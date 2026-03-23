@@ -5,7 +5,7 @@ from datetime import datetime
 class Ingredient:
     def __init__(self, name: str, quantity: int, nutritional_info: NutritionalInformation, estimated_expiration_date: datetime, estimated_financial_cost: float):
         """
-        'Ingredient' class, represents an ingredient in the pantry with various attributes useful for recipe suggestions and inventory management
+        `Ingredient` class represents an ingredient in the pantry with various attributes useful for recipe suggestions and inventory management
 
         :param name: name of the ingredient
         :type name: str

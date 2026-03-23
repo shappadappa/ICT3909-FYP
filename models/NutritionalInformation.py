@@ -14,7 +14,7 @@ class NutritionalInformation:
                  is_vegan: bool,
                  ):
         """
-        The 'NutritionalInformation' class, represents the nutritional information of an ingredient, useful for recipe suggestions and dietary management. All listed attributes are per 100 grams of the ingredient
+        The `NutritionalInformation` class represents the nutritional information of an ingredient, useful for recipe suggestions and dietary management. All listed attributes are per 100 grams of the ingredient
 
         :param calories: number of calories in the ingredient
         :type calories: float

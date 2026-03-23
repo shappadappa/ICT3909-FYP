@@ -3,7 +3,7 @@ from models.Ingredient import Ingredient
 class Pantry:
     def __init__(self):
         """
-        The 'Pantry' class, represents a collection of ingredients in the pantry
+        The `Pantry` class represents a collection of ingredients in the pantry
         """
 
         self.ingredients: list[Ingredient] = []
