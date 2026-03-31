@@ -9,3 +9,5 @@ Evaluation using an LLM, added as a baseline against my system
 Claude cowork to combine pantries and generate a variety, setting parameters and allowing it to create pantries (synthetic data)
 
 See more about evaluation later, once we get some more data from my own system
+
+- Consider using the full CSV including branded foods ?
