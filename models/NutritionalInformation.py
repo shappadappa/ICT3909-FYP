@@ -14,9 +14,9 @@ class NutritionalInformation:
                  is_vegan: bool,
                  ):
         """
-        The `NutritionalInformation` class represents the nutritional information of an ingredient, useful for recipe suggestions and dietary management. All listed attributes are per 100 grams of the ingredient
+        The `NutritionalInformation` class represents the nutritional information of an ingredient or recipe. All listed attributes are dependent on the unit quantity of the ingredient/recipe
 
-        :param calories: number of calories in the ingredient
+        :param calories: number of calories in the ingredient in kcal
         :type calories: float
         :param carbohydrates: amount of carbohydrates in grams
         :type carbohydrates: float
@@ -55,3 +55,27 @@ class NutritionalInformation:
         self.is_vegetarian = is_vegetarian
         self.is_vegan = is_vegan
 
+    def print(self, tab_indent: int = 0):
+        """
+        Prints the nutritional information in a readable format
+
+        :param tab_indent: number of tabs to indent the printed information (default = 0)
+        :type tab_indent: int
+        """
+
+        indent = "\t" * tab_indent
+
+        print(
+            f"{indent}Calories: {self.calories} kcal\n"
+            f"{indent}Carbohydrates: {self.carbohydrates} g\n"
+            f"{indent}Sugar: {self.sugar} g\n"
+            f"{indent}Protein: {self.protein} g\n"
+            f"{indent}Fat: {self.fat} g\n"
+            f"{indent}Saturated Fat: {self.saturated_fat} g\n"
+            f"{indent}Fiber: {self.fiber} g\n"
+            f"{indent}Sodium: {self.sodium} mg\n"
+            f"{indent}Gluten Free: {'Yes' if self.is_gluten_free else 'No'}\n"
+            f"{indent}Lactose Free: {'Yes' if self.is_lactose_free else 'No'}\n"
+            f"{indent}Vegetarian: {'Yes' if self.is_vegetarian else 'No'}\n"
+            f"{indent}Vegan: {'Yes' if self.is_vegan else 'No'}"
+        )

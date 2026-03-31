@@ -1,31 +1,61 @@
-from models.Ingredient import Ingredient
+﻿from models.Ingredient import Ingredient
 
 class Pantry:
     def __init__(self):
         """
-        The `Pantry` class represents a collection of ingredients in the pantry
+        The `Pantry` class represents a collection of ingredients and their available quantities
         """
 
-        self.ingredients: list[Ingredient] = []
+        self._ingredients: dict[str, Ingredient] = {}
+        self._quantities: dict[str, int] = {}
 
-    def add(self, ingredient: Ingredient):
+    @property
+    def ingredients(self) -> list[Ingredient]:
         """
-        Adds an ingredient to the pantry
+        Returns the list of unique ingredient objects currently in the pantry
         
-        :param ingredient: ingredient to add to the pantry
-        :type ingredient: Ingredient
+        :return: list of unique ingredient objects currently in the pantry
+        :rtype: list[Ingredient]
         """
-        self.ingredients.append(ingredient)
+
+        return list(self._ingredients.values())
+
+    @property
+    def stock(self) -> dict[str, int]:
+        """
+        Returns a snapshot of ingredient name to available quantity
+
+        :return: dictionary mapping ingredient names to their available quantities
+        :rtype: dict[str, int]
+        """
+
+        return dict(self._quantities)
+
+    def add(self, ingredient: Ingredient, quantity: int):
+        """
+        Adds a quantity of an ingredient to the pantry. If the ingredient already exists,
+        its quantity is increased.
+
+        :param ingredient: ingredient to add
+        :type ingredient: Ingredient
+        :param quantity: number of units to add
+        :type quantity: int
+        """
+
+        if ingredient.name in self._ingredients:
+            self._quantities[ingredient.name] += quantity
+        else:
+            self._ingredients[ingredient.name] = ingredient
+            self._quantities[ingredient.name] = quantity
 
     def print(self):
         """
-        Prints the details of all ingredients in the pantry
+        Prints the details of all ingredients currently in the pantry
         """
 
-        for ingredient in self.ingredients:
-            print(f"Name: {ingredient.name}")
-            print(f"Quantity: {ingredient.quantity}")
-            print(f"Nutritional Information: Calories: {ingredient.nutritional_info.calories}, Carbohydrates: {ingredient.nutritional_info.carbohydrates}, Sugar: {ingredient.nutritional_info.sugar}, Protein: {ingredient.nutritional_info.protein}, Fat: {ingredient.nutritional_info.fat}, Saturated Fat: {ingredient.nutritional_info.saturated_fat}, Fiber: {ingredient.nutritional_info.fiber}, Sodium: {ingredient.nutritional_info.sodium}, Gluten Free: {ingredient.nutritional_info.is_gluten_free}, Lactose Free: {ingredient.nutritional_info.is_lactose_free}, Vegetarian: {ingredient.nutritional_info.is_vegetarian}, Vegan: {ingredient.nutritional_info.is_vegan}")
-            print(f"Estimated Expiration Date: {ingredient.estimated_expiration_date}")
-            print(f"Is Expired: {ingredient.is_expired()}")
-            print(f"Estimated Financial Cost: EUR {ingredient.estimated_financial_cost:.2f}")
+        for name, ingredient in self._ingredients.items():
+            qty = self._quantities[name]
+            print("---")
+            print(f"Quantity: {qty}")
+            ingredient.print()
+            print("---")
