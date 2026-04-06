@@ -3,8 +3,6 @@
 
 __pycache__/
 
-food_data_extraction/FoodData_Central_foundation_food_csv_2025-12-18/
-food_data_extraction/FoodData_Central_sr_legacy_food_csv_2018-04
-food_data_extraction/FoodData_Central_survey_food_csv_2024-10-31/
+food_data_extraction/FoodData_central_csv_2025-12-18
 
 .env
