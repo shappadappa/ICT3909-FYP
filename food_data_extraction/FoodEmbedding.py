@@ -1,9 +1,8 @@
-import os
 import pandas as pd
-from sentence_transformers import SentenceTransformer
-import faiss
+import os
+from Embedding import Embedding
 
-class FoodEmbedding():
+class FoodEmbedding(Embedding):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         """
         The `FoodEmbedding` class is responsible for creating embeddings for food descriptions and allowing for similarity search based on those embeddings. It also provides functionality to retrieve nutritional information for specific food items
@@ -14,76 +13,46 @@ class FoodEmbedding():
         :type model_name: str
         """
 
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        super().__init__(model_name)
 
-        self.food = pd.read_csv(f"{os.path.join(base_dir, 'FoodData_Central_csv_2025-12-18')}/food.csv")
-        self.food_nutrient = pd.read_csv(f"{os.path.join(base_dir, 'FoodData_Central_csv_2025-12-18')}/food_nutrient.csv")
-        self.nutrient = pd.read_csv(f"{os.path.join(base_dir, 'FoodData_Central_csv_2025-12-18')}/nutrient.csv").drop_duplicates(subset = ["id"])
+        self.food = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food.csv")
+        self.food_nutrient = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food_nutrient.csv")
+        self.nutrient = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/nutrient.csv").drop_duplicates(subset = ["id"])
 
-        self.model = SentenceTransformer(model_name, token = "test") # todo pass token
-
-        self.search_cache = {}
-
-    # def _normalize_description(self, description: str) -> str:
-    #     """
-    #     Converts a comma-separated FDC description into natural word order so that it aligns better with the queries
-
-    #     :param description: the original FDC description to normalize
-    #     :type description: str
-
-    #     :returns: the normalized description with words in natural order
-    #     :rtype: str
-    #     """
-
-    #     try:
-    #         return description.replace(",", " ")
-    #     except Exception:
-    #         return description
-
-    def initialise(self):
+    def initialise(self, descriptions: list[str] | None = None):
         """
         Initialise the embeddings for the food descriptions
+
+        :param descriptions: the list of descriptions to create embeddings for (if None, the method will use the ingredient names from the food densities DataFrame)
+        :type descriptions: list[str] | None
         """
 
-        descriptions = self.food ["description"].tolist()
-        # normalized_descriptions = [self._normalize_description(description) for description in self.descriptions]
-        # self.embeddings = self.model.encode(normalized_descriptions, show_progress_bar = True, convert_to_numpy = True, batch_size = 64).astype("float32")
-        embeddings = self.model.encode(descriptions, show_progress_bar = True, convert_to_numpy = True, batch_size = 64).astype("float32")
+        if descriptions is None:
+            descriptions = self.food ["description"].tolist()
 
-        self.index = faiss.IndexFlatIP(embeddings.shape [1])
-        faiss.normalize_L2(embeddings)
-        self.index.add(embeddings)
+        super().initialise(descriptions)
 
-    def search(self, query: str, top_n: int = 5) -> pd.DataFrame:
+    def search(self, query: str, data: pd.DataFrame | None = None, top_n: int = 5, minimum_confidence: float = 0.0) -> pd.DataFrame:
         """
         Search for similar food items based on a query string
 
         :param query: the query string to search for
         :type query: str
+        :param data: the DataFrame containing the food items to search through (if None, the method will use the food DataFrame)
+        :type data: pd.DataFrame | None
         :param top_n: the number of top results to return (default = 5)
         :type top_n: int
+        :param minimum_confidence: the minimum confidence score for a search result to be considered valid (default = 0.0)
+        :type minimum_confidence: float
 
         :returns: a DataFrame containing the top N most similar food items, along with their similarity scores
         :rtype: pd.DataFrame
         """
 
-        if self.search_cache.get(query) is not None:
-            return self.search_cache [query]
+        if data is None:
+            data = self.food
 
-        # normalized_query = self._normalize_description(query)
-        # query_embedding = self.model.encode([normalized_query], convert_to_numpy = True).astype("float32")
-        query_embedding = self.model.encode([query], convert_to_numpy = True).astype("float32")
-        faiss.normalize_L2(query_embedding)
-
-        scores, indices = self.index.search(query_embedding, k = top_n)
-
-        results = self.food.iloc [indices [0]].copy()
-
-        results ["score"] = scores [0]
-
-        self.search_cache [query] = results
-
-        return results
+        return super().search(query, data, top_n, minimum_confidence)
     
     def get_nutritional_information(self, fdc_id: int) -> pd.DataFrame:
         """
@@ -102,16 +71,12 @@ class FoodEmbedding():
 
         return nutrient_info [["nutrient_id", "amount", "unit_name", "name"]]
 
-    def load(self, index_path: str):
-        """
-        Loads the FAISS index from disk
-        """
-
-        self.index = faiss.read_index(index_path)
-
-    def save(self):
+    def save(self, index_path: str = "food_embedding.faiss"):
         """
         Saves the FAISS index to disk
+
+        :param index_path: the file path to save the FAISS index to (default = "food_embedding.faiss")
+        :type index_path: str
         """
 
-        faiss.write_index(self.index, "food_embedding.faiss")
+        super().save(index_path)
