@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from Embedding import Embedding
+from food_data_extraction.Embedding import Embedding
 
 class FoodEmbedding(Embedding):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
@@ -18,6 +18,7 @@ class FoodEmbedding(Embedding):
         self.food = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food.csv")
         self.food_nutrient = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food_nutrient.csv")
         self.nutrient = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/nutrient.csv").drop_duplicates(subset = ["id"])
+        self.food_portion = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food_portion.csv")
 
     def initialise(self, descriptions: list[str] | None = None):
         """
@@ -70,6 +71,21 @@ class FoodEmbedding(Embedding):
         nutrient_info = raw_nutrient_info.merge(self.nutrient, left_on = "nutrient_id", right_on = "id", how = "left")
 
         return nutrient_info [["nutrient_id", "amount", "unit_name", "name"]]
+    
+    def get_portion_size(self, fdc_id: int) -> pd.DataFrame:
+        """
+        Get the portion size information for a specific food item
+
+        :param fdc_id: the ID of the food item
+        :type fdc_id: int
+
+        :returns: a DataFrame containing the portion size information for the specified food item
+        :rtype: pd.DataFrame
+        """
+
+        portion = self.food_portion [self.food_portion ["fdc_id"] == fdc_id]
+
+        return portion
 
     def save(self, index_path: str = "food_embedding.faiss"):
         """

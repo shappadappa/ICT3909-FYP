@@ -1,5 +1,0 @@
-1. Go through the recipes in the dataset
-2. For each recipe, go through its ingredients
-3. For each ingredient, check if its information already has been fetched
-4. If not, fetch the ingredient information from the API and store it in a dictionary for future reference
-5. Store the recipe information, including the ingredient details, in a JSON file for later use in the meal planner algorithm

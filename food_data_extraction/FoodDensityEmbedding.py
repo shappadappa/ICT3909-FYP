@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from Embedding import Embedding
+from food_data_extraction.Embedding import Embedding
 
 """
 PLAN:
