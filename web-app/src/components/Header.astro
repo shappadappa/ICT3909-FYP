@@ -1,0 +1,29 @@
+---
+const currentDate = new Date();
+const day = currentDate.getDay();
+const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
+const weekStart = new Date(currentDate.setDate(diff)).toLocaleDateString("en-us", { month: "short", day: "numeric" });
+const weekEnd = new Date(currentDate.setDate(diff + 6)).toLocaleDateString("en-us", { month: "short", day: "numeric" });
+---
+
+<header class="border-walnut-100 flex items-center justify-between border-b bg-white px-8 py-4">
+	<div class="flex items-center gap-3">
+		<div class="bg-sage-400 flex h-8 w-8 items-center justify-center rounded-full">
+			<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M3 3h18M3 9h18M3 15h18M3 21h18"></path>
+			</svg>
+		</div>
+	</div>
+	<div class="flex items-center gap-3">
+		<span class="text-walnut-400 font-body text-sm">Week of</span>
+		<span class="text-walnut-600 bg-parchment border-walnut-100 rounded-full border px-3 py-1 text-sm font-medium"
+			>{weekStart} - {weekEnd}</span
+		>
+		<button>
+			<button
+				class="bg-sage-600 hover:bg-sage-800 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+				>+ Add Meal</button
+			>
+		</button>
+	</div>
+</header>

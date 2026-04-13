@@ -1,0 +1,103 @@
+---
+import type { Meal } from "../types";
+import MealPlanSummary from "./MealPlanSummary.astro";
+
+interface Props {
+	breakfast: Meal[];
+	lunch: Meal[];
+	dinner: Meal[];
+}
+
+const { breakfast, lunch, dinner } = Astro.props;
+---
+
+<section class="flex min-w-0 flex-1 flex-col">
+	<div class="mb-4 flex items-center justify-between">
+		<h2 class="font-display text-walnut-800 text-lg font-semibold">Weekly Meal Plan</h2>
+		<div class="flex gap-2 text-xs font-medium">
+			<span class="bg-terra-50 text-terra-600 border-terra-100 rounded-full border px-2.5 py-1">Breakfast</span>
+			<span class="bg-sage-50 text-sage-600 border-sage-100 rounded-full border px-2.5 py-1">Lunch</span>
+			<span class="bg-walnut-50 text-walnut-600 border-walnut-100 rounded-full border px-2.5 py-1">Dinner</span>
+		</div>
+	</div>
+
+	<div class="border-walnut-100 flex flex-1 flex-col overflow-hidden rounded-2xl border bg-white">
+		<!-- Table -->
+		<div class="flex-1 overflow-auto">
+			<table class="w-full" style="min-width:700px">
+				<thead>
+					<tr class="border-walnut-100 bg-parchment border-b">
+						{
+							["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+								<th class="text-walnut-600 px-3 py-3 text-center text-xs font-medium tracking-wider uppercase">
+									{day}
+								</th>
+							))
+						}
+					</tr>
+				</thead>
+				<tbody class="divide-walnut-50 divide-y">
+					<!-- Breakfast -->
+					<tr class="h-36">
+						<td class="px-4 py-3 align-top">
+							<span
+								class="text-terra-600 bg-terra-50 border-terra-100 rounded-md border px-2 py-0.5 text-xs font-semibold tracking-wider uppercase"
+								>Breakfast</span
+							>
+						</td>
+						{
+							breakfast?.map((meal) => (
+								<td class="px-2 py-3 align-top">
+									<div class="meal-card bg-terra-50 border-terra-100 cursor-pointer rounded-xl border p-2.5">
+										<p class="text-terra-800 text-xs leading-snug font-medium">{meal.title}</p>
+										<p class="text-terra-600 mt-0.5 text-xs">{meal.description}</p>
+									</div>
+								</td>
+							))
+						}
+					</tr>
+					<!-- Lunch -->
+					<tr class="bg-sage-50/30 h-36">
+						<td class="px-4 py-3 align-top">
+							<span
+								class="text-sage-600 bg-sage-50 border-sage-100 rounded-md border px-2 py-0.5 text-xs font-semibold tracking-wider uppercase"
+								>Lunch</span
+							>
+						</td>
+						{
+							lunch?.map((meal) => (
+								<td class="px-2 py-3 align-top">
+									<div class="meal-card bg-sage-50 border-sage-100 cursor-pointer rounded-xl border p-2.5">
+										<p class="text-sage-800 text-xs leading-snug font-medium">{meal.title}</p>
+										<p class="text-sage-600 mt-0.5 text-xs">{meal.description}</p>
+									</div>
+								</td>
+							))
+						}
+					</tr>
+					<!-- Dinner -->
+					<tr class="h-36">
+						<td class="px-4 py-3 align-top">
+							<span
+								class="text-walnut-600 bg-walnut-50 border-walnut-100 rounded-md border px-2 py-0.5 text-xs font-semibold tracking-wider uppercase"
+								>Dinner</span
+							>
+						</td>
+						{
+							dinner?.map((meal) => (
+								<td class="px-2 py-3 align-top">
+									<div class="meal-card bg-walnut-50 border-walnut-100 cursor-pointer rounded-xl border p-2.5">
+										<p class="text-walnut-800 text-xs leading-snug font-medium">{meal.title}</p>
+										<p class="text-walnut-500 mt-0.5 text-xs">{meal.description}</p>
+									</div>
+								</td>
+							))
+						}
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<MealPlanSummary />
+</section>

@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=DM+Sans:opsz,wght@9..40,300..700&display=swap");
+@import "tailwindcss";
+
+@theme {
+	--font-display: "Lora", serif;
+	--font-body: "DM Sans", sans-serif;
+
+	--color-cream: #faf7f2;
+	--color-parchment: #f0ebe1;
+
+	--color-sage-50: #f2f5f0;
+	--color-sage-100: #dce5d8;
+	--color-sage-200: #b8cdb1;
+	--color-sage-400: #7fa874;
+	--color-sage-600: #4f7a47;
+	--color-sage-800: #2e4e28;
+
+	--color-terra-50: #fbf0ec;
+	--color-terra-100: #f4d5c8;
+	--color-terra-200: #e8aa92;
+	--color-terra-400: #c96b46;
+	--color-terra-600: #9c4828;
+	--color-terra-800: #6b2f16;
+
+	--color-walnut-50: #f5f1eb;
+	--color-walnut-100: #e5d9c8;
+	--color-walnut-200: #c9b49a;
+	--color-walnut-400: #9d7e5a;
+	--color-walnut-600: #6e5438;
+	--color-walnut-800: #433020;
+}
+
+body {
+	font-family: "DM Sans", sans-serif;
+}
+
+.badge-low {
+	background: #fbf0ec;
+	color: #9c4828;
+	border: 1px solid #e8aa92;
+}
+
+.badge-ok {
+	background: #f2f5f0;
+	color: #4f7a47;
+	border: 1px solid #b8cdb1;
+}
+
+.meal-card {
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.meal-card:hover {
+	transform: translateY(-2px);
+}
+
+.pantry-item:hover {
+	background: #f5f1eb;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f0ebe1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #c9b49a;
+	border-radius: 10px;
+}
