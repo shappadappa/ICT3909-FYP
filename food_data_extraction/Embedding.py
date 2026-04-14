@@ -1,19 +1,23 @@
 import os
-import faiss
-from sentence_transformers import SentenceTransformer
-import pandas as pd
 
-class Embedding():
+import faiss
+import pandas as pd
+from sentence_transformers import SentenceTransformer
+
+
+class Embedding:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         """
         The `Embedding` class is responsible for creating an embedding, allowing for similarity search based on the embedding, and providing functionality to retrieve nutritional information for specific food items
-        
+
         In particular, this class is used by `FoodEmbedding` to create an embedding for food descriptions, and by `FoodDensityEmbedding` to create an embedding for foods that incorporates density information. The embedding allows for efficient similarity search without making API calls, enabling fast retrieval of similar food items based on their descriptions and/or density information, as well as access to their nutritional information without hitting API rate limits
         """
 
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        self.model = SentenceTransformer(model_name_or_path = model_name, token = "test") # todo pass token
+        self.model = SentenceTransformer(
+            model_name_or_path=model_name, token="test"
+        )  # todo pass token
 
         self.search_cache = {}
 
@@ -25,13 +29,21 @@ class Embedding():
         :type descriptions: list[str] | None
         """
 
-        embeddings = self.model.encode(descriptions, show_progress_bar = True, convert_to_numpy = True, batch_size = 64).astype("float32") # type: ignore
+        embeddings = self.model.encode(
+            descriptions, show_progress_bar=True, convert_to_numpy=True, batch_size=64
+        ).astype("float32")  # type: ignore
 
-        self.index = faiss.IndexFlatIP(embeddings.shape [1])
+        self.index = faiss.IndexFlatIP(embeddings.shape[1])
         faiss.normalize_L2(embeddings)
-        self.index.add(embeddings) # type: ignore
-    
-    def search(self, query: str, data: pd.DataFrame | None = None, top_n: int = 5, minimum_confidence: float = 0.0) -> pd.DataFrame:
+        self.index.add(embeddings)  # type: ignore
+
+    def search(
+        self,
+        query: str,
+        data: pd.DataFrame | None = None,
+        top_n: int = 5,
+        minimum_confidence: float = 0.0,
+    ) -> pd.DataFrame:
         """
         Search for similar items based on a query that incorporates the relevant information for the embedding
 
@@ -49,19 +61,21 @@ class Embedding():
         """
 
         if self.search_cache.get(query) is not None:
-            return self.search_cache [query]
-        
-        query_embedding = self.model.encode([query], convert_to_numpy = True).astype("float32")
+            return self.search_cache[query]
+
+        query_embedding = self.model.encode([query], convert_to_numpy=True).astype(
+            "float32"
+        )
         faiss.normalize_L2(query_embedding)
 
-        scores, indices = self.index.search(query_embedding, top_n) # type: ignore
+        scores, indices = self.index.search(query_embedding, top_n)  # type: ignore
 
-        results = data.iloc [indices [0]].copy() # type: ignore
-        results ["score"] = scores [0]
-        results = results [results ["score"] >= minimum_confidence]
+        results = data.iloc[indices[0]].copy()  # type: ignore
+        results["score"] = scores[0]
+        results = results[results["score"] >= minimum_confidence]
 
         return results
-    
+
     def save(self, index_path: str):
         """
         Save the FAISS index to a file for later use

@@ -12,6 +12,7 @@ PLAN:
 
 DEFAULT_MINIMUM_CONFIDENCE = 0.7
 
+
 class FoodDensityEmbedding(Embedding):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         """
@@ -23,7 +24,9 @@ class FoodDensityEmbedding(Embedding):
 
         super().__init__(model_name)
 
-        self.food_densities = pd.read_csv(os.path.join(self.base_dir, "ingredient_densities.csv"))
+        self.food_densities = pd.read_csv(
+            os.path.join(self.base_dir, "ingredient_densities.csv")
+        )
 
     def initialise(self, descriptions: list[str] | None = None):
         """
@@ -34,11 +37,17 @@ class FoodDensityEmbedding(Embedding):
         """
 
         if descriptions is None:
-            descriptions = self.food_densities ["ingredient"].tolist()
+            descriptions = self.food_densities["ingredient"].tolist()
 
         super().initialise(descriptions)
 
-    def search(self, query: str, data: pd.DataFrame | None = None, top_n: int = 5, minimum_confidence: float = DEFAULT_MINIMUM_CONFIDENCE) -> pd.DataFrame:
+    def search(
+        self,
+        query: str,
+        data: pd.DataFrame | None = None,
+        top_n: int = 5,
+        minimum_confidence: float = DEFAULT_MINIMUM_CONFIDENCE,
+    ) -> pd.DataFrame:
         """
         Search for similar food items based on a query that incorporates both textual description and density information
 
@@ -59,7 +68,7 @@ class FoodDensityEmbedding(Embedding):
             data = self.food_densities
 
         return super().search(query, data, top_n, minimum_confidence)
-    
+
     def save(self, index_path: str = "food_density_embedding.faiss"):
         """
         Saves the FAISS index to disk

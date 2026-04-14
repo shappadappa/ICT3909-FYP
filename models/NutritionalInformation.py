@@ -1,3 +1,5 @@
+import json
+
 class NutritionalInformation:
     def __init__(self, 
                  calories: float | None = None, 
@@ -132,3 +134,10 @@ class NutritionalInformation:
             "is_vegetarian",
             "is_vegan"
         ]
+
+    def to_dict(self) -> dict:
+        """
+        Converts the nutritional information to a dictionary format
+        """
+
+        return vars(self)

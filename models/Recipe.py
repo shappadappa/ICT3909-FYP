@@ -1,6 +1,9 @@
-﻿from models.DietaryTag import DietaryTag
-from models.NutritionalInformation import NutritionalInformation
+﻿import json
+
+from models.DietaryTag import DietaryTag
 from models.Ingredient import Ingredient
+from models.NutritionalInformation import NutritionalInformation
+
 
 class Recipe:
     def __init__(
@@ -9,11 +12,11 @@ class Recipe:
         ingredients: dict[Ingredient, int],
         dietary_tags: list[DietaryTag],
         instructions: list[str] = [],
-        serves: int = 1
+        serves: int = 1,
     ):
         """
         The `Recipe` class represents a recipe with its required ingredients and dietary properties.
-        Nutritional information is automatically derived from the ingredient list.
+        Nutritional information is computed separately by calling `compute_nutritional_information`.
 
         :param name: display name of the recipe
         :type name: str
@@ -32,7 +35,7 @@ class Recipe:
         self.dietary_tags = dietary_tags
         self.instructions = instructions
         self.serves = serves
-        
+
         self.is_vegan = DietaryTag.VEGAN in dietary_tags
         self.is_vegetarian = DietaryTag.VEGETARIAN in dietary_tags or self.is_vegan
         self.is_gluten_free = DietaryTag.GLUTEN_FREE in dietary_tags
@@ -57,18 +60,46 @@ class Recipe:
 
             for nutritional_attribute in ingredient.nutritional_information.keys:
                 # float attributes: calories, carbohydrates, sugar, protein, fat, saturated_fat, fiber, sodium
-                if isinstance(ingredient.nutritional_information.get_nutritional_value(nutritional_attribute), (int, float)):
-                    per_100g_value = ingredient.nutritional_information.get_nutritional_value(nutritional_attribute)
+                if isinstance(
+                    ingredient.nutritional_information.get_nutritional_value(
+                        nutritional_attribute
+                    ),
+                    (int, float),
+                ):
+                    per_100g_value = (
+                        ingredient.nutritional_information.get_nutritional_value(
+                            nutritional_attribute
+                        )
+                    )
 
                     if per_100g_value is not None:
-                        old_value = recipe_nutritional_information.get_nutritional_value(nutritional_attribute) or 0.0
+                        old_value = (
+                            recipe_nutritional_information.get_nutritional_value(
+                                nutritional_attribute
+                            )
+                            or 0.0
+                        )
                         new_value = old_value + (per_100g_value * scale)
-                        recipe_nutritional_information.set_nutritional_value(nutritional_attribute, new_value)
+                        recipe_nutritional_information.set_nutritional_value(
+                            nutritional_attribute, new_value
+                        )
                     continue
-            
+
                 # bool attributes: is_gluten_free, is_lactose_free, is_vegetarian, is_vegan. Only changed if False or None, since when True, the recipe is only as compliant as its least compliant ingredient
-                if isinstance(ingredient.nutritional_information.get_nutritional_value(nutritional_attribute), bool) and ingredient.nutritional_information.get_nutritional_value(nutritional_attribute) in [False, None]:
-                    recipe_nutritional_information.set_nutritional_value(nutritional_attribute, ingredient.nutritional_information.get_nutritional_value(nutritional_attribute))
+                if isinstance(
+                    ingredient.nutritional_information.get_nutritional_value(
+                        nutritional_attribute
+                    ),
+                    bool,
+                ) and ingredient.nutritional_information.get_nutritional_value(
+                    nutritional_attribute
+                ) in [False, None]:
+                    recipe_nutritional_information.set_nutritional_value(
+                        nutritional_attribute,
+                        ingredient.nutritional_information.get_nutritional_value(
+                            nutritional_attribute
+                        ),
+                    )
 
         return recipe_nutritional_information
 
@@ -81,7 +112,10 @@ class Recipe:
         :rtype: dict[str, int]
         """
 
-        return {ingredient.name: quantity for ingredient, quantity in self.ingredients.items()}
+        return {
+            ingredient.name: quantity
+            for ingredient, quantity in self.ingredients.items()
+        }
 
     def print(self):
         """
@@ -100,3 +134,24 @@ class Recipe:
         )
 
         self.nutritional_information.print(2)
+
+    def to_dict(self):
+        """
+        Converts the recipe object to a dictionary format
+        """
+
+        return {
+            "name": self.name,
+            "ingredients": [
+                {"ingredient": ingredient.to_dict(), "quantity": quantity}
+                for ingredient, quantity in self.ingredients.items()
+            ],
+            "dietary_tags": [tag.name for tag in self.dietary_tags],
+            "instructions": self.instructions,
+            "serves": self.serves,
+            "is_vegan": self.is_vegan,
+            "is_vegetarian": self.is_vegetarian,
+            "is_gluten_free": self.is_gluten_free,
+            "is_lactose_free": self.is_lactose_free,
+            "nutritional_information": self.nutritional_information.to_dict(),
+        }

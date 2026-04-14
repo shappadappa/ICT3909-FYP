@@ -1,3 +1,4 @@
+import json
 from models.NutritionalInformation import NutritionalInformation
 
 class Ingredient:
@@ -30,3 +31,13 @@ class Ingredient:
         )
 
         self.nutritional_information.print(2)
+
+    def to_dict(self):
+        """
+        Converts the ingredient object to a dictionary format
+        """
+
+        return {
+            "name": self.name,
+            "nutritional_information": self.nutritional_information.to_dict()
+        }
