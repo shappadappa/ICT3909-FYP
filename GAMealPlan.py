@@ -2,6 +2,7 @@ from models import Recipe, UserPreferences
 
 DIETARY_PENALTY_VIOLATION = 50.0
 
+
 def dietary_penalty(recipe: Recipe, preferences: UserPreferences) -> float:
     """
     Calculates a penalty score for a recipe based on how well it aligns with the user's dietary preferences (higher = worse alignment)
@@ -28,11 +29,13 @@ def dietary_penalty(recipe: Recipe, preferences: UserPreferences) -> float:
 
     return penalty
 
+
 EXPIRY_BONUS_WEIGHTS = {
-    1: 30.0,
-    3: 20.0,
-    7: 10.0,
+    1: 0.03,
+    3: 0.02,
+    7: 0.01,
 }
+
 
 def expiry_bonus(days_until_expiry: int, quantity_used: int) -> float:
     """
@@ -55,7 +58,9 @@ def expiry_bonus(days_until_expiry: int, quantity_used: int) -> float:
 
     return bonus
 
-WASTE_PENALTY_URGENCY_MULTIPLIER = 5.0
+
+WASTE_PENALTY_URGENCY_MULTIPLIER = 0.001
+
 
 def waste_penalty(quantity_unused: int, days_until_expiry: int) -> float:
     """
@@ -79,7 +84,9 @@ def waste_penalty(quantity_unused: int, days_until_expiry: int) -> float:
 
     return penalty
 
-BUDGET_PENALTY_MULTIPLIER = 10.0
+
+BUDGET_PENALTY_MULTIPLIER = 2.0
+
 
 def budget_penalty(total_cost: float, budget: float) -> float:
     """
@@ -101,6 +108,7 @@ def budget_penalty(total_cost: float, budget: float) -> float:
     penalty = excess * BUDGET_PENALTY_MULTIPLIER
 
     return penalty
+
 
 def evaluate_meal_plan(
     recipe_indices: list[int],
@@ -131,22 +139,22 @@ def evaluate_meal_plan(
     purchase_cost = 0.0
 
     for index in recipe_indices:
-        recipe = recipes [index]
+        recipe = recipes[index]
 
         dietary_penalty_total += dietary_penalty(recipe, preferences)
 
-        for ingredient_name, quantity_needed in recipe.ingredient_quantities.items():
+        for ingredient_name, quantity_needed in recipe.ingredients.items():
             total_units_needed += quantity_needed
 
             available = pantry_stock.get(ingredient_name, 0) - consumed_stock.get(ingredient_name, 0)
             from_pantry = max(0, min(available, quantity_needed))
             to_buy = quantity_needed - from_pantry
 
-            consumed_stock [ingredient_name] = consumed_stock.get(ingredient_name, 0) + from_pantry
+            consumed_stock[ingredient_name] = consumed_stock.get(ingredient_name, 0) + from_pantry
 
             total_units_from_pantry += from_pantry
             expiry_bonus_total += expiry_bonus(days_until_expiry.get(ingredient_name, 999), from_pantry)
-            purchase_cost += to_buy * ingredient_costs.get(ingredient_name, 1.0)
+            purchase_cost += (to_buy / 100.0) * ingredient_costs.get(ingredient_name, 1.0)
 
     pantry_score = (total_units_from_pantry / total_units_needed * 100.0) if total_units_needed > 0 else 0.0
 
@@ -162,17 +170,23 @@ def evaluate_meal_plan(
     # (must not be done per-recipe, as individual meals will never reach daily calorie/protein goals)
 
     num_days = len(recipe_indices) // 3
-    
+
     for day in range(num_days):
-        day_indices = recipe_indices [day * 3 : day * 3 + 3]
-        daily_calories = sum(recipes [i].nutritional_info.calories for i in day_indices)
-        daily_protein = sum(recipes [i].nutritional_info.protein for i in day_indices)
+        day_indices = recipe_indices[day * 3 : day * 3 + 3]
+        daily_calories = sum(
+            (recipes[i].nutritional_information.get_nutritional_value("calories") or 0.0) for i in day_indices
+        )
+        daily_protein = sum(
+            (recipes[i].nutritional_information.get_nutritional_value("protein") or 0.0) for i in day_indices
+        )
 
         # TODO these weights should be tuned
 
-        dietary_penalty_total += abs(daily_calories - preferences.calorie_target_per_day) / 10.0
-        dietary_penalty_total += abs(daily_protein - preferences.protein_target_per_day) / 2.0
+        dietary_penalty_total += abs(daily_calories - preferences.calorie_target_per_day) / 100.0
+        dietary_penalty_total += abs(daily_protein - preferences.protein_target_per_day) / 10.0
 
-    fitness_score = pantry_score + expiry_bonus_total - dietary_penalty_total - waste_penalty_total - budget_penalty_total
+    fitness_score = (
+        pantry_score + expiry_bonus_total - dietary_penalty_total - waste_penalty_total - budget_penalty_total
+    )
 
     return fitness_score

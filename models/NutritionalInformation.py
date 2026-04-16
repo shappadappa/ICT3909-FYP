@@ -1,20 +1,19 @@
-import json
-
 class NutritionalInformation:
-    def __init__(self, 
-                 calories: float | None = None, 
-                 carbohydrates: float | None = None, 
-                 sugar: float | None = None, 
-                 protein: float | None = None, 
-                 fat: float | None = None, 
-                 saturated_fat: float | None = None, 
-                 fiber: float | None = None, 
-                 sodium: float | None = None, 
-                 is_gluten_free: bool | None = None, 
-                 is_lactose_free: bool | None = None, 
-                 is_vegetarian: bool | None = None,
-                 is_vegan: bool | None = None,
-                 ):
+    def __init__(
+        self,
+        calories: float | None = None,
+        carbohydrates: float | None = None,
+        sugar: float | None = None,
+        protein: float | None = None,
+        fat: float | None = None,
+        saturated_fat: float | None = None,
+        fiber: float | None = None,
+        sodium: float | None = None,
+        is_gluten_free: bool | None = None,
+        is_lactose_free: bool | None = None,
+        is_vegetarian: bool | None = None,
+        is_vegan: bool | None = None,
+    ):
         """
         The `NutritionalInformation` class represents the nutritional information of an ingredient or recipe. All listed attributes are dependent on the unit quantity of the ingredient/recipe
 
@@ -97,7 +96,7 @@ class NutritionalInformation:
             return getattr(self, attribute)
         else:
             return None
-        
+
     def set_nutritional_value(self, attribute: str, value: float | bool):
         """
         Sets the value of the specified nutritional attribute
@@ -132,7 +131,7 @@ class NutritionalInformation:
             "is_gluten_free",
             "is_lactose_free",
             "is_vegetarian",
-            "is_vegan"
+            "is_vegan",
         ]
 
     def to_dict(self) -> dict:

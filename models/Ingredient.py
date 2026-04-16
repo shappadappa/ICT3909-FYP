@@ -1,12 +1,12 @@
-import json
 from models.NutritionalInformation import NutritionalInformation
+
 
 class Ingredient:
     def __init__(
-            self,
-            name: str, 
-            nutritional_information: NutritionalInformation, 
-            ):
+        self,
+        name: str,
+        nutritional_information: NutritionalInformation,
+    ):
         """
         `Ingredient` class represents an ingredient in the pantry with various attributes useful for recipe suggestions and inventory management
 
@@ -14,7 +14,7 @@ class Ingredient:
         :type name: str
         :param nutritional_information: nutritional information of the ingredient per 100 grams
         :type nutritional_information: NutritionalInformation
-        
+
         """
 
         self.name = name
@@ -25,10 +25,8 @@ class Ingredient:
         Prints a summary of the ingredient's details
         """
 
-        print(
-            f"Ingredient: {self.name}\n"
-            f"\tNutritional Information:"
-        )
+        print(f"Ingredient: {self.name}")
+        print("\tNutritional Information per 100g:")
 
         self.nutritional_information.print(2)
 
@@ -37,7 +35,4 @@ class Ingredient:
         Converts the ingredient object to a dictionary format
         """
 
-        return {
-            "name": self.name,
-            "nutritional_information": self.nutritional_information.to_dict()
-        }
+        return {"name": self.name, "nutritional_information": self.nutritional_information.to_dict()}
