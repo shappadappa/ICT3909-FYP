@@ -5,6 +5,9 @@ import pandas as pd
 
 from food_data_extraction.Embedding import Embedding
 
+DEFAULT_MINIMUM_FOUNDATION_FOOD_CONFIDENCE = 0.7
+DEFAULT_MINIMUM_SR_LEGACY_FOOD_CONFIDENCE = 0.7
+
 
 class FoodEmbedding(Embedding):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
@@ -28,9 +31,7 @@ class FoodEmbedding(Embedding):
 
         super().__init__(model_name)
 
-        self.food = pd.read_csv(
-            f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food.csv"
-        )
+        self.food = pd.read_csv(f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food.csv")
         self.food_nutrient = pd.read_csv(
             f"{os.path.join(self.base_dir, 'FoodData_Central_csv_2025-12-18')}/food_nutrient.csv"
         )
@@ -83,9 +84,7 @@ class FoodEmbedding(Embedding):
         if data is None:
             data = self.food
 
-        query_embedding = self.model.encode([query], convert_to_numpy=True).astype(
-            "float32"
-        )
+        query_embedding = self.model.encode([query], convert_to_numpy=True).astype("float32")
         faiss.normalize_L2(query_embedding)
 
         scores, indices = self.index.search(query_embedding, 1000)  # type: ignore
@@ -97,25 +96,21 @@ class FoodEmbedding(Embedding):
         foundation_results = results[results["data_type"] == "foundation_food"]
         sr_legacy_results = results[results["data_type"] == "sr_legacy_food"]
 
-        foundation_results = foundation_results[foundation_results["score"] >= 0.7]
-        sr_legacy_results = sr_legacy_results[sr_legacy_results["score"] >= 0.7]
+        foundation_results = foundation_results[
+            foundation_results["score"] >= DEFAULT_MINIMUM_FOUNDATION_FOOD_CONFIDENCE
+        ]
+        sr_legacy_results = sr_legacy_results[sr_legacy_results["score"] >= DEFAULT_MINIMUM_SR_LEGACY_FOOD_CONFIDENCE]
 
         # if there are not top_n results from foundation food or SR legacy food, then add the top results from the other data types until we have top_n results
-        priority_results = pd.concat(
-            [foundation_results, sr_legacy_results]
-        ).sort_values("score", ascending=False)
+        priority_results = pd.concat([foundation_results, sr_legacy_results]).sort_values("score", ascending=False)
 
         if len(priority_results) >= top_n:
             return priority_results.head(top_n)
 
         # fill remaining slots with other data types, sorted by score
         remaining = top_n - len(priority_results)
-        other_results = results[
-            ~results["data_type"].isin(["foundation_food", "sr_legacy_food"])
-        ]
-        other_results = other_results.sort_values("score", ascending=False).head(
-            remaining
-        )
+        other_results = results[~results["data_type"].isin(["foundation_food", "sr_legacy_food"])]
+        other_results = other_results.sort_values("score", ascending=False).head(remaining)
 
         return pd.concat([priority_results, other_results]).head(top_n)
 
@@ -132,9 +127,7 @@ class FoodEmbedding(Embedding):
 
         raw_nutrient_info = self.food_nutrient[self.food_nutrient["fdc_id"] == fdc_id]
 
-        nutrient_info = raw_nutrient_info.merge(
-            self.nutrient, left_on="nutrient_id", right_on="id", how="left"
-        )
+        nutrient_info = raw_nutrient_info.merge(self.nutrient, left_on="nutrient_id", right_on="id", how="left")
 
         return nutrient_info[["nutrient_id", "amount", "unit_name", "name"]]
 

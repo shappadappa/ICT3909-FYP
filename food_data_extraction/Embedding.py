@@ -2,7 +2,10 @@ import os
 
 import faiss
 import pandas as pd
+from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+
+load_dotenv()
 
 
 class Embedding:
@@ -15,9 +18,7 @@ class Embedding:
 
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        self.model = SentenceTransformer(
-            model_name_or_path=model_name, token="test"
-        )  # todo pass token
+        self.model = SentenceTransformer(model_name_or_path=model_name, token=os.getenv("HF_TOKEN"))
 
         self.search_cache = {}
 
@@ -63,9 +64,7 @@ class Embedding:
         if self.search_cache.get(query) is not None:
             return self.search_cache[query]
 
-        query_embedding = self.model.encode([query], convert_to_numpy=True).astype(
-            "float32"
-        )
+        query_embedding = self.model.encode([query], convert_to_numpy=True).astype("float32")
         faiss.normalize_L2(query_embedding)
 
         scores, indices = self.index.search(query_embedding, top_n)  # type: ignore

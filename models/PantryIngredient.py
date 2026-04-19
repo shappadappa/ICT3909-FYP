@@ -21,7 +21,7 @@ class PantryIngredient(Ingredient):
         :type nutritional_information: NutritionalInformation
         :param estimated_expiration_date: estimated expiration date of the ingredient (default = datetime(9999, 12, 31), meaning it does not expire)
         :type estimated_expiration_date: datetime
-        :param estimated_financial_cost: estimated financial cost of the ingredient per unit (default = 0.0)
+        :param estimated_financial_cost: estimated financial cost of the ingredient per unit in EUR (default = 0.0)
         :type estimated_financial_cost: float
         """
 

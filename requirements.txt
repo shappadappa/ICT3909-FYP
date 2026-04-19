@@ -1,2 +1,10 @@
-# ! TODO
-# add fastparquet to this list
+beautifulsoup4
+faiss-cpu
+ingredient-parser
+pandas
+pint
+pygad
+python-dotenv
+requests
+sentence-transformers
+tqdms

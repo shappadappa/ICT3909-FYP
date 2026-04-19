@@ -1,8 +1,4 @@
-- the expiry date must be in the format "dd-mm-yyyy": should add checks when initialising
-
 Use Claude to generate JSON files
-
-Can use library weka
 
 Evaluation using an LLM, added as a baseline against my system
 
@@ -10,6 +6,8 @@ Claude cowork to combine pantries and generate a variety, setting parameters and
 
 See more about evaluation later, once we get some more data from my own system
 
-- Consider using the full CSV including branded foods ?
-
 - data supplementation: adding more recipes like replacing all "Pasta" dishes with "Gluten-free Pasta" dishes, or replacing all "Milk" with "Almond Milk" etc. to create more data for training and testing, and to test the generalisation of the model
+
+- maybe filter out non-deitary compliant recipes from mealplanningenvironemtn
+
+https://zenodo.org/records/7308053 - consider for evaluations

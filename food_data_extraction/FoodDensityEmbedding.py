@@ -1,14 +1,8 @@
-import pandas as pd
 import os
-from food_data_extraction.Embedding import Embedding
 
-"""
-PLAN:
-- Check the ingredient_densities.csv
-- If there is no satisfactory result, consider density = 1
-    - Fallback: use the ingredient_parser.convert_to("g") and then use FoodEmbedding
-- Otherwise, use this embedding to find the closest ingredient and use its density to convert the volume to mass, and then use FoodEmbedding to find the nutritional information based on the mass
-"""
+import pandas as pd
+
+from food_data_extraction.Embedding import Embedding
 
 DEFAULT_MINIMUM_CONFIDENCE = 0.7
 
@@ -24,9 +18,7 @@ class FoodDensityEmbedding(Embedding):
 
         super().__init__(model_name)
 
-        self.food_densities = pd.read_csv(
-            os.path.join(self.base_dir, "ingredient_densities.csv")
-        )
+        self.food_densities = pd.read_csv(os.path.join(self.base_dir, "ingredient_densities.csv"))
 
     def initialise(self, descriptions: list[str] | None = None):
         """
