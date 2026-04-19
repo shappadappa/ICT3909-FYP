@@ -17,6 +17,9 @@ class MealPlanningEnvironment:
 
         self.ingredient_nutritional_information_lookup: dict[str, NutritionalInformation] = {}
 
+        self._filter_ingredients_by_dietary_preferences()
+        self._filter_recipes_by_dietary_preferences()
+
     def load_recipes_from_json(self, filepath: str):
         self.recipes = []
 
@@ -37,6 +40,8 @@ class MealPlanningEnvironment:
             recipe.nutritional_information = self._parse_nutritional_information(item["nutritional_information"])
 
             self.recipes.append(recipe)
+
+        self._filter_recipes_by_dietary_preferences()
 
     def _parse_dietary_tags(self, tags: list[str]) -> list[DietaryTag]:
         tag_map = {
@@ -62,3 +67,39 @@ class MealPlanningEnvironment:
             is_vegetarian=nutritional_information_dict.get("is_vegetarian"),
             is_vegan=nutritional_information_dict.get("is_vegan"),
         )
+
+    def _filter_ingredients_by_dietary_preferences(self):
+        """
+        Filters the ingredients stored in the pantry based on the user's dietary preferences. For example, if the user is vegan, all non-vegan ingredients will be filtered out
+        """
+
+        names_to_remove = []
+
+        for name, ingredient in self.pantry._ingredients.items():
+            ni = ingredient.nutritional_information
+
+            if (
+                (self.preferences.is_vegan and not ni.is_vegan)
+                or (self.preferences.is_vegetarian and not ni.is_vegetarian)
+                or (self.preferences.requires_gluten_free and not ni.is_gluten_free)
+                or (self.preferences.requires_lactose_free and not ni.is_lactose_free)
+            ):
+                names_to_remove.append(name)
+
+        for name in names_to_remove:
+            del self.pantry._ingredients[name]
+            del self.pantry._quantities[name]
+
+    def _filter_recipes_by_dietary_preferences(self):
+        """
+        Filters the recipes stored in the environment based on the user's dietary preferences. For example, if the user is vegan, all non-vegan recipes will be filtered out
+        """
+
+        self.recipes = [
+            recipe
+            for recipe in self.recipes
+            if (not self.preferences.is_vegan or recipe.is_vegan)
+            and (not self.preferences.is_vegetarian or recipe.is_vegetarian)
+            and (not self.preferences.requires_gluten_free or recipe.is_gluten_free)
+            and (not self.preferences.requires_lactose_free or recipe.is_lactose_free)
+        ]

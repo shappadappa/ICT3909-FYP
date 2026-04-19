@@ -4,7 +4,6 @@ from models import Recipe, UserPreferences
 class GAMealPlanner:
     def __init__(
         self,
-        dietary_penalty_violation: float = 50.0,
         waste_penalty_multiplier: float = 0.001,
         panty_score_weight: float = 1.0,
         budget_penalty_multiplier: float = 2.0,
@@ -14,8 +13,6 @@ class GAMealPlanner:
         """
         The `GAMealPlanner` class supports a genetic-algorithm-based meal planner that optimises meal plans based on dietary compliance, ingredient expiry, waste reduction, and budget adherence
 
-        :param dietary_penalty_violation: penalty score for violating dietary restrictions (higher = worse)
-        :type dietary_penalty_violation: float
         :param waste_penalty_multiplier: multiplier for calculating the penalty score for leaving ingredients unused that are close to expiring (higher = less tolerance for waste)
         :type waste_penalty_multiplier: float
         :param panty_score_weight: weight applied to the pantry score (higher = more importance)
@@ -28,38 +25,11 @@ class GAMealPlanner:
         :type protein_penalty_weight: float
         """
 
-        self.dietary_penalty_violation = dietary_penalty_violation
         self.waste_penalty_urgency_multiplier = waste_penalty_multiplier
         self.panty_score_weight = panty_score_weight
         self.budget_penalty_multiplier = budget_penalty_multiplier
         self.calorie_penalty_weight = calorie_penalty_weight
         self.protein_penalty_weight = protein_penalty_weight
-
-    def _get_dietary_penalty(self, recipe: Recipe, preferences: UserPreferences) -> float:
-        """
-        Calculates a penalty score for a recipe based on how well it aligns with the user's dietary preferences (higher = worse)
-
-        :param recipe: Recipe object to evaluate
-        :type recipe: Recipe
-        :param preferences: UserPreferences object representing the user's dietary preferences
-        :type preferences: UserPreferences
-
-        :return: penalty score for the recipe based on dietary preferences
-        :rtype: float
-        """
-
-        penalty = 0.0
-
-        if preferences.is_vegan and not recipe.is_vegan:
-            penalty += self.dietary_penalty_violation
-        if preferences.is_vegetarian and not recipe.is_vegetarian:
-            penalty += self.dietary_penalty_violation
-        if preferences.requires_gluten_free and not recipe.is_gluten_free:
-            penalty += self.dietary_penalty_violation
-        if preferences.requires_lactose_free and not recipe.is_lactose_free:
-            penalty += self.dietary_penalty_violation
-
-        return penalty
 
     def _get_waste_penalty(self, quantity_unused: int, days_until_expiry: int) -> float:
         """
@@ -139,7 +109,7 @@ class GAMealPlanner:
             - covering recipe ingredients from existing pantry stock (pantry score)
         and penalises:
             - leaving expiring items unused (waste penalty)
-            - violating dietary preferences (dietary penalty)
+            - not meeting dietary preferences (dietary penalty)
             - exceeding the weekly grocery budget (budget penalty)
         """
 
@@ -148,13 +118,10 @@ class GAMealPlanner:
         total_units_needed = 0
         total_units_from_pantry = 0
         expiry_bonus_total = 0.0
-        dietary_penalty_total = 0.0
         purchase_cost = 0.0
 
         for index in recipe_indices:
             recipe = recipes[index]
-
-            dietary_penalty_total += self._get_dietary_penalty(recipe, preferences)
 
             for ingredient_name, quantity_needed in recipe.ingredients.items():
                 total_units_needed += quantity_needed
@@ -182,6 +149,8 @@ class GAMealPlanner:
         # (must not be done per-recipe, as individual meals will never reach daily calorie/protein goals)
 
         num_days = len(recipe_indices) // 3
+
+        dietary_penalty_total = 0.0
 
         for day in range(num_days):
             day_indices = recipe_indices[day * 3 : day * 3 + 3]
