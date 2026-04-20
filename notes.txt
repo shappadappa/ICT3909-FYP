@@ -8,6 +8,4 @@ See more about evaluation later, once we get some more data from my own system
 
 - data supplementation: adding more recipes like replacing all "Pasta" dishes with "Gluten-free Pasta" dishes, or replacing all "Milk" with "Almond Milk" etc. to create more data for training and testing, and to test the generalisation of the model
 
-- maybe filter out non-deitary compliant recipes from mealplanningenvironemtn
-
 https://zenodo.org/records/7308053 - consider for evaluations
