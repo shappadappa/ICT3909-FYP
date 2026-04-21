@@ -10,7 +10,7 @@ class Pantry:
         """
 
         self._ingredients: dict[str, PantryIngredient] = {}
-        self._quantities: dict[str, int] = {}
+        self._quantities: dict[str, float] = {}
 
     @property
     def ingredients(self) -> list[PantryIngredient]:
@@ -24,12 +24,12 @@ class Pantry:
         return list(self._ingredients.values())
 
     @property
-    def stock(self) -> dict[str, int]:
+    def stock(self) -> dict[str, float]:
         """
         Returns a snapshot of ingredient name to available quantity
 
-        :return: dictionary mapping ingredient names to their available quantities
-        :rtype: dict[str, int]
+        :return: dictionary mapping ingredient names to their available quantities in grams
+        :rtype: dict[str, float]
         """
 
         return dict(self._quantities)
@@ -86,6 +86,6 @@ class Pantry:
         for name, ingredient in self._ingredients.items():
             qty = self._quantities[name]
             print("---")
-            print(f"Quantity: {qty}")
+            print(f"Quantity: {qty} g")
             ingredient.print()
             print("---")
