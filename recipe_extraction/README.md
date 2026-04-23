@@ -1,0 +1,27 @@
+# Recipe Extraction
+
+This module processes raw recipes from the [Epicurious dataset](https://www.kaggle.com/datasets/hugodarwood/epirecipes) into structured JSON files ready for use by the meal planner.
+
+## Pipeline
+
+The extraction is split across three notebooks, run in the following order:
+
+1. **`recipe_parsing.ipynb`**: parses raw ingredient strings using NLP (`ingredient_parser`) to extract ingredient names and quantities. Converts quantities to weights in grams using the `FoodDensityEmbedding` density lookup and outputs `parsed_recipes.json`.
+
+2. **`recipe_extraction.ipynb`**: matches parsed ingredient names against the [USDA FoodData Central](https://fdc.nal.usda.gov/) dataset via `FoodEmbedding` to retrieve per-ingredient nutritional information (calories, carbohydrates, protein, fat, sugar, fibre, etc.). Recipe-level nutritional information is **not** computed here. Outputs `structured_recipes.json` and `structured_ingredients.json`.
+
+3. **`data_supplementation.ipynb`**: supplements the dataset by adding dietary tags (vegan, vegetarian, gluten-free, lactose-free) to ingredients and recipes via keyword matching, and **computes recipe-level nutritional information** by aggregating ingredient data. Outputs `supplemented_structured_recipes.json` and `supplemented_structured_ingredients.json`.
+
+## Setup
+
+To run the notebooks, ensure that the Kaggle dataset is downloaded in the same directory, `recipe_extraction`. Then, run each notebook in order. The output JSON files will be saved in the same directory.
+
+## Output Files
+
+| File | Description |
+|------|-------------|
+| `parsed_recipes.json` | Recipes with parsed ingredient names, quantities, and gram weights |
+| `structured_recipes.json` | Recipes with full nutritional information per ingredient |
+| `structured_ingredients.json` | Deduplicated ingredient records with nutritional data |
+| `supplemented_structured_recipes.json` | Recipes with dietary tags added |
+| `supplemented_structured_ingredients.json` | Ingredients with dietary tags added |

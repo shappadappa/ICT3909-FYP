@@ -1,5 +1,26 @@
 # Food Data Extraction
 
-The CSV folders should be in this folder from food data central.
+This module provides embedding-based semantic search over food data, enabling fast retrieval of nutritional information and ingredient densities without hitting the USDA FoodData Central API rate limits (1000 requests/hour).
 
-Note that this system is used to avoid having to use the API, which has a limit of 1000 requests per hour.
+## Classes
+
+- **`Embedding`** (`Embedding.py`): abstract class that encodes a list of text descriptions into a FAISS index using a `sentence-transformers` model (`all-MiniLM-L6-v2` by default). Supports similarity search with a configurable confidence threshold and result caching.
+
+- **`FoodEmbedding`** (`FoodEmbedding.py`): subclass of `Embedding` that indexes food descriptions from the USDA FoodData Central dataset. Used to match ingredient names to FDC entries and retrieve their nutritional information (calories, protein, fat, carbohydrates, sugar, fibre, etc.) and portion sizes.
+
+- **`FoodDensityEmbedding`** (`FoodDensityEmbedding.py`): subclass of `Embedding` that indexes ingredient names from a density lookup table (`ingredient_densities.csv`). Used to convert volumetric quantities (e.g. "1 cup flour") into gram weights.
+
+## Setup
+
+1. Download the [USDA FoodData Central](https://fdc.nal.usda.gov/download-datasets/) CSV export (full download) and place the extracted folder inside this directory as `FoodData_Central_csv_2025-12-18/`.
+2. Run `density_extraction.ipynb` to scrape and generate `ingredient_densities.csv` (sourced from [King Arthur Baking's ingredient weight chart](https://www.kingarthurbaking.com/learn/ingredient-weight-chart)).
+3. Run `test_FoodEmbedding.ipynb` and `test_FoodDensityEmbedding.ipynb` to build and save the FAISS indexes (`food_embedding.faiss` and `food_density_embedding.faiss`).
+
+## Output Files
+
+| File | Description |
+|------|-------------|
+| `food_embedding.faiss` | Pre-built FAISS index over FDC food descriptions |
+| `food_density_embedding.faiss` | Pre-built FAISS index over ingredient density entries |
+| `ingredient_densities.csv` | Ingredient name-to-density lookup table |
+| `FoodData_Central_csv_2025-12-18/` | USDA FoodData Central CSV export |

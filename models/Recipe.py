@@ -7,7 +7,7 @@ class Recipe:
     def __init__(
         self,
         name: str,
-        ingredients: dict[str, int],
+        ingredients: dict[str, float],
         dietary_tags: list[DietaryTag],
         instructions: list[str] = [],
     ):
@@ -18,7 +18,7 @@ class Recipe:
         :param name: display name of the recipe
         :type name: str
         :param ingredients: mapping of ingredient names to number of grams required for the recipe
-        :type ingredients: dict[strs, int]
+        :type ingredients: dict[str, float]
         :param dietary_tags: list of dietary compliance tags
         :type dietary_tags: list[DietaryTag]
         :param instructions: list of step-by-step instructions for preparing the recipe (optional)
