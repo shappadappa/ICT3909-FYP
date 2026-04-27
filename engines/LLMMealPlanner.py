@@ -1,17 +1,25 @@
+import json
+
+from openai import OpenAI
+
 from engines.MealPlanner import MealPlanner
 from models import MealPlanningEnvironment
 
 
 class LLMMealPlanner(MealPlanner):
-    def __init__(self, meal_planning_environment: MealPlanningEnvironment):
+    def __init__(self, meal_planning_environment: MealPlanningEnvironment, llm_client: OpenAI):
         """
         The `LLMMealPlanner` class is an implementation of the `MealPlanner` abstract class that uses a large language model (LLM) to generate a meal plan. The LLM is prompted with detailed information about the available recipes, the user's pantry stock, and their preferences, and is tasked with selecting an optimal combination of recipes for the week
 
         :param meal_planning_environment: the meal planning environment containing recipes, pantry, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
+        :param llm_client: the OpenAI client used to interact with the LLM
+        :type llm_client: OpenAI
         """
 
         super().__init__(meal_planning_environment)
+
+        self.llm_client = llm_client
 
         with open("./LLMMealPlannerPrompt.txt", "r", encoding="utf-8") as prompt:
             self.prompt = prompt.read()
@@ -31,6 +39,9 @@ class LLMMealPlanner(MealPlanner):
         :rtype: tuple[list[int], float]
         """
 
-        # TODO: implement LLM prompting logic to generate meal plan based on self.prompt and parse the response to extract selected recipe indices
+        response = self.llm_client.responses.create(model="gpt-5-nano", input=self.prompt)
+
+        raw_meal_plan = response.output[1].content[0].text
+        self.best_meal_plan = json.loads(raw_meal_plan)["meal_plan"]
 
         return self.best_meal_plan, 0.0

@@ -46,6 +46,13 @@ class GAMealPlanner(MealPlanner):
         num_generations: int = 1000,
         num_parents_mating: int = 20,
         population_size: int = 100,
+        parent_selection_type: str = "tournament",
+        K_tournament: int = 5,
+        keep_elitism: int = 1,
+        crossover_type: str = "single_point",
+        crossover_probability: float = 0.8,
+        mutation_type: str = "random",
+        mutation_probability: float = 0.1,
         generation_print_interval: int | None = 10,
         seed: int | None = 1,
     ) -> tuple[list[int], float]:
@@ -62,8 +69,24 @@ class GAMealPlanner(MealPlanner):
         :type num_parents_mating: int
         :param population_size: number of solutions in the population
         :type population_size: int
-        :param generation_print_interval: how often (in generations) to print progress; 0 to disable
-        :type generation_print_interval: int
+        :param parent_selection_type: parent selection method (e.g. "tournament", "sss", "rws", "sus", "random")
+        :type parent_selection_type: str
+        :param K_tournament: number of solutions competing in each tournament (only used when parent_selection_type="tournament")
+        :type K_tournament: int
+        :param keep_elitism: number of best solutions to carry over unchanged each generation
+        :type keep_elitism: int
+        :param crossover_type: crossover method (e.g. "single_point", "two_points", "uniform", "scattered")
+        :type crossover_type: str
+        :param crossover_probability: probability of crossover occurring for each pair of parents
+        :type crossover_probability: float
+        :param mutation_type: mutation method (e.g. "random", "swap", "inversion", "scramble", "adaptive")
+        :type mutation_type: str
+        :param mutation_probability: probability of mutating each gene
+        :type mutation_probability: float
+        :param generation_print_interval: how often (in generations) to print progress; None to disable
+        :type generation_print_interval: int | None
+        :param seed: random seed for reproducibility
+        :type seed: int | None
 
         :return: tuple of (best meal plan as a list of recipe indices, best fitness score)
         :rtype: tuple[list[int], float]
@@ -90,13 +113,13 @@ class GAMealPlanner(MealPlanner):
             num_genes=num_genes,
             gene_type=int,
             gene_space=list(range(len(self.recipes))),
-            parent_selection_type="tournament",
-            K_tournament=5,
-            keep_elitism=1,
-            crossover_type="single_point",
-            crossover_probability=0.8,
-            mutation_type="random",
-            mutation_probability=0.1,
+            parent_selection_type=parent_selection_type,
+            K_tournament=K_tournament,
+            keep_elitism=keep_elitism,
+            crossover_type=crossover_type,
+            crossover_probability=crossover_probability,
+            mutation_type=mutation_type,
+            mutation_probability=mutation_probability,
             on_generation=on_generation,
             random_seed=seed,
         )

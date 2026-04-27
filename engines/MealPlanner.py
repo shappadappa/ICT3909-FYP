@@ -56,6 +56,7 @@ class MealPlanner:
             unused = max(0, available - used)
             days = self.days_until_expiry[ingredient.name]
             expiry_str = str(days) + "d"
+
             pantry_data.append(
                 {
                     "Ingredient": ingredient.name,
