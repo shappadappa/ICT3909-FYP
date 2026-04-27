@@ -123,9 +123,12 @@ class Recipe:
 
         self.nutritional_information.print(2)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """
         Converts the recipe object to a dictionary format
+
+        :return: dictionary representation of the recipe
+        :rtype: dict
         """
 
         return {

@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 
+from engines.utils import get_consumed_stock
 from models import MealPlanningEnvironment
 
 
@@ -36,17 +37,12 @@ class MealPlanner:
         :rtype: pd.DataFrame
         """
 
-        # going through the best meal plan and calculating how much of each ingredient is consumed from the pantry
+        meal_plan_recipes = [
+            [self.recipes[int(index)] for index in self.best_meal_plan[i : i + 3]]
+            for i in range(0, len(self.best_meal_plan), 3)
+        ]
 
-        self.consumed_stock = dict.fromkeys(self.meal_planning_environment.pantry.stock.keys(), 0)
-
-        for index in self.best_meal_plan:
-            recipe = self.recipes[int(index)]
-
-            for ingredient_name, quantity_needed in recipe.ingredients.items():
-                available = self.pantry_stock.get(ingredient_name, 0) - self.consumed_stock.get(ingredient_name, 0)
-                from_pantry = max(0, min(available, quantity_needed))
-                self.consumed_stock[ingredient_name] = self.consumed_stock.get(ingredient_name, 0) + from_pantry
+        self.consumed_stock = get_consumed_stock(meal_plan_recipes, self.pantry_stock)
 
         pantry_data = []
 

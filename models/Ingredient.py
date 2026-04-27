@@ -30,9 +30,12 @@ class Ingredient:
 
         self.nutritional_information.print(2)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """
         Converts the ingredient object to a dictionary format
+
+        :return: dictionary representation of the ingredient
+        :rtype: dict
         """
 
         return {"name": self.name, "nutritional_information": self.nutritional_information.to_dict()}

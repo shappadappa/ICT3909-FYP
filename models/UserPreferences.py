@@ -39,3 +39,21 @@ class UserPreferences:
         self.is_vegan = is_vegan
         self.requires_gluten_free = requires_gluten_free
         self.requires_lactose_free = requires_lactose_free
+
+    def to_dict(self) -> dict:
+        """
+        Converts the user preferences to a dictionary format
+
+        :return: dictionary representation of the user preferences
+        :rtype: dict
+        """
+
+        return {
+            "weekly_budget": self.weekly_budget,
+            "calorie_target_per_day": self.calorie_target_per_day,
+            "protein_target_per_day": self.protein_target_per_day,
+            "is_vegetarian": self.is_vegetarian,
+            "is_vegan": self.is_vegan,
+            "requires_gluten_free": self.requires_gluten_free,
+            "requires_lactose_free": self.requires_lactose_free,
+        }

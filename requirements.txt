@@ -3,6 +3,7 @@ faiss-cpu
 ingredient-parser
 pandas
 pint
+pulp
 pygad
 python-dotenv
 requests

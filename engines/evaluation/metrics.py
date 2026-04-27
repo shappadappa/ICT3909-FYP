@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from engines.utils import get_consumed_stock
 from models import Pantry, Recipe, UserPreferences
 
 
@@ -17,14 +18,8 @@ def get_ingredient_utilisation_score(meal_plan: list[list[Recipe]], pantry: Pant
     """
 
     pantry_stock = pantry.stock
-    consumed_stock: dict[str, float] = dict.fromkeys(pantry_stock.keys(), 0.0)
 
-    for day_meals in meal_plan:
-        for recipe in day_meals:
-            for ingredient_name, quantity_needed in recipe.ingredients.items():
-                available = pantry_stock.get(ingredient_name, 0.0) - consumed_stock.get(ingredient_name, 0.0)
-                from_pantry = max(0.0, min(available, quantity_needed))
-                consumed_stock[ingredient_name] = consumed_stock.get(ingredient_name, 0.0) + from_pantry
+    consumed_stock = get_consumed_stock(meal_plan, pantry_stock)
 
     total_available = sum(pantry_stock.values())
     if total_available == 0:
@@ -53,14 +48,8 @@ def get_expiry_weighted_utilisation_score(
 
     pantry_stock = pantry.stock
     days_until_expiry = pantry.get_days_until_expiry(current_date)
-    consumed_stock: dict[str, float] = dict.fromkeys(pantry_stock.keys(), 0.0)
 
-    for day_meals in meal_plan:
-        for recipe in day_meals:
-            for ingredient_name, quantity_needed in recipe.ingredients.items():
-                available = pantry_stock.get(ingredient_name, 0.0) - consumed_stock.get(ingredient_name, 0.0)
-                from_pantry = max(0.0, min(available, quantity_needed))
-                consumed_stock[ingredient_name] = consumed_stock.get(ingredient_name, 0.0) + from_pantry
+    consumed_stock = get_consumed_stock(meal_plan, pantry_stock)
 
     score = 0.0
     for ingredient_name, quantity_used in consumed_stock.items():
@@ -73,7 +62,7 @@ def get_expiry_weighted_utilisation_score(
     return score
 
 
-def dietary_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
+def get_dietary_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
     """
     Calculates the dietary compliance score for a given meal plan and user preferences
 
@@ -116,3 +105,46 @@ def dietary_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPref
 
     mean_relative_error = total_relative_error / (num_days * 2)
     return max(0.0, 1.0 - mean_relative_error)
+
+
+def get_budget_efficiency(
+    meal_plan: list[list[Recipe]], pantry: Pantry, ingredient_costs: dict[str, float], weekly_budget: float
+) -> float:
+    """
+    Calculates the budget efficiency score for a given meal plan, pantry, ingredient costs, and weekly budget
+
+    The score is defined as (weekly_budget / total_cost_of_purchased_ingredients), capped at 1.0, since spending less than the budget is better but there's no additional reward for being significantly under budget
+
+    :param meal_plan: a list of lists of Recipe objects representing the meal plan
+    :type meal_plan: list[list[Recipe]]
+    :param pantry: a Pantry object representing the available ingredients
+    :type pantry: Pantry
+    :param ingredient_costs: a dictionary mapping ingredient names to their cost per 100 units
+    :type ingredient_costs: dict[str, float]
+    :param weekly_budget: the user's weekly budget for purchasing ingredients
+    :type weekly_budget: float
+
+    :return: budget efficiency score as a float between 0 and 1 (higher is better)
+    :rtype: float
+    """
+
+    pantry_stock = pantry.stock
+    consumed_stock = get_consumed_stock(meal_plan, pantry_stock)
+
+    total_needed: dict[str, float] = {}
+    for day_meals in meal_plan:
+        for recipe in day_meals:
+            for ingredient_name, quantity_needed in recipe.ingredients.items():
+                total_needed[ingredient_name] = total_needed.get(ingredient_name, 0.0) + quantity_needed
+
+    purchase_cost = 0.0
+    for ingredient_name, needed in total_needed.items():
+        from_pantry = consumed_stock.get(ingredient_name, 0.0)
+        to_buy = max(0.0, needed - from_pantry)
+        purchase_cost += (to_buy / 100.0) * ingredient_costs.get(ingredient_name, 1.0)
+
+    if purchase_cost == 0.0:
+        return 1.0
+
+    efficiency = weekly_budget / purchase_cost
+    return min(efficiency, 1.0)

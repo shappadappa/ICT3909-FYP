@@ -63,4 +63,3 @@ EXAMPLE OUTPUT (with fictitious indices):
 ---
 
 From now on, here is the information you need to produce the meal plan:
-

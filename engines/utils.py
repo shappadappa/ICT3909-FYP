@@ -178,3 +178,28 @@ def make_preferences(
         requires_gluten_free=requires_gluten_free,
         requires_lactose_free=requires_lactose_free,
     )
+
+
+def get_consumed_stock(meal_plan: list[list[Recipe]], pantry_stock: dict[str, float]) -> dict[str, float]:
+    """
+    Returns a mapping of ingredient name to total quantity consumed from the pantry across a meal plan
+
+    :param meal_plan: a list of lists of Recipe objects representing the meal plan
+    :type meal_plan: list[list[Recipe]]
+    :param pantry_stock: mapping of ingredient name to available quantity in grams
+    :type pantry_stock: dict[str, float]
+
+    :return: mapping of ingredient name to total quantity consumed from the pantry in grams
+    :rtype: dict[str, float]
+    """
+
+    consumed_stock: dict[str, float] = dict.fromkeys(pantry_stock.keys(), 0.0)
+
+    for day_meals in meal_plan:
+        for recipe in day_meals:
+            for ingredient_name, quantity_needed in recipe.ingredients.items():
+                available = pantry_stock.get(ingredient_name, 0.0) - consumed_stock.get(ingredient_name, 0.0)
+                from_pantry = max(0.0, min(available, quantity_needed))
+                consumed_stock[ingredient_name] = consumed_stock.get(ingredient_name, 0.0) + from_pantry
+
+    return consumed_stock
