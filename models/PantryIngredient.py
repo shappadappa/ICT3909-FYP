@@ -10,25 +10,21 @@ class PantryIngredient(Ingredient):
         name: str,
         nutritional_information: NutritionalInformation,
         estimated_expiration_date: datetime = datetime(9999, 12, 31),
-        estimated_financial_cost: float = 0.0,
     ):
         """
-        `PantryIngredient` class extends `Ingredient` with additional attributes specific to ingredients stored in the pantry, such as estimated expiration date and financial cost
+        `PantryIngredient` class extends `Ingredient` with additional attributes specific to ingredients stored in the pantry, such as estimated expiration date
 
-        :param name: name of the ingredient
+        :param name: name of the ingredients
         :type name: str
         :param nutritional_information: nutritional information of the ingredient per 100 grams
         :type nutritional_information: NutritionalInformation
         :param estimated_expiration_date: estimated expiration date of the ingredient (default = datetime(9999, 12, 31), meaning it does not expire)
         :type estimated_expiration_date: datetime
-        :param estimated_financial_cost: estimated financial cost of the ingredient per unit in EUR (default = 0.0)
-        :type estimated_financial_cost: float
         """
 
         super().__init__(name, nutritional_information)
 
         self.estimated_expiration_date = estimated_expiration_date
-        self.estimated_financial_cost = estimated_financial_cost
 
     def is_expired(self, current_date: datetime | None = None) -> bool:
         """
@@ -56,11 +52,6 @@ class PantryIngredient(Ingredient):
 
         expiry_str = self.estimated_expiration_date.strftime("%Y-%m-%d") if self.estimated_expiration_date else "N/A"
 
-        print(
-            f"Ingredient: {self.name}\n"
-            f"\tEstimated Expiration Date: {expiry_str}\n"
-            f"\tEstimated Financial Cost per 100g: EUR {self.estimated_financial_cost:.2f}\n"
-            f"\tNutritional Information:"
-        )
+        print(f"Ingredient: {self.name}\n\tEstimated Expiration Date: {expiry_str}\n\tNutritional Information:")
 
         self.nutritional_information.print(2)

@@ -9,11 +9,31 @@ from models.UserPreferences import UserPreferences
 
 class MealPlanningEnvironment:
     def __init__(
-        self, recipes: list[Recipe] = [], pantry: Pantry = Pantry(), preferences: UserPreferences = UserPreferences()
+        self,
+        recipes: list[Recipe] = [],
+        pantry: Pantry = Pantry(),
+        preferences: UserPreferences = UserPreferences(),
+        ingredient_costs: dict[str, float] = {},
     ):
+        """
+        The `MealPlanningEnvironment` class encapsulates all the data and information needed for meal planning, including recipes, pantry stock, user preferences, and ingredient costs
+
+        :param recipes: list of available recipes to choose from (default = empty list)
+        :type recipes: list[Recipe]
+        :param pantry: the pantry containing available ingredients and their quantities (default = empty Pantry)
+        :type pantry: Pantry
+        :param preferences: user dietary preferences and restrictions (default = no restrictions)
+        :type preferences: UserPreferences
+        :param ingredient_costs: dictionary mapping ingredient names to their costs per unit (default = empty dict)
+        :type ingredient_costs: dict[str, float]
+        """
+
         self.recipes = recipes
         self.pantry = pantry
         self.preferences = preferences
+        self.ingredient_costs = ingredient_costs
+
+        self._check_ingredient_costs()
 
         self.ingredient_nutritional_information_lookup: dict[str, NutritionalInformation] = {}
 
@@ -42,6 +62,7 @@ class MealPlanningEnvironment:
             self.recipes.append(recipe)
 
         self._filter_recipes_by_dietary_preferences()
+        self._check_ingredient_costs()
 
     def _parse_dietary_tags(self, tags: list[str]) -> list[DietaryTag]:
         tag_map = {
@@ -103,3 +124,20 @@ class MealPlanningEnvironment:
             and (not self.preferences.requires_gluten_free or recipe.is_gluten_free)
             and (not self.preferences.requires_lactose_free or recipe.is_lactose_free)
         ]
+
+    def _check_ingredient_costs(self):
+        """
+        Checks if all ingredients used in the recipes have a cost defined in the meal planning environment. If any ingredient is missing a cost, a warning is printed
+        """
+
+        num_missing_costs = sum(
+            1
+            for recipe in self.recipes
+            for ingredient_name in recipe.ingredients.keys()
+            if ingredient_name not in self.ingredient_costs
+        )
+
+        if num_missing_costs > 0:
+            print(
+                f"Warning: {num_missing_costs} ingredient(s) used in the recipes do not have a cost defined in the meal planning environment. Defaulting to 1.0 €/100g for missing ingredients."
+            )

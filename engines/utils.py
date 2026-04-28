@@ -49,7 +49,6 @@ def get_ingredient(ingredient_name: str, all_ingredients: list[Ingredient]) -> I
 def get_pantry_ingredient(
     ingredient_name: str,
     estimated_expiration_date: datetime,
-    estimated_financial_cost: float,
     all_ingredients: list[Ingredient],
 ) -> PantryIngredient:
     """
@@ -59,8 +58,6 @@ def get_pantry_ingredient(
     :type ingredient_name: str
     :param estimated_expiration_date: estimated expiry date for the pantry item
     :type estimated_expiration_date: datetime
-    :param estimated_financial_cost: estimated cost per unit in EUR
-    :type estimated_financial_cost: float
     :param all_ingredients: list of available Ingredient objects to search
     :type all_ingredients: list[Ingredient]
 
@@ -79,7 +76,6 @@ def get_pantry_ingredient(
         name=ingredient.name,
         nutritional_information=ingredient.nutritional_information,
         estimated_expiration_date=estimated_expiration_date,
-        estimated_financial_cost=estimated_financial_cost,
     )
 
 

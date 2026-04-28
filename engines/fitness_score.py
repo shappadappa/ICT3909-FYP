@@ -86,6 +86,8 @@ def fitness_score(
     budget_penalty_multiplier: float = 2.0,
     calorie_penalty_weight: float = 0.01,
     protein_penalty_weight: float = 0.1,
+    recipe_calories: list[float] | None = None,
+    recipe_protein: list[float] | None = None,
 ) -> float:
     """
     Evaluates a meal plan (encoded as recipe indices) and returns a fitness score
@@ -175,12 +177,16 @@ def fitness_score(
     for day in range(num_days):
         day_indices = recipe_indices[day * 3 : day * 3 + 3]
 
-        daily_calories = sum(
-            (recipes[i].nutritional_information.get_nutritional_value("calories") or 0.0) for i in day_indices
-        )
-        daily_protein = sum(
-            (recipes[i].nutritional_information.get_nutritional_value("protein") or 0.0) for i in day_indices
-        )
+        if recipe_calories is not None and recipe_protein is not None:
+            daily_calories = sum(recipe_calories[i] for i in day_indices)
+            daily_protein = sum(recipe_protein[i] for i in day_indices)
+        else:
+            daily_calories = sum(
+                (recipes[i].nutritional_information.get_nutritional_value("calories") or 0.0) for i in day_indices
+            )
+            daily_protein = sum(
+                (recipes[i].nutritional_information.get_nutritional_value("protein") or 0.0) for i in day_indices
+            )
 
         dietary_penalty += abs(daily_calories - calorie_target_per_day) * calorie_penalty_weight
         dietary_penalty += abs(daily_protein - protein_target_per_day) * protein_penalty_weight

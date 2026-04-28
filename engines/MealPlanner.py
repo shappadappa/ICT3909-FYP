@@ -11,7 +11,7 @@ class MealPlanner:
         """
         The `MealPlanner` class is an abstract class used by other meal planner implementations, providing common methods and properties for meal planning
 
-        :param meal_planning_environment: The meal planning environment containing recipes, pantry, and user preferences
+        :param meal_planning_environment: the meal planning environment containing recipes, pantry, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
         """
 
@@ -20,7 +20,7 @@ class MealPlanner:
         self.recipes = self.meal_planning_environment.recipes
         self.pantry_stock = self.meal_planning_environment.pantry.stock
         self.days_until_expiry = self.meal_planning_environment.pantry.get_days_until_expiry(datetime.now())
-        self.ingredient_costs = self.meal_planning_environment.pantry.ingredient_costs
+        self.ingredient_costs = self.meal_planning_environment.ingredient_costs
         self.preferences = self.meal_planning_environment.preferences
 
         self.best_meal_plan: list[int] = []
@@ -90,9 +90,7 @@ class MealPlanner:
             {
                 "Ingredient": name,
                 "Quantity to Buy (g)": round(qty, 1),
-                "Cost (€)": round(
-                    (qty / 100.0) * self.meal_planning_environment.pantry.ingredient_costs.get(name, 1.0), 2
-                ),
+                "Cost (€)": round((qty / 100.0) * self.ingredient_costs.get(name, 1.0), 2),
             }
             for name, qty in sorted(shopping_list.items())
         ]

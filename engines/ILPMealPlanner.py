@@ -44,6 +44,9 @@ class ILPMealPlanner(MealPlanner):
         self.calorie_penalty_weight = calorie_penalty_weight
         self.protein_penalty_weight = protein_penalty_weight
 
+        self.recipe_calories = [recipe.nutritional_information.calories or 0.0 for recipe in self.recipes]
+        self.recipe_protein = [recipe.nutritional_information.protein or 0.0 for recipe in self.recipes]
+
         self.solve_status: int = 0
 
     def generate_meal_plan(
@@ -149,6 +152,8 @@ class ILPMealPlanner(MealPlanner):
             budget_penalty_multiplier=self.budget_penalty_multiplier,
             calorie_penalty_weight=self.calorie_penalty_weight,
             protein_penalty_weight=self.protein_penalty_weight,
+            recipe_calories=self.recipe_calories,
+            recipe_protein=self.recipe_protein,
         )
 
         return meal_plan, self.best_fitness
@@ -266,6 +271,7 @@ class ILPMealPlanner(MealPlanner):
             sum(qty * self.ingredient_costs.get(ing, 1.0) / 100.0 for ing, qty in recipe.ingredients.items())
             for recipe in recipes
         ]
+
         full_cost_expr = lpSum(x[d, m, r] * recipe_full_costs[r] for d in days for m in meals for r in recipes_range)
         pantry_savings = lpSum(f[name] * self.ingredient_costs.get(name, 1.0) / 100.0 for name in pantry_names)
 

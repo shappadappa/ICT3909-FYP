@@ -42,7 +42,14 @@ class LLMMealPlanner(MealPlanner):
         for ingredient in self.meal_planning_environment.pantry.ingredients:
             quantity = pantry_stock.get(ingredient.name, 0)
 
-            self.prompt += f"{ingredient.name}: {quantity} (expires in {days_until_expiry.get(ingredient.name, 0)} days), costs EUR {ingredient.estimated_financial_cost}\n"
+            self.prompt += (
+                f"{ingredient.name}: {quantity} (expires in {days_until_expiry.get(ingredient.name, 0)} days)\n"
+            )
+
+        self.prompt += "\n---\n\nINGREDIENT COSTS (€/100g):\n"
+
+        for ingredient_name, cost in self.ingredient_costs.items():
+            self.prompt += f"{ingredient_name}: {cost}\n"
 
         self.prompt += "\n---\n\nUSER PREFERENCES:\n"
 

@@ -40,6 +40,9 @@ class GAMealPlanner(MealPlanner):
         self.calorie_penalty_weight = calorie_penalty_weight
         self.protein_penalty_weight = protein_penalty_weight
 
+        self.recipe_calories = [recipe.nutritional_information.calories or 0.0 for recipe in self.recipes]
+        self.recipe_protein = [recipe.nutritional_information.protein or 0.0 for recipe in self.recipes]
+
     def generate_meal_plan(
         self,
         num_days: int = 7,
@@ -110,6 +113,8 @@ class GAMealPlanner(MealPlanner):
                 budget_penalty_multiplier=self.budget_penalty_multiplier,
                 calorie_penalty_weight=self.calorie_penalty_weight,
                 protein_penalty_weight=self.protein_penalty_weight,
+                recipe_calories=self.recipe_calories,
+                recipe_protein=self.recipe_protein,
             )
 
         def on_generation(ga_instance):
