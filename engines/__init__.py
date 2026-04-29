@@ -1,4 +1,4 @@
-from engines.fitness_score import fitness_score
+from engines.fitness_score import fitness_score, get_waste_penalty
 from engines.GAMealPlanner import GAMealPlanner
 from engines.ILPMealPlanner import ILPMealPlanner
 from engines.LLMMealPlanner import LLMMealPlanner
@@ -28,4 +28,5 @@ __all__ = [
     "make_preferences",
     "fitness_score",
     "get_consumed_stock",
+    "get_waste_penalty",
 ]

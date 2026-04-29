@@ -34,11 +34,17 @@ Optimise your selection by following these priorities (in order of importance):
 3. PANTRY USAGE (soft goal - maximise):
    - Prefer recipes whose ingredients are already available in the pantry, particularly ingredients that are expiring soon (within 7 days).
    - An ingredient expiring in fewer days is more urgent - prioritise recipes that use it.
+   - IMPORTANT: Ingredient matching is EXACT and case-insensitive. An ingredient in a recipe is only considered covered by the pantry if its name matches a pantry ingredient name exactly (ignoring case). Do NOT treat similar or related names as equivalent. For example:
+       - "chicken breast" and "half-cut chicken breast" are DIFFERENT ingredients: one does NOT cover the other.
+       - "broccoli florets" and "broccoli" are DIFFERENT ingredients.
+       - "brown rice" and "rice" are DIFFERENT ingredients.
+   - Only count a pantry ingredient as covering a recipe ingredient when the names are an exact match.
 
 4. BUDGET (soft goal - stay within limit):
-   - Ingredients not covered by the pantry must be purchased. Minimise total purchase cost.
+   - Ingredients not covered by the pantry (i.e. no exact name match exists in the pantry) must be purchased. Minimise total purchase cost.
    - The total estimated cost of purchased ingredients across the week must not exceed the weekly budget where possible.
    - Cost per ingredient is estimated at: (quantity_needed_grams / 100) × cost_per_100g.
+   - Apply the same exact name matching rule here: only deduct from the pantry budget if the ingredient name exactly matches a pantry entry.
 
 ---
 

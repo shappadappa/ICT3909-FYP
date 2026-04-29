@@ -1,6 +1,6 @@
 from pulp import PULP_CBC_CMD, LpMaximize, LpProblem, LpVariable, lpSum, value
 
-from engines.fitness_score import fitness_score
+from engines.fitness_score import fitness_score, get_waste_penalty
 from engines.MealPlanner import MealPlanner
 from models.MealPlanningEnvironment import MealPlanningEnvironment
 
@@ -9,40 +9,34 @@ class ILPMealPlanner(MealPlanner):
     def __init__(
         self,
         meal_planning_environment: MealPlanningEnvironment,
-        waste_penalty_multiplier: float = 0.001,
-        pantry_score_weight: float = 1.0,
-        budget_penalty_multiplier: float = 2.0,
-        calorie_penalty_weight: float = 0.01,
-        protein_penalty_weight: float = 0.1,
+        pantry_weight: float = 1.0,
+        waste_weight: float = 1.0,
+        budget_weight: float = 1.0,
+        dietary_weight: float = 1.0,
     ):
         """
         The `ILPMealPlanner` class uses integer linear programming (ILP) to find a provably near-optimal meal plan, making it suitable as an oracle / ground-truth upper bound when comparing meal planning strategies
-
-        Because the pantry score is a ratio (from_pantry / total_needed), which is non-linear, the ILP objective normalises by the average expected total ingredient weight across a plan.
 
         The returned fitness score is recomputed post-solve using the same fitness function as the GA planner to ensure comparability, even though the ILP objective is a linear approximation of the GA formula
 
         :param meal_planning_environment: the meal planning environment containing recipes, pantry stock, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
-        :param waste_penalty_multiplier: multiplier for the penalty for leaving near-expiry ingredients unused (default = 0.001)
-        :type waste_penalty_multiplier: float
-        :param pantry_score_weight: weight applied to the pantry utilisation score (default = 1.0)
-        :type pantry_score_weight: float
-        :param budget_penalty_multiplier: multiplier for the penalty for exceeding the weekly budget (default = 2.0)
-        :type budget_penalty_multiplier: float
-        :param calorie_penalty_weight: weight applied to the absolute daily calorie deviation from target (default = 0.01)
-        :type calorie_penalty_weight: float
-        :param protein_penalty_weight: weight applied to the absolute daily protein deviation from target (default = 0.1)
-        :type protein_penalty_weight: float
+        :param pantry_weight: importance weight for the pantry utilisation reward, in [0, 1] (default = 1.0)
+        :type pantry_weight: float
+        :param waste_weight: importance weight for the food waste penalty, in [0, 1] (default = 1.0)
+        :type waste_weight: float
+        :param budget_weight: importance weight for the budget overspend penalty, in [0, 1] (default = 1.0)
+        :type budget_weight: float
+        :param dietary_weight: importance weight for the dietary target penalty, in [0, 1] (default = 1.0)
+        :type dietary_weight: float
         """
 
         super().__init__(meal_planning_environment)
 
-        self.waste_penalty_multiplier = waste_penalty_multiplier
-        self.pantry_score_weight = pantry_score_weight
-        self.budget_penalty_multiplier = budget_penalty_multiplier
-        self.calorie_penalty_weight = calorie_penalty_weight
-        self.protein_penalty_weight = protein_penalty_weight
+        self.pantry_weight = pantry_weight
+        self.waste_weight = waste_weight
+        self.budget_weight = budget_weight
+        self.dietary_weight = dietary_weight
 
         self.recipe_calories = [recipe.nutritional_information.calories or 0.0 for recipe in self.recipes]
         self.recipe_protein = [recipe.nutritional_information.protein or 0.0 for recipe in self.recipes]
@@ -54,6 +48,7 @@ class ILPMealPlanner(MealPlanner):
         num_days: int = 7,
         meals_per_day: int = 3,
         time_limit: int = 300,
+        mip_gap: float = 0.01,
         msg: bool = True,
     ) -> tuple[list[int], float]:
         """
@@ -67,6 +62,8 @@ class ILPMealPlanner(MealPlanner):
         :type meals_per_day: int
         :param time_limit: maximum solver time in seconds; returns best incumbent if the limit is reached before proving optimality (default = 300)
         :type time_limit: int
+        :param mip_gap: relative MIP gap tolerance; solver stops as soon as the best integer solution is within this fraction of the LP relaxation bound, without needing to prove full optimality (default = 0.01, i.e. 1%)
+        :type mip_gap: float
         :param msg: whether to print CBC solver output (default = True)
         :type msg: bool
 
@@ -86,47 +83,70 @@ class ILPMealPlanner(MealPlanner):
 
         prob = LpProblem("MealPlan_ILP", LpMaximize)
 
-        # ── Decision variables ─────────────────────────────────────────────────────
+        # decision variables
         # x[d, m, r] = 1 if recipe r is assigned to meal m on day d
         x = {(d, m, r): LpVariable(f"x_{d}_{m}_{r}", cat="Binary") for d in D for m in M for r in R}
 
-        # ── Assignment constraints: exactly one recipe per meal slot ───────────────
+        # assignment constraints: each meal slot must be assigned exactly one recipe
         for d in D:
             for m in M:
                 prob += lpSum(x[d, m, r] for r in R) == 1, f"assign_{d}_{m}"
 
+        # symmetry breaking: meal slots within a day are interchangeable in the objective,
+        # so enforce a non-decreasing recipe-index order to prune the branch-and-bound tree
+        for d in D:
+            for m in range(meals_per_day - 1):
+                prob += (
+                    lpSum(r * x[d, m, r] for r in R) <= lpSum(r * x[d, m + 1, r] for r in R),
+                    f"sym_break_{d}_{m}",
+                )
+
         f, pantry_names = self._setup_pantry_vars(prob, x, D, M, R)
         cal_over, cal_under, prot_over, prot_under = self._setup_dietary_vars(prob, x, D, M, R)
         budget_over = self._setup_budget_var(prob, x, D, M, R, f, pantry_names)
-        # ── Objective ─────────────────────────────────────────────────────────────
-        # Pantry score: normalised by average expected total ingredient weight per plan
+
+        # objectives
+        # pantry score: normalised by average total ingredient weight across all plan slots
         recipe_total_weights = [sum(recipe.ingredients.values()) for recipe in recipes]
         avg_weight_per_slot = sum(recipe_total_weights) / n_recipes
         avg_total_needed = max(avg_weight_per_slot * num_days * meals_per_day, 1.0)
-        pantry_score_coeff = 100.0 * self.pantry_score_weight / avg_total_needed
+        pantry_score_coeff = self.pantry_weight / avg_total_needed
 
-        # Waste: reward using expiring stock (waste = stock - f, so +f reduces penalty)
+        # waste penalty: using pantry items reduces waste; coefficient is urgency normalised by
+        # max possible waste (total pantry stock × max urgency of 7)
+        total_pantry_stock = max(sum(self.pantry_stock.get(name, 0.0) for name in pantry_names), 1.0)
         waste_coeff: dict[str, float] = {
-            name: max(1, 8 - self.days_until_expiry.get(name, 999)) * self.waste_penalty_multiplier
+            name: get_waste_penalty(1, self.days_until_expiry.get(name, 999))
+            * self.waste_weight
+            / (total_pantry_stock * 7)
             for name in pantry_names
-            if self.days_until_expiry.get(name, 999) <= 7
         }
+
+        # dietary penalty: per-day deviation normalised by target, split equally between
+        # calories and protein, then averaged over days
+        cal_target = max(self.preferences.calorie_target_per_day, 1.0)
+        prot_target = max(self.preferences.protein_target_per_day, 1.0)
+        dietary_cal_coeff = self.dietary_weight / (2 * num_days * cal_target)
+        dietary_prot_coeff = self.dietary_weight / (2 * num_days * prot_target)
+
+        # budget penalty: overspend normalised by the weekly budget
+        budget_coeff = self.budget_weight / max(self.preferences.weekly_budget, 1.0)
 
         prob += (
             pantry_score_coeff * lpSum(f[name] for name in pantry_names)
             + lpSum(waste_coeff.get(name, 0.0) * f[name] for name in pantry_names)
-            - self.calorie_penalty_weight * lpSum(cal_over[d] + cal_under[d] for d in D)
-            - self.protein_penalty_weight * lpSum(prot_over[d] + prot_under[d] for d in D)
-            - self.budget_penalty_multiplier * budget_over,
+            - dietary_cal_coeff * lpSum(cal_over[d] + cal_under[d] for d in D)
+            - dietary_prot_coeff * lpSum(prot_over[d] + prot_under[d] for d in D)
+            - budget_coeff * budget_over,
             "objective",
         )
 
-        # ── Solve ──────────────────────────────────────────────────────────────────
-        solver = PULP_CBC_CMD(timeLimit=time_limit, msg=1 if msg else 0)
+        # solve the ILP
+        solver = PULP_CBC_CMD(timeLimit=time_limit, gapRel=mip_gap, msg=1 if msg else 0)
         prob.solve(solver)
         self.solve_status = prob.status
 
-        # ── Extract solution ──────────────────────────────────────────────────────
+        # extract solution
         meal_plan: list[int] = []
         for d in D:
             for m in M:
@@ -147,18 +167,15 @@ class ILPMealPlanner(MealPlanner):
             weekly_budget=self.preferences.weekly_budget,
             calorie_target_per_day=self.preferences.calorie_target_per_day,
             protein_target_per_day=self.preferences.protein_target_per_day,
-            pantry_score_weight=self.pantry_score_weight,
-            waste_penalty_multiplier=self.waste_penalty_multiplier,
-            budget_penalty_multiplier=self.budget_penalty_multiplier,
-            calorie_penalty_weight=self.calorie_penalty_weight,
-            protein_penalty_weight=self.protein_penalty_weight,
+            pantry_weight=self.pantry_weight,
+            waste_weight=self.waste_weight,
+            budget_weight=self.budget_weight,
+            dietary_weight=self.dietary_weight,
             recipe_calories=self.recipe_calories,
             recipe_protein=self.recipe_protein,
         )
 
         return meal_plan, self.best_fitness
-
-    # ── Private helpers ────────────────────────────────────────────────────────────
 
     def _setup_pantry_vars(
         self,
@@ -170,16 +187,23 @@ class ILPMealPlanner(MealPlanner):
     ) -> tuple[dict, list[str]]:
         """
         Adds pantry utilisation variables ``f[name]`` to the ILP, bounded by pantry stock
-        and the total consumption of each ingredient on days before it expires.
+        and the total consumption of each ingredient on days before it expires
 
         :return: tuple of (f variable dict keyed by ingredient name, list of pantry ingredient names)
         :rtype: tuple[dict, list[str]]
         """
 
         pantry_names = [name for name, qty in self.pantry_stock.items() if qty > 0]
-        recipes = self.recipes
 
         f = {name: LpVariable(f"f_{i}", lowBound=0.0) for i, name in enumerate(pantry_names)}
+
+        # pre-build a sparse map from ingredient name to (recipe_index, quantity) pairs,
+        # so pantry constraints only iterate over recipes that actually use each ingredient
+        ingredient_to_recipes: dict[str, list[tuple[int, float]]] = {}
+        for r in recipes_range:
+            for ing, qty in self.recipes[r].ingredients.items():
+                if qty > 0:
+                    ingredient_to_recipes.setdefault(ing, []).append((r, qty))
 
         for i, name in enumerate(pantry_names):
             prob += f[name] <= self.pantry_stock[name], f"pantry_cap_{i}"
@@ -191,10 +215,10 @@ class ILPMealPlanner(MealPlanner):
                 prob += (
                     f[name]
                     <= lpSum(
-                        x[d, m, r] * recipes[r].ingredients.get(name, 0.0)
+                        x[d, m, r] * qty
                         for d in usable_days
                         for m in meals
-                        for r in recipes_range
+                        for r, qty in ingredient_to_recipes.get(name, [])
                     ),
                     f"pantry_use_{i}",
                 )
@@ -213,13 +237,11 @@ class ILPMealPlanner(MealPlanner):
     ) -> tuple[dict, dict, dict, dict]:
         """
         Adds daily calorie and protein deviation variables to the ILP to linearise the
-        absolute-value terms in the dietary penalty.
+        absolute-value terms in the dietary penalty
 
         :return: tuple of (cal_over, cal_under, prot_over, prot_under) dicts keyed by day index
         :rtype: tuple[dict, dict, dict, dict]
         """
-
-        recipes = self.recipes
 
         cal_over = {d: LpVariable(f"cal_over_{d}", lowBound=0.0) for d in days}
         cal_under = {d: LpVariable(f"cal_under_{d}", lowBound=0.0) for d in days}
@@ -227,16 +249,8 @@ class ILPMealPlanner(MealPlanner):
         prot_under = {d: LpVariable(f"prot_under_{d}", lowBound=0.0) for d in days}
 
         for d in days:
-            daily_cal = lpSum(
-                x[d, m, r] * (recipes[r].nutritional_information.get_nutritional_value("calories") or 0.0)
-                for m in meals
-                for r in recipes_range
-            )
-            daily_prot = lpSum(
-                x[d, m, r] * (recipes[r].nutritional_information.get_nutritional_value("protein") or 0.0)
-                for m in meals
-                for r in recipes_range
-            )
+            daily_cal = lpSum(x[d, m, r] * self.recipe_calories[r] for m in meals for r in recipes_range)
+            daily_prot = lpSum(x[d, m, r] * self.recipe_protein[r] for m in meals for r in recipes_range)
             prob += (
                 cal_over[d] - cal_under[d] == daily_cal - self.preferences.calorie_target_per_day,
                 f"cal_dev_{d}",
@@ -259,17 +273,15 @@ class ILPMealPlanner(MealPlanner):
         pantry_names: list[str],
     ) -> LpVariable:
         """
-        Adds the budget overrun variable and constraint to the ILP.
+        Adds the budget overrun variable and constraint to the ILP
 
         :return: ``budget_over`` variable (zero when within budget, positive otherwise)
         :rtype: LpVariable
         """
 
-        recipes = self.recipes
-
         recipe_full_costs = [
             sum(qty * self.ingredient_costs.get(ing, 1.0) / 100.0 for ing, qty in recipe.ingredients.items())
-            for recipe in recipes
+            for recipe in self.recipes
         ]
 
         full_cost_expr = lpSum(x[d, m, r] * recipe_full_costs[r] for d in days for m in meals for r in recipes_range)

@@ -1,18 +1,18 @@
 from models import Recipe
 
 
-def _get_waste_penalty(quantity_unused: int, days_until_expiry: int, waste_penalty_urgency_multiplier: float) -> float:
+def get_waste_penalty(quantity_unused: float, days_until_expiry: int) -> float:
     """
-    Calculates a penalty score for leaving an ingredient unused that is close to expiring (higher = worse)
+    Returns the raw waste score for a single pantry ingredient (quantity × urgency)
+
+    Normalisation against total pantry stock is handled by the caller inside ``fitness_score``
 
     :param quantity_unused: quantity of the ingredient that goes unused across the week
-    :type quantity_unused: int
+    :type quantity_unused: float
     :param days_until_expiry: number of days until the ingredient expires
     :type days_until_expiry: int
-    :param waste_penalty_urgency_multiplier: multiplier for calculating the penalty score (higher = less tolerance for waste)
-    :type waste_penalty_urgency_multiplier: float
 
-    :return: penalty score for leaving the ingredient unused based on how close it is to expiring
+    :return: raw waste contribution (quantity x urgency), or 0 if not expiring within the week
     :rtype: float
     """
 
@@ -20,24 +20,20 @@ def _get_waste_penalty(quantity_unused: int, days_until_expiry: int, waste_penal
     if days_until_expiry > 7:
         return 0.0
 
-    urgency = max(1, 8 - days_until_expiry)
-    penalty = quantity_unused * urgency * waste_penalty_urgency_multiplier
-
-    return penalty
+    urgency = max(1, 8 - days_until_expiry)  # urgency in [1, 7]
+    return quantity_unused * urgency
 
 
-def _get_pantry_score(total_units_from_pantry: float, total_units_needed: float, pantry_score_weight: float) -> float:
+def _get_pantry_score(total_units_from_pantry: float, total_units_needed: float) -> float:
     """
-    Calculates a score for how well the meal plan makes use of existing pantry stock (higher = better)
+    Returns pantry utilisation as a fraction in [0, 1]
 
     :param total_units_from_pantry: total quantity of ingredients sourced from the pantry across the meal plan
     :type total_units_from_pantry: float
     :param total_units_needed: total quantity of ingredients required across the meal plan
     :type total_units_needed: float
-    :param pantry_score_weight: weight applied to the pantry score (higher = more importance)
-    :type pantry_score_weight: float
 
-    :return: percentage of ingredient units covered by pantry stock, or 0 if no ingredients are needed
+    :return: fraction of ingredient units covered by pantry stock, or 0 if no ingredients are needed
     :rtype: float
     """
 
@@ -45,31 +41,26 @@ def _get_pantry_score(total_units_from_pantry: float, total_units_needed: float,
     if total_units_needed == 0:
         return 0.0
 
-    return (total_units_from_pantry / total_units_needed) * 100.0 * pantry_score_weight
+    return total_units_from_pantry / total_units_needed
 
 
-def _get_budget_penalty(total_cost: float, budget: float, budget_penalty_multiplier: float) -> float:
+def _get_budget_penalty(total_cost: float, budget: float) -> float:
     """
-    Calculates a penalty score for exceeding the weekly grocery budget (higher = worse)
+    Returns budget overspend as a fraction of the weekly budget, clamped to [0, 1]
 
     :param total_cost: total cost of the ingredients needed for the meal plan
     :type total_cost: float
     :param budget: user's weekly grocery budget
     :type budget: float
-    :param budget_penalty_multiplier: multiplier for calculating the penalty score (higher = worse)
-    :type budget_penalty_multiplier: float
 
-    :return: penalty score for exceeding the budget
+    :return: fractional budget overspend in [0, 1], or 0 if within budget
     :rtype: float
     """
 
-    if total_cost <= budget:
+    if total_cost <= budget or budget == 0:
         return 0.0
 
-    excess = total_cost - budget
-    penalty = excess * budget_penalty_multiplier
-
-    return penalty
+    return min(1.0, (total_cost - budget) / budget)
 
 
 def fitness_score(
@@ -81,16 +72,17 @@ def fitness_score(
     weekly_budget: float,
     calorie_target_per_day: float,
     protein_target_per_day: float,
-    pantry_score_weight: float = 1.0,
-    waste_penalty_multiplier: float = 0.001,
-    budget_penalty_multiplier: float = 2.0,
-    calorie_penalty_weight: float = 0.01,
-    protein_penalty_weight: float = 0.1,
+    pantry_weight: float = 1.0,
+    waste_weight: float = 1.0,
+    budget_weight: float = 1.0,
+    dietary_weight: float = 1.0,
     recipe_calories: list[float] | None = None,
     recipe_protein: list[float] | None = None,
 ) -> float:
     """
     Evaluates a meal plan (encoded as recipe indices) and returns a fitness score
+
+    All four components are normalised to [0, 1] before weights are applied, so the weights are directly comparable across features. The overall score ranges from -3 to 1 when all weights are 1.0 (one reward, three penalties).
 
     Higher scores are better. The score rewards:
         - covering recipe ingredients from existing pantry stock (pantry score)
@@ -115,18 +107,16 @@ def fitness_score(
     :type calorie_target_per_day: float
     :param protein_target_per_day: target daily protein intake in grams
     :type protein_target_per_day: float
-    :param pantry_score_weight: weight applied to the pantry utilisation score (default = 1.0)
-    :type pantry_score_weight: float
-    :param waste_penalty_multiplier: multiplier for leaving near-expiry ingredients unused (default = 0.001)
-    :type waste_penalty_multiplier: float
-    :param budget_penalty_multiplier: multiplier for exceeding the weekly budget (default = 2.0)
-    :type budget_penalty_multiplier: float
-    :param calorie_penalty_weight: weight for absolute daily calorie deviation (default = 0.01)
-    :type calorie_penalty_weight: float
-    :param protein_penalty_weight: weight for absolute daily protein deviation (default = 0.1)
-    :type protein_penalty_weight: float
+    :param pantry_weight: importance weight for the pantry utilisation reward, in [0, 1] (default = 1.0)
+    :type pantry_weight: float
+    :param waste_weight: importance weight for the food waste penalty, in [0, 1] (default = 1.0)
+    :type waste_weight: float
+    :param budget_weight: importance weight for the budget overspend penalty, in [0, 1] (default = 1.0)
+    :type budget_weight: float
+    :param dietary_weight: importance weight for the dietary target penalty, in [0, 1] (default = 1.0)
+    :type dietary_weight: float
 
-    :return: composite fitness score (higher is better)
+    :return: composite fitness score (higher is better); range is [-3, 1] when all weights are 1.0
     :rtype: float
     """
 
@@ -155,21 +145,27 @@ def fitness_score(
             total_units_from_pantry += from_pantry
             purchase_cost += (to_buy / 100.0) * ingredient_costs.get(ingredient_name, 1.0)
 
-    pantry_score = _get_pantry_score(total_units_from_pantry, total_units_needed, pantry_score_weight)
+    pantry_score = _get_pantry_score(total_units_from_pantry, total_units_needed) * pantry_weight
 
-    waste_penalty = 0.0
+    # normalise waste by the theoretical maximum (all pantry stock unused at maximum urgency of 7)
+    total_pantry_stock = sum(pantry_stock.values())
+    raw_waste = 0.0
 
     for ingredient_name, quantity_available in pantry_stock.items():
         quantity_unused = max(0.0, quantity_available - consumed_stock.get(ingredient_name, 0.0))
+        raw_waste += get_waste_penalty(quantity_unused, days_until_expiry.get(ingredient_name, 999))
 
-        waste_penalty += _get_waste_penalty(
-            quantity_unused, days_until_expiry.get(ingredient_name, 999), waste_penalty_multiplier
-        )
+    if total_pantry_stock > 0:
+        waste_penalty = min(1.0, raw_waste / (total_pantry_stock * 7)) * waste_weight
+    else:
+        waste_penalty = 0.0
 
-    budget_penalty = _get_budget_penalty(purchase_cost, weekly_budget, budget_penalty_multiplier)
+    budget_penalty = _get_budget_penalty(purchase_cost, weekly_budget) * budget_weight
 
     # compare the sum of each day's meals against daily targets, not per-recipe
     # (individual meals will never reach daily calorie/protein goals on their own)
+    # each daily deviation is normalised by the target and clamped to [0, 1],
+    # then averaged equally across calories and protein and across all days
 
     num_days = len(recipe_indices) // 3
     dietary_penalty = 0.0
@@ -188,7 +184,19 @@ def fitness_score(
                 (recipes[i].nutritional_information.get_nutritional_value("protein") or 0.0) for i in day_indices
             )
 
-        dietary_penalty += abs(daily_calories - calorie_target_per_day) * calorie_penalty_weight
-        dietary_penalty += abs(daily_protein - protein_target_per_day) * protein_penalty_weight
+        calorie_dev = (
+            min(1.0, abs(daily_calories - calorie_target_per_day) / calorie_target_per_day)
+            if calorie_target_per_day > 0
+            else 0.0
+        )
+        protein_dev = (
+            min(1.0, abs(daily_protein - protein_target_per_day) / protein_target_per_day)
+            if protein_target_per_day > 0
+            else 0.0
+        )
+        dietary_penalty += (calorie_dev + protein_dev) / 2
+
+    if num_days > 0:
+        dietary_penalty = (dietary_penalty / num_days) * dietary_weight
 
     return pantry_score - dietary_penalty - waste_penalty - budget_penalty

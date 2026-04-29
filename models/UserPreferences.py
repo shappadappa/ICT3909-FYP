@@ -30,13 +30,16 @@ class UserPreferences:
 
         assert weekly_budget >= 0, "Weekly budget must be non-negative"
         assert calorie_target_per_day > 0, "Calorie target per day must be positive"
-        assert not (is_vegan and not is_vegetarian), "Cannot be vegan without being vegetarian"
 
         self.weekly_budget = weekly_budget
         self.calorie_target_per_day = calorie_target_per_day
         self.protein_target_per_day = protein_target_per_day
-        self.is_vegetarian = is_vegetarian or is_vegan
         self.is_vegan = is_vegan
+
+        if self.is_vegan:
+            self.is_vegetarian = True
+
+        self.is_vegetarian = is_vegetarian or is_vegan
         self.requires_gluten_free = requires_gluten_free
         self.requires_lactose_free = requires_lactose_free
 

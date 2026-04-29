@@ -78,12 +78,15 @@ class Pantry:
             self._ingredients[ingredient.name] = ingredient
             self._quantities[ingredient.name] = quantity
 
-    def print(self):
+    def print(self, max_ingredients: int | None = None):
         """
         Prints the details of all ingredients currently in the pantry
         """
 
-        for name, ingredient in self._ingredients.items():
+        for i, (name, ingredient) in enumerate(self._ingredients.items()):
+            if max_ingredients is not None and i >= max_ingredients:
+                break
+
             qty = self._quantities[name]
             print("---")
             print(f"Quantity: {qty} g")

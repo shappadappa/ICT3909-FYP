@@ -9,36 +9,32 @@ class GAMealPlanner(MealPlanner):
     def __init__(
         self,
         meal_planning_environment: MealPlanningEnvironment,
-        waste_penalty_multiplier: float = 0.001,
-        pantry_score_weight: float = 1.0,
-        budget_penalty_multiplier: float = 2.0,
-        calorie_penalty_weight: float = 0.01,
-        protein_penalty_weight: float = 0.1,
+        pantry_weight: float = 1.0,
+        waste_weight: float = 1.0,
+        budget_weight: float = 1.0,
+        dietary_weight: float = 1.0,
     ):
         """
         The `GAMealPlanner` class supports a genetic-algorithm-based meal planner that optimises meal plans based on dietary compliance, ingredient expiry, waste reduction, and budget adherence
 
         :meal_planning_environment: the meal planning environment containing recipes, pantry stock, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
-        :param waste_penalty_multiplier: multiplier for calculating the penalty score for leaving ingredients unused that are close to expiring (higher = less tolerance for waste; default = 0.001)
-        :type waste_penalty_multiplier: float
-        :param pantry_score_weight: weight applied to the pantry score (higher = more importance; default = 1.0)
-        :type pantry_score_weight: float
-        :param budget_penalty_multiplier: multiplier for calculating the penalty score for exceeding the budget (higher = worse; default = 2.0)
-        :type budget_penalty_multiplier: float
-        :param calorie_penalty_weight: weight applied to the absolute difference between daily calories and the calorie target (higher = stricter calorie adherence; default = 0.01)
-        :type calorie_penalty_weight: float
-        :param protein_penalty_weight: weight applied to the absolute difference between daily protein and the protein target (higher = stricter protein adherence; default = 0.1)
-        :type protein_penalty_weight: float
+        :param pantry_weight: importance weight for the pantry utilisation reward, in [0, 1] (default = 1.0)
+        :type pantry_weight: float
+        :param waste_weight: importance weight for the food waste penalty, in [0, 1] (default = 1.0)
+        :type waste_weight: float
+        :param budget_weight: importance weight for the budget overspend penalty, in [0, 1] (default = 1.0)
+        :type budget_weight: float
+        :param dietary_weight: importance weight for the dietary target penalty, in [0, 1] (default = 1.0)
+        :type dietary_weight: float
         """
 
         super().__init__(meal_planning_environment)
 
-        self.waste_penalty_urgency_multiplier = waste_penalty_multiplier
-        self.pantry_score_weight = pantry_score_weight
-        self.budget_penalty_multiplier = budget_penalty_multiplier
-        self.calorie_penalty_weight = calorie_penalty_weight
-        self.protein_penalty_weight = protein_penalty_weight
+        self.pantry_weight = pantry_weight
+        self.waste_weight = waste_weight
+        self.budget_weight = budget_weight
+        self.dietary_weight = dietary_weight
 
         self.recipe_calories = [recipe.nutritional_information.calories or 0.0 for recipe in self.recipes]
         self.recipe_protein = [recipe.nutritional_information.protein or 0.0 for recipe in self.recipes]
@@ -108,11 +104,10 @@ class GAMealPlanner(MealPlanner):
                 weekly_budget=self.preferences.weekly_budget,
                 calorie_target_per_day=self.preferences.calorie_target_per_day,
                 protein_target_per_day=self.preferences.protein_target_per_day,
-                pantry_score_weight=self.pantry_score_weight,
-                waste_penalty_multiplier=self.waste_penalty_urgency_multiplier,
-                budget_penalty_multiplier=self.budget_penalty_multiplier,
-                calorie_penalty_weight=self.calorie_penalty_weight,
-                protein_penalty_weight=self.protein_penalty_weight,
+                pantry_weight=self.pantry_weight,
+                waste_weight=self.waste_weight,
+                budget_weight=self.budget_weight,
+                dietary_weight=self.dietary_weight,
                 recipe_calories=self.recipe_calories,
                 recipe_protein=self.recipe_protein,
             )
