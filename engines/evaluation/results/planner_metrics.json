@@ -9,13 +9,13 @@
         "variety_score": 1.0
     },
     "GAMealPlanner|1": {
-        "ingredient_utilisation_score": 0.18683651804670912,
-        "expiry_weighted_utilisation_score": 0.022646850672328377,
-        "expiry_waste_score": 0.445859872611465,
-        "dietary_compliance": 0.9656732711425781,
+        "ingredient_utilisation_score": 0.22867545722054605,
+        "expiry_weighted_utilisation_score": 0.029821235679432123,
+        "expiry_waste_score": 0.4004730509926621,
+        "dietary_compliance": 0.8923141212772707,
         "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.09625122647964506,
-        "variety_score": 0.19047619047619047
+        "purchase_dependency_score": 0.19186956073245923,
+        "variety_score": 0.2857142857142857
     },
     "ILPMealPlanner|1": {
         "ingredient_utilisation_score": 0.24760935867623765,
@@ -27,13 +27,13 @@
         "variety_score": 0.7142857142857143
     },
     "LLMMealPlanner|1": {
-        "ingredient_utilisation_score": 0.11092203229487124,
-        "expiry_weighted_utilisation_score": 0.010971436876236694,
-        "expiry_waste_score": 0.501151804670913,
-        "dietary_compliance": 0.4427904050106939,
-        "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.0861116818474941,
-        "variety_score": 0.9523809523809523
+        "ingredient_utilisation_score": 0.09261125954961714,
+        "expiry_weighted_utilisation_score": 0.008620930728600896,
+        "expiry_waste_score": 0.5019465588286002,
+        "dietary_compliance": 0.4549592753496353,
+        "budget_efficiency": 0.7762223638375599,
+        "purchase_dependency_score": 0.038055196796436236,
+        "variety_score": 1.0
     },
     "RandomMealPlanner|2": {
         "ingredient_utilisation_score": 0.5015205627705628,
@@ -45,13 +45,13 @@
         "variety_score": 1.0
     },
     "GAMealPlanner|2": {
-        "ingredient_utilisation_score": 0.5454545454545454,
-        "expiry_weighted_utilisation_score": 0.10064935064935064,
-        "expiry_waste_score": 0.0,
-        "dietary_compliance": 0.9788708838359789,
-        "budget_efficiency": 0.3702447579676524,
-        "purchase_dependency_score": 0.08397605422452718,
-        "variety_score": 0.23809523809523808
+        "ingredient_utilisation_score": 0.13818181818181818,
+        "expiry_weighted_utilisation_score": 0.013246753246753245,
+        "expiry_waste_score": 0.4072727272727273,
+        "dietary_compliance": 0.8566985497500043,
+        "budget_efficiency": 0.9960617235841382,
+        "purchase_dependency_score": 0.035908770713411454,
+        "variety_score": 0.19047619047619047
     },
     "ILPMealPlanner|2": {
         "ingredient_utilisation_score": 0.45454545454545453,
@@ -63,13 +63,13 @@
         "variety_score": 0.19047619047619047
     },
     "LLMMealPlanner|2": {
-        "ingredient_utilisation_score": 0.09090909090909091,
-        "expiry_weighted_utilisation_score": 0.006493506493506493,
-        "expiry_waste_score": 0.45454545454545453,
-        "dietary_compliance": 0.8874338549143967,
-        "budget_efficiency": 0.20623500392926286,
-        "purchase_dependency_score": 0.005877488266576954,
-        "variety_score": 0.14285714285714285
+        "ingredient_utilisation_score": 0.2727272727272727,
+        "expiry_weighted_utilisation_score": 0.032467532467532464,
+        "expiry_waste_score": 0.2727272727272727,
+        "dietary_compliance": 0.37127424387347363,
+        "budget_efficiency": 0.4328085898023716,
+        "purchase_dependency_score": 0.049130225082130684,
+        "variety_score": 0.42857142857142855
     },
     "RandomMealPlanner|3": {
         "ingredient_utilisation_score": 0.07333546933612264,
@@ -81,13 +81,13 @@
         "variety_score": 0.9523809523809523
     },
     "GAMealPlanner|3": {
-        "ingredient_utilisation_score": 0.10547842401500938,
-        "expiry_weighted_utilisation_score": 0.010427231305280085,
-        "expiry_waste_score": 0.4202626641651032,
-        "dietary_compliance": 0.9500598363560171,
+        "ingredient_utilisation_score": 0.1137023139462164,
+        "expiry_weighted_utilisation_score": 0.011463891122427707,
+        "expiry_waste_score": 0.4031894934333959,
+        "dietary_compliance": 0.9393564628105633,
         "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.21916985625592778,
-        "variety_score": 0.14285714285714285
+        "purchase_dependency_score": 0.19649170051999396,
+        "variety_score": 0.3333333333333333
     },
     "ILPMealPlanner|3": {
         "ingredient_utilisation_score": 0.1127628316805146,
@@ -99,13 +99,13 @@
         "variety_score": 0.7142857142857143
     },
     "LLMMealPlanner|3": {
-        "ingredient_utilisation_score": 0.022865853658536585,
-        "expiry_weighted_utilisation_score": 0.001298244438488341,
-        "expiry_waste_score": 0.4268292682926829,
-        "dietary_compliance": 0.21453093594338735,
+        "ingredient_utilisation_score": 0.033047217010631645,
+        "expiry_weighted_utilisation_score": 0.002911678429971113,
+        "expiry_waste_score": 0.4223545966228893,
+        "dietary_compliance": 0.3024155426332299,
         "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.06847842567576226,
-        "variety_score": 0.09523809523809523
+        "purchase_dependency_score": 0.09710245375674298,
+        "variety_score": 0.42857142857142855
     },
     "RandomMealPlanner|4": {
         "ingredient_utilisation_score": 0.09662091503267975,
@@ -117,13 +117,13 @@
         "variety_score": 0.8095238095238095
     },
     "GAMealPlanner|4": {
-        "ingredient_utilisation_score": 0.06648739495798318,
-        "expiry_weighted_utilisation_score": 0.00781752701080432,
-        "expiry_waste_score": 0.5688067226890756,
-        "dietary_compliance": 0.9242968001637144,
+        "ingredient_utilisation_score": 0.10576470588235294,
+        "expiry_weighted_utilisation_score": 0.011541816726690676,
+        "expiry_waste_score": 0.5467563025210084,
+        "dietary_compliance": 0.9179994053164231,
         "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.03427305127967416,
-        "variety_score": 0.14285714285714285
+        "purchase_dependency_score": 0.039534817362548054,
+        "variety_score": 0.42857142857142855
     },
     "ILPMealPlanner|4": {
         "ingredient_utilisation_score": 0.07941176470588235,
@@ -135,12 +135,12 @@
         "variety_score": 0.14285714285714285
     },
     "LLMMealPlanner|4": {
-        "ingredient_utilisation_score": 0.12015686274509803,
-        "expiry_weighted_utilisation_score": 0.010674136321195144,
-        "expiry_waste_score": 0.5590588235294117,
-        "dietary_compliance": 0.9292901878308842,
-        "budget_efficiency": 0.6682551982147701,
-        "purchase_dependency_score": 0.04069837640448173,
+        "ingredient_utilisation_score": 0.1215686274509804,
+        "expiry_weighted_utilisation_score": 0.012679738562091503,
+        "expiry_waste_score": 0.5411764705882353,
+        "dietary_compliance": 0.39388319278637407,
+        "budget_efficiency": 0.3710292173095041,
+        "purchase_dependency_score": 0.022650691713477868,
         "variety_score": 0.14285714285714285
     },
     "RandomMealPlanner|5": {
@@ -153,13 +153,13 @@
         "variety_score": 1.0
     },
     "GAMealPlanner|5": {
-        "ingredient_utilisation_score": 0.10336832895888015,
-        "expiry_weighted_utilisation_score": 0.008705161854768155,
-        "expiry_waste_score": 0.5280110819480898,
-        "dietary_compliance": 0.903594741930759,
+        "ingredient_utilisation_score": 0.12014260717410323,
+        "expiry_weighted_utilisation_score": 0.009776132150147897,
+        "expiry_waste_score": 0.5464146981627297,
+        "dietary_compliance": 0.9301130543972066,
         "budget_efficiency": 1.0,
-        "purchase_dependency_score": 0.09516793048709903,
-        "variety_score": 0.09523809523809523
+        "purchase_dependency_score": 0.09971868768915469,
+        "variety_score": 0.2857142857142857
     },
     "ILPMealPlanner|5": {
         "ingredient_utilisation_score": 0.10858590592842561,
@@ -174,9 +174,9 @@
         "ingredient_utilisation_score": 0.03937007874015748,
         "expiry_weighted_utilisation_score": 0.0013123359580052493,
         "expiry_waste_score": 0.5511811023622047,
-        "dietary_compliance": 0.8348605844176809,
-        "budget_efficiency": 0.4088416978444652,
-        "purchase_dependency_score": 0.012128177376379744,
-        "variety_score": 0.23809523809523808
+        "dietary_compliance": 0.5061688602128332,
+        "budget_efficiency": 0.9022622880920729,
+        "purchase_dependency_score": 0.029899671788175854,
+        "variety_score": 0.14285714285714285
     }
 }

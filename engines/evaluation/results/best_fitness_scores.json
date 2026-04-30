@@ -1,0 +1,22 @@
+{
+    "RandomMealPlanner|1": 0.0,
+    "GAMealPlanner|1": -0.19760314579348837,
+    "ILPMealPlanner|1": -0.20467758041919204,
+    "LLMMealPlanner|1": 0.0,
+    "RandomMealPlanner|2": 0.0,
+    "GAMealPlanner|2": -0.3445932805445884,
+    "ILPMealPlanner|2": -0.09107859733776277,
+    "LLMMealPlanner|2": 0.0,
+    "RandomMealPlanner|3": 0.0,
+    "GAMealPlanner|3": -0.21488419013862614,
+    "ILPMealPlanner|3": -0.2856014402838908,
+    "LLMMealPlanner|3": 0.0,
+    "RandomMealPlanner|4": 0.0,
+    "GAMealPlanner|4": -0.3869171578732497,
+    "ILPMealPlanner|4": -0.37381355761493923,
+    "LLMMealPlanner|4": 0.0,
+    "RandomMealPlanner|5": 0.0,
+    "GAMealPlanner|5": -0.3250119024580706,
+    "ILPMealPlanner|5": -0.32640455850858197,
+    "LLMMealPlanner|5": 0.0
+}

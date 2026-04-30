@@ -8,7 +8,13 @@ from models import MealPlanningEnvironment
 
 
 class LLMMealPlanner(MealPlanner):
-    def __init__(self, meal_planning_environment: MealPlanningEnvironment, llm_client: OpenAI, prompt_filepath: str):
+    def __init__(
+        self,
+        meal_planning_environment: MealPlanningEnvironment,
+        llm_client: OpenAI,
+        model_name: str,
+        prompt_filepath: str,
+    ):
         """
         The `LLMMealPlanner` class is an implementation of the `MealPlanner` abstract class that uses a large language model (LLM) to generate a meal plan. The LLM is prompted with detailed information about the available recipes, the user's pantry stock, and their preferences, and is tasked with selecting an optimal combination of recipes for the week
 
@@ -16,6 +22,8 @@ class LLMMealPlanner(MealPlanner):
         :type meal_planning_environment: MealPlanningEnvironment
         :param llm_client: the OpenAI client used to interact with the LLM
         :type llm_client: OpenAI
+        :param model_name: the name of the LLM model to use
+        :type model_name: str
         :param prompt_filepath: the file path to the text file containing the prompt template for the LLM
         :type prompt_filepath: str
         """
@@ -23,6 +31,7 @@ class LLMMealPlanner(MealPlanner):
         super().__init__(meal_planning_environment)
 
         self.llm_client = llm_client
+        self.model_name = model_name
 
         with open(prompt_filepath, "r", encoding="utf-8") as prompt:
             self.prompt = prompt.read()
@@ -64,9 +73,9 @@ class LLMMealPlanner(MealPlanner):
         :rtype: tuple[list[int], float]
         """
 
-        response = self.llm_client.responses.create(model="gpt-5-nano", input=self.prompt)
+        response = self.llm_client.responses.create(model=self.model_name, input=self.prompt)
 
-        raw_meal_plan = response.output[1].content[0].text
+        raw_meal_plan = response.output[0].content[0].text
         self.best_meal_plan = json.loads(raw_meal_plan)["meal_plan"]
 
         return self.best_meal_plan, 0.0

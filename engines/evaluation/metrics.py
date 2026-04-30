@@ -252,26 +252,3 @@ def get_variety_score(meal_plan: list[list[Recipe]], num_days: int = 7, meals_pe
     unique_count = len(set(recipe.name for recipe in flat_recipes))
 
     return unique_count / total_slots
-
-
-def get_optimality_gap(planner_fitness: float, ilp_fitness: float) -> float:
-    """
-    Calculates the optimality gap between a planner's fitness and the ILP oracle fitness
-
-    Defined as (ILP_fitness - planner_fitness) / ILP_fitness [0, 1], where lower is better
-
-    :param planner_fitness: fitness score achieved by the planner under evaluation
-    :type planner_fitness: float
-    :param ilp_fitness: fitness score of the ILP oracle (upper bound)
-    :type ilp_fitness: float
-
-    :return: optimality gap as a float between 0 and 1 (lower is better)
-    :rtype: float
-    """
-
-    if ilp_fitness <= 0.0:
-        return 0.0
-
-    gap = (ilp_fitness - planner_fitness) / ilp_fitness
-
-    return max(0.0, min(gap, 1.0))

@@ -1,11 +1,11 @@
 {
-    "population_size": 160,
-    "num_parents_mating": 46,
+    "population_size": 180,
+    "num_parents_mating": 48,
     "parent_selection_type": "sss",
-    "K_tournament": 10,
-    "keep_elitism": 1,
-    "crossover_type": "uniform",
-    "crossover_probability": 0.6,
-    "mutation_type": "scramble",
-    "mutation_probability": 0.02
+    "K_tournament": 3,
+    "keep_elitism": 0,
+    "crossover_type": "single_point",
+    "crossover_probability": 1.0,
+    "mutation_type": "inversion",
+    "mutation_probability": 0.09
 }
