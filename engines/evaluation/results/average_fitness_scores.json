@@ -1,6 +1,6 @@
 {
     "RandomMealPlanner": 0.0,
-    "GAMealPlanner": -0.29380193536160465,
-    "ILPMealPlanner": -0.2563151468328734,
+    "GAMealPlanner": -0.23520828590244458,
+    "ILPMealPlanner": -0.21098647609181143,
     "LLMMealPlanner": 0.0
 }

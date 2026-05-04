@@ -35,9 +35,13 @@ def get_expiry_weighted_utilisation_score(
     """
     Calculates the expiry-weighted utilisation score for a given meal plan and pantry
 
-    Ingredients closer to expiry contribute more weight when consumed. The raw score (sum of quantity_used x 1/days_to_expiry) is normalised by total pantry stock so the result is bounded to [0, 1]
+    Each pantry ingredient is assigned an urgency weight of 1 / max(days_to_expiry, 1)
 
-    A score of 1.0 means all stock was consumed and everything expired in exactly 1 day (worst urgency)
+    The score is defined as the sum of (quantity_consumed x weight) divided by the sum of (quantity_available x weight). This ratio is bounded to [0, 1] since consumed quantity never exceeds available quantity per ingredient
+
+    A score of 1.0 means all urgency-weighted stock was fully consumed. Higher scores indicate that proportionally more of the higher-urgency (nearer-expiry) ingredients were consumed
+
+    Note: ingredients with days_to_expiry = 0 (expiring today) are treated with the same weight as those expiring in 1 day due to the max(days, 1) clamping
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
@@ -50,27 +54,30 @@ def get_expiry_weighted_utilisation_score(
 
     pantry_stock = pantry.stock
     days_until_expiry = pantry.get_days_until_expiry(current_date)
-
     consumed_stock = get_consumed_stock(meal_plan, pantry_stock)
 
-    total_available = sum(pantry_stock.values())
-    if total_available == 0.0:
-        return 0.0
+    weighted_available = 0.0
+    weighted_consumed = 0.0
 
-    score = 0.0
-    for ingredient_name, quantity_used in consumed_stock.items():
-        if quantity_used == 0.0:
+    for ingredient_name, quantity_available in pantry_stock.items():
+        if quantity_available == 0.0:
             continue
 
-        days = max(days_until_expiry.get(ingredient_name, 1), 1)
-        score += quantity_used * (1.0 / days)
+        days = days_until_expiry.get(ingredient_name, 1)
+        weight = 1.0 / max(days, 1)
 
-    return min(score / total_available, 1.0)
+        weighted_available += quantity_available * weight
+        weighted_consumed += consumed_stock.get(ingredient_name, 0.0) * weight
+
+    if weighted_available == 0.0:
+        return 0.0
+
+    return min(weighted_consumed / weighted_available, 1.0)
 
 
-def get_expiry_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_date: datetime) -> float:
+def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_date: datetime) -> float:
     """
-    Calculates the expiry waste score for a given meal plan and pantry
+    Calculates the food waste score for a given meal plan and pantry
 
     Defined as the total grams of pantry stock that will expire within the planning week but are not consumed by the meal plan, divided by total pantry grams available.
 
@@ -105,18 +112,16 @@ def get_expiry_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, curren
     return expired_unused / total_available
 
 
-def get_dietary_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
+def get_dietary_constraint_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
     """
-    Calculates the dietary compliance score for a given meal plan and user preferences
-
-    Hard constraints (vegan, vegetarian, gluten-free, lactose-free) are checked first. Any violation immediately returns 0.0. Otherwise, the score reflects how closely daily calorie and protein totals match the user's targets, using mean relative error
+    Checks if the meal plan is compliant with the user's dietary constraints (vegan, vegetarian, gluten-free, lactose-free)
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param user_preferences: the user's dietary preferences and nutritional targets
     :type user_preferences: UserPreferences
 
-    :return: dietary compliance score as a float between 0 and 1
+    :return: dietary constraint compliance score, either 0 (not compliant) or 1 (fully compliant)
     :rtype: float
     """
 
@@ -129,6 +134,22 @@ def get_dietary_compliance(meal_plan: list[list[Recipe]], user_preferences: User
                 or (user_preferences.requires_lactose_free and not recipe.is_lactose_free)
             ):
                 return 0.0
+
+    return 1.0
+
+
+def get_nutritional_target_score(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
+    """
+    Calculates a nutritional target score for a given meal plan and user preferences
+
+    :param meal_plan: a list of lists of Recipe objects representing the meal plan
+    :type meal_plan: list[list[Recipe]]
+    :param user_preferences: the user's dietary preferences and nutritional targets
+    :type user_preferences: UserPreferences
+
+    :return: nutritional target score as a float between 0 and 1 (higher is better)
+    :rtype: float
+    """
 
     total_relative_error = 0.0
     num_days = len(meal_plan)
@@ -193,18 +214,20 @@ def get_budget_efficiency(
     return min(efficiency, 1.0)
 
 
-def get_purchase_dependency_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> float:
+def get_pantry_coverage_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> float:
     """
-    Calculates the purchase dependency score for a given meal plan and pantry
+    Calculates the pantry coverage score for a given meal plan and pantry
 
-    Defined as the proportion of total needed ingredients that are already available in the pantry, weighted by quantity needed. Higher means less dependency on purchasing new ingredients
+    Defined as the proportion of total needed ingredients that are already available in the pantry, weighted by quantity needed
+
+    Higher means the meal plan covers more of the pantry stock and requires fewer additional purchases
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param pantry: a Pantry object representing the available ingredients
     :type pantry: Pantry
 
-    :return: purchase dependency score as a float between 0 and 1 (higher is better)
+    :return: pantry coverage score as a float between 0 and 1 (higher is better)
     :rtype: float
     """
 
