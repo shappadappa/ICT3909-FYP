@@ -5,6 +5,7 @@ from engines.LLMMealPlanner import LLMMealPlanner
 from engines.MealPlanner import MealPlanner
 from engines.RandomMealPlanner import RandomMealPlanner
 from engines.utils import (
+    filter_and_add_recipes,
     get_consumed_stock,
     get_ingredient,
     get_pantry_ingredient,
@@ -12,6 +13,7 @@ from engines.utils import (
     make_pantry,
     make_preferences,
     make_recipe,
+    parse_recipes,
 )
 
 __all__ = [
@@ -29,4 +31,6 @@ __all__ = [
     "fitness_score",
     "get_consumed_stock",
     "get_waste_penalty",
+    "filter_and_add_recipes",
+    "parse_recipes",
 ]

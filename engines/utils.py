@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+from random import sample
 
 from models import NutritionalInformation, Pantry, PantryIngredient, Recipe, UserPreferences
 from models.DietaryTag import DietaryTag
@@ -199,3 +200,100 @@ def get_consumed_stock(meal_plan: list[list[Recipe]], pantry_stock: dict[str, fl
                 consumed_stock[ingredient_name] = consumed_stock.get(ingredient_name, 0.0) + from_pantry
 
     return consumed_stock
+
+
+def filter_and_add_recipes(
+    all_recipes: list[Recipe],
+    pantry_ingredient_names: list[str],
+    num_filtered_recipes: int,
+    num_extra_recipes: int,
+) -> list[Recipe]:
+    """
+    Filters the recipe list to those that can be made with the pantry ingredients, then adds a few random extra recipes to increase variety
+
+    :param all_recipes: full list of recipes loaded from supplemented_structured_recipes.json
+    :type all_recipes: list[Recipe]
+    :param pantry_ingredient_names: list of ingredient names available in the pantry
+    :type pantry_ingredient_names: list[str]
+    :param num_filtered_recipes: maximum number of pantry-matching recipes to include
+    :type num_filtered_recipes: int
+    :param num_extra_recipes: number of random extra recipes to add for variety
+    :type num_extra_recipes: int
+
+    :return: filtered and augmented list of recipes
+    :rtype: list[Recipe]
+    """
+
+    unique_ingredient_names = set(pantry_ingredient_names)
+
+    filtered_recipe_indices = []
+
+    for i, recipe in enumerate(all_recipes):
+        if any(ingredient_name in unique_ingredient_names for ingredient_name in recipe.ingredients.keys()):
+            filtered_recipe_indices.append(i)
+
+    if len(filtered_recipe_indices) > num_filtered_recipes:
+        filtered_recipe_indices = sample(filtered_recipe_indices, num_filtered_recipes)
+
+    sampled_recipe_indices = sample(
+        [i for i in range(len(all_recipes)) if i not in filtered_recipe_indices], num_extra_recipes
+    )
+
+    assert len(set(sampled_recipe_indices).intersection(set(filtered_recipe_indices))) == 0, (
+        "Sampled indices should not overlap with filtered recipe indices"
+    )
+
+    return [all_recipes[i] for i in filtered_recipe_indices + sampled_recipe_indices]
+
+
+_TAG_MAP: dict[str, DietaryTag] = {
+    "VEGETARIAN": DietaryTag.VEGETARIAN,
+    "VEGAN": DietaryTag.VEGAN,
+    "GLUTEN_FREE": DietaryTag.GLUTEN_FREE,
+    "LACTOSE_FREE": DietaryTag.LACTOSE_FREE,
+}
+
+
+def parse_recipes(unparsed_recipes: list[dict]) -> list[Recipe]:
+    """
+    Parses a list of unparsed recipe dictionaries (loaded from json) into Recipe objects with nutritional information and dietary tags set
+
+    :param unparsed_recipes: list of unparsed recipe dictionaries
+    :type unparsed_recipes: list[dict]
+
+    :return: list of parsed Recipe objects
+    :rtype: list[Recipe]
+    """
+
+    recipes = []
+
+    for unparsed_recipe in unparsed_recipes:
+        ingredients = {item["ingredient"]: item["quantity"] for item in unparsed_recipe["ingredients"]}
+        dietary_tags = [_TAG_MAP[tag] for tag in unparsed_recipe.get("dietary_tags", []) if tag in _TAG_MAP]
+        nutritional_information = unparsed_recipe.get("nutritional_information", {})
+
+        recipe = Recipe(
+            name=unparsed_recipe["name"].strip(),
+            ingredients=ingredients,
+            dietary_tags=dietary_tags,
+            instructions=unparsed_recipe.get("instructions", []),
+        )
+
+        recipe.nutritional_information = NutritionalInformation(
+            calories=nutritional_information.get("calories"),
+            carbohydrates=nutritional_information.get("carbohydrates"),
+            sugar=nutritional_information.get("sugar"),
+            protein=nutritional_information.get("protein"),
+            fat=nutritional_information.get("fat"),
+            saturated_fat=nutritional_information.get("saturated_fat"),
+            fiber=nutritional_information.get("fiber"),
+            sodium=nutritional_information.get("sodium"),
+            is_gluten_free=nutritional_information.get("is_gluten_free"),
+            is_lactose_free=nutritional_information.get("is_lactose_free"),
+            is_vegetarian=nutritional_information.get("is_vegetarian"),
+            is_vegan=nutritional_information.get("is_vegan"),
+        )
+
+        recipes.append(recipe)
+
+    return recipes

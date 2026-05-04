@@ -141,6 +141,7 @@ class GAMealPlanner(MealPlanner):
 
         ga_instance.run()
 
+        self.ga_instance = ga_instance
         self.best_meal_plan, self.best_fitness, _ = ga_instance.best_solution()
 
         return list(self.best_meal_plan), float(self.best_fitness)

@@ -1,8 +1,18 @@
-from pulp import PULP_CBC_CMD, LpMaximize, LpProblem, LpVariable, lpSum, value
+import numpy as np
+from scipy.optimize import Bounds, LinearConstraint, milp
+from scipy.sparse import csc_matrix
 
 from engines.fitness_score import fitness_score, get_waste_penalty
 from engines.MealPlanner import MealPlanner
 from models.MealPlanningEnvironment import MealPlanningEnvironment
+
+HIGHS_STATUS = {
+    0: "Optimal",
+    1: "Time / iteration limit reached",
+    2: "Infeasible",
+    3: "Unbounded",
+    4: "Other",
+}
 
 
 class ILPMealPlanner(MealPlanner):
@@ -18,6 +28,8 @@ class ILPMealPlanner(MealPlanner):
         The `ILPMealPlanner` class uses integer linear programming (ILP) to find a provably near-optimal meal plan, making it suitable as an oracle / ground-truth upper bound when comparing meal planning strategies
 
         The returned fitness score is recomputed post-solve using the same fitness function as the GA planner to ensure comparability, even though the ILP objective is a linear approximation of the GA formula
+
+        Uses SciPy's ``milp`` function (HiGHS backend) instead of PuLP/CBC
 
         :param meal_planning_environment: the meal planning environment containing recipes, pantry stock, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
@@ -52,7 +64,7 @@ class ILPMealPlanner(MealPlanner):
         msg: bool = True,
     ) -> tuple[list[int], float]:
         """
-        Solves the meal planning problem as an ILP to find a provably near-optimal plan
+        Solves the meal planning problem as an ILP using SciPy's milp (HiGHS backend) to find a provably near-optimal plan
 
         The ILP maximises a linear approximation of the GA fitness function. The pantry score term is linearised by normalising against the average total ingredient weight per plan slot across the recipe pool. All other penalty terms are exact linear equivalents of the GA objective
 
@@ -62,9 +74,9 @@ class ILPMealPlanner(MealPlanner):
         :type meals_per_day: int
         :param time_limit: maximum solver time in seconds; returns best incumbent if the limit is reached before proving optimality (default = 300)
         :type time_limit: int
-        :param mip_gap: relative MIP gap tolerance; solver stops as soon as the best integer solution is within this fraction of the LP relaxation bound, without needing to prove full optimality (default = 0.01, i.e. 1%)
+        :param mip_gap: relative MIP gap tolerance; solver stops as soon as the best integer solution is within this fraction of the LP relaxation bound (default = 0.01, i.e. 1%)
         :type mip_gap: float
-        :param msg: whether to print CBC solver output (default = True)
+        :param msg: whether to print HiGHS solver output (default = True)
         :type msg: bool
 
         :return: tuple of best meal plan as a list of recipe indices, fitness score computed using the exact GA formula
@@ -77,87 +89,203 @@ class ILPMealPlanner(MealPlanner):
         if n_recipes == 0:
             raise ValueError("No recipes available in the meal planning environment.")
 
-        D = range(num_days)
-        M = range(meals_per_day)
-        R = range(n_recipes)
+        pantry_names = [name for name, qty in self.pantry_stock.items() if qty > 0]
+        n_pantry = len(pantry_names)
 
-        prob = LpProblem("MealPlan_ILP", LpMaximize)
+        # --- Variable layout (flat vector) ---
+        # x[d, m, r] : binary   — num_days * meals_per_day * n_recipes vars
+        # f[i]        : continuous pantry usage — n_pantry vars
+        # cal_over[d] : continuous — num_days vars
+        # cal_under[d]: continuous — num_days vars
+        # prot_over[d]: continuous — num_days vars
+        # prot_under[d]: continuous — num_days vars
+        # budget_over : continuous — 1 var
+        n_x = num_days * meals_per_day * n_recipes
+        x_start = 0
+        f_start = n_x
+        cal_over_start = f_start + n_pantry
+        cal_under_start = cal_over_start + num_days
+        prot_over_start = cal_under_start + num_days
+        prot_under_start = prot_over_start + num_days
+        budget_over_idx = prot_under_start + num_days
+        n_vars = budget_over_idx + 1
 
-        # decision variables
-        # x[d, m, r] = 1 if recipe r is assigned to meal m on day d
-        x = {(d, m, r): LpVariable(f"x_{d}_{m}_{r}", cat="Binary") for d in D for m in M for r in R}
+        def x_idx(d: int, m: int, r: int) -> int:
+            return x_start + (d * meals_per_day + m) * n_recipes + r
 
-        # assignment constraints: each meal slot must be assigned exactly one recipe
-        for d in D:
-            for m in M:
-                prob += lpSum(x[d, m, r] for r in R) == 1, f"assign_{d}_{m}"
+        # --- Objective coefficients (milp minimises, so negate the maximisation terms) ---
+        c = np.zeros(n_vars)
 
-        # symmetry breaking: meal slots within a day are interchangeable in the objective,
-        # so enforce a non-decreasing recipe-index order to prune the branch-and-bound tree
-        for d in D:
-            for m in range(meals_per_day - 1):
-                prob += (
-                    lpSum(r * x[d, m, r] for r in R) <= lpSum(r * x[d, m + 1, r] for r in R),
-                    f"sym_break_{d}_{m}",
-                )
-
-        f, pantry_names = self._setup_pantry_vars(prob, x, D, M, R)
-        cal_over, cal_under, prot_over, prot_under = self._setup_dietary_vars(prob, x, D, M, R)
-        budget_over = self._setup_budget_var(prob, x, D, M, R, f, pantry_names)
-
-        # objectives
-        # pantry score: normalised by average total ingredient weight across all plan slots
+        # pantry score coefficient (same normalisation as the PuLP version)
         recipe_total_weights = [sum(recipe.ingredients.values()) for recipe in recipes]
         avg_weight_per_slot = sum(recipe_total_weights) / n_recipes
         avg_total_needed = max(avg_weight_per_slot * num_days * meals_per_day, 1.0)
         pantry_score_coeff = self.pantry_weight / avg_total_needed
 
-        # waste penalty: using pantry items reduces waste; coefficient is urgency normalised by
-        # max possible waste (total pantry stock × max urgency of 7)
+        # waste coefficient per pantry ingredient
         total_pantry_stock = max(sum(self.pantry_stock.get(name, 0.0) for name in pantry_names), 1.0)
-        waste_coeff: dict[str, float] = {
-            name: get_waste_penalty(1, self.days_until_expiry.get(name, 999))
-            * self.waste_weight
-            / (total_pantry_stock * 7)
-            for name in pantry_names
-        }
+        for i, name in enumerate(pantry_names):
+            waste_c = (
+                get_waste_penalty(1, self.days_until_expiry.get(name, 999))
+                * self.waste_weight
+                / (total_pantry_stock * 7)
+            )
+            c[f_start + i] = -(pantry_score_coeff + waste_c)  # negative because milp minimises
 
-        # dietary penalty: per-day deviation normalised by target, split equally between
-        # calories and protein, then averaged over days
+        # dietary penalty coefficients
         cal_target = max(self.preferences.calorie_target_per_day, 1.0)
         prot_target = max(self.preferences.protein_target_per_day, 1.0)
         dietary_cal_coeff = self.dietary_weight / (2 * num_days * cal_target)
         dietary_prot_coeff = self.dietary_weight / (2 * num_days * prot_target)
 
-        # budget penalty: overspend normalised by the weekly budget
+        c[cal_over_start : cal_over_start + num_days] = dietary_cal_coeff
+        c[cal_under_start : cal_under_start + num_days] = dietary_cal_coeff
+        c[prot_over_start : prot_over_start + num_days] = dietary_prot_coeff
+        c[prot_under_start : prot_under_start + num_days] = dietary_prot_coeff
+
+        # budget penalty coefficient
         budget_coeff = self.budget_weight / max(self.preferences.weekly_budget, 1.0)
+        c[budget_over_idx] = budget_coeff
 
-        prob += (
-            pantry_score_coeff * lpSum(f[name] for name in pantry_names)
-            + lpSum(waste_coeff.get(name, 0.0) * f[name] for name in pantry_names)
-            - dietary_cal_coeff * lpSum(cal_over[d] + cal_under[d] for d in D)
-            - dietary_prot_coeff * lpSum(prot_over[d] + prot_under[d] for d in D)
-            - budget_coeff * budget_over,
-            "objective",
-        )
+        # --- Build constraint matrix in COO format, then convert to CSC ---
+        a_rows: list[int] = []
+        a_cols: list[int] = []
+        a_data: list[float] = []
+        con_lb: list[float] = []
+        con_ub: list[float] = []
+        row = 0
 
-        # solve the ILP
-        solver = PULP_CBC_CMD(timeLimit=time_limit, gapRel=mip_gap, msg=1 if msg else 0)
-        prob.solve(solver)
-        self.solve_status = prob.status
+        def _add(r: int, col: int, val: float) -> None:
+            a_rows.append(r)
+            a_cols.append(col)
+            a_data.append(val)
 
-        # extract solution
+        # 1. Assignment: exactly one recipe per meal slot — sum_r x[d,m,r] == 1
+        for d in range(num_days):
+            for m in range(meals_per_day):
+                for r in range(n_recipes):
+                    _add(row, x_idx(d, m, r), 1.0)
+                con_lb.append(1.0)
+                con_ub.append(1.0)
+                row += 1
+
+        # 2. Symmetry breaking within a day: enforces non-decreasing recipe index order
+        #    across meal slots to prune the branch-and-bound tree
+        #    sum_r r*x[d,m,r] <= sum_r r*x[d,m+1,r]  →  sum_r r*(x[d,m,r] - x[d,m+1,r]) <= 0
+        for d in range(num_days):
+            for m in range(meals_per_day - 1):
+                for r in range(n_recipes):
+                    _add(row, x_idx(d, m, r), float(r))
+                    _add(row, x_idx(d, m + 1, r), -float(r))
+                con_lb.append(-np.inf)
+                con_ub.append(0.0)
+                row += 1
+
+        # 3. Pantry usability: f[i] <= pantry consumption before expiry
+        #    f[name] - sum_{d<days_exp, m, r using name} x[d,m,r]*qty <= 0
+        #    (upper bound on f[name] via variable bounds handles the pantry_cap constraint)
+        ingredient_to_recipes: dict[str, list[tuple[int, float]]] = {}
+        for r in range(n_recipes):
+            for ing, qty in recipes[r].ingredients.items():
+                if qty > 0:
+                    ingredient_to_recipes.setdefault(ing, []).append((r, float(qty)))
+
+        for i, name in enumerate(pantry_names):
+            _add(row, f_start + i, 1.0)
+            days_exp = self.days_until_expiry.get(name, 999)
+            for d in range(num_days):
+                if d >= days_exp:
+                    continue
+                for m in range(meals_per_day):
+                    for r, qty in ingredient_to_recipes.get(name, []):
+                        _add(row, x_idx(d, m, r), -qty)
+            con_lb.append(-np.inf)
+            con_ub.append(0.0)
+            row += 1
+
+        # 4. Dietary calorie deviation: cal_over[d] - cal_under[d] == daily_cal - cal_target
+        #    Rearranged: cal_over[d] - cal_under[d] - sum_{m,r} x[d,m,r]*cal[r] == -cal_target
+        for d in range(num_days):
+            _add(row, cal_over_start + d, 1.0)
+            _add(row, cal_under_start + d, -1.0)
+            for m in range(meals_per_day):
+                for r in range(n_recipes):
+                    if self.recipe_calories[r]:
+                        _add(row, x_idx(d, m, r), -self.recipe_calories[r])
+            rhs = -self.preferences.calorie_target_per_day
+            con_lb.append(rhs)
+            con_ub.append(rhs)
+            row += 1
+
+        # 5. Dietary protein deviation: prot_over[d] - prot_under[d] == daily_prot - prot_target
+        for d in range(num_days):
+            _add(row, prot_over_start + d, 1.0)
+            _add(row, prot_under_start + d, -1.0)
+            for m in range(meals_per_day):
+                for r in range(n_recipes):
+                    if self.recipe_protein[r]:
+                        _add(row, x_idx(d, m, r), -self.recipe_protein[r])
+            rhs = -self.preferences.protein_target_per_day
+            con_lb.append(rhs)
+            con_ub.append(rhs)
+            row += 1
+
+        # 6. Budget overrun: budget_over >= full_cost - pantry_savings - weekly_budget
+        #    budget_over - sum_{d,m,r} x[d,m,r]*cost[r] + sum_i f[i]*unit_cost[i] >= -weekly_budget
+        recipe_full_costs = [
+            sum(qty * self.ingredient_costs.get(ing, 1.0) / 100.0 for ing, qty in recipe.ingredients.items())
+            for recipe in recipes
+        ]
+        _add(row, budget_over_idx, 1.0)
+        for d in range(num_days):
+            for m in range(meals_per_day):
+                for r in range(n_recipes):
+                    if recipe_full_costs[r]:
+                        _add(row, x_idx(d, m, r), -recipe_full_costs[r])
+        for i, name in enumerate(pantry_names):
+            cost_per_unit = self.ingredient_costs.get(name, 1.0) / 100.0
+            if cost_per_unit:
+                _add(row, f_start + i, cost_per_unit)
+        con_lb.append(-self.preferences.weekly_budget)
+        con_ub.append(np.inf)
+        row += 1
+
+        # --- Assemble sparse constraint matrix ---
+        n_constraints = row
+        A = csc_matrix((a_data, (a_rows, a_cols)), shape=(n_constraints, n_vars))
+        constraints = LinearConstraint(A, np.array(con_lb), np.array(con_ub))  # type: ignore[arg-type]
+
+        # --- Variable bounds ---
+        lb_vars = np.zeros(n_vars)  # all variables >= 0
+        ub_vars = np.full(n_vars, np.inf)
+        ub_vars[x_start:f_start] = 1.0  # binary variables in [0, 1]
+        for i, name in enumerate(pantry_names):
+            ub_vars[f_start + i] = self.pantry_stock[name]  # pantry cap per ingredient
+        bounds = Bounds(lb=lb_vars, ub=ub_vars)  # type: ignore[arg-type]
+
+        # --- Integrality: 1 = integer, 0 = continuous ---
+        integrality = np.zeros(n_vars)
+        integrality[x_start:f_start] = 1.0  # x variables are binary
+
+        # --- Solve ---
+        options: dict = {
+            "time_limit": float(time_limit),
+            "mip_rel_gap": mip_gap,
+            "disp": msg,
+        }
+        result = milp(c, constraints=constraints, integrality=integrality, bounds=bounds, options=options)
+        self.solve_status = result.status
+
+        # --- Extract solution ---
+        sol = result.x if result.x is not None else np.zeros(n_vars)
         meal_plan: list[int] = []
-        for d in D:
-            for m in M:
-                chosen = next(
-                    (r for r in R if value(x[d, m, r]) is not None and value(x[d, m, r]) > 0.5),
-                    0,
-                )
+        for d in range(num_days):
+            for m in range(meals_per_day):
+                x_vals = [sol[x_idx(d, m, r)] for r in range(n_recipes)]
+                chosen = int(np.argmax(x_vals))
                 meal_plan.append(chosen)
 
         self.best_meal_plan = meal_plan
-
         self.best_fitness = fitness_score(
             recipe_indices=meal_plan,
             recipes=self.recipes,
@@ -177,120 +305,12 @@ class ILPMealPlanner(MealPlanner):
 
         return meal_plan, self.best_fitness
 
-    def _setup_pantry_vars(
-        self,
-        prob: LpProblem,
-        x: dict,
-        days: range,
-        meals: range,
-        recipes_range: range,
-    ) -> tuple[dict, list[str]]:
+    def get_solve_status(self) -> str:
         """
-        Adds pantry utilisation variables ``f[name]`` to the ILP, bounded by pantry stock
-        and the total consumption of each ingredient on days before it expires
+        Returns a string describing the status of the last ILP solve attempt
 
-        :return: tuple of (f variable dict keyed by ingredient name, list of pantry ingredient names)
-        :rtype: tuple[dict, list[str]]
+        :return: status message
+        :rtype: str
         """
 
-        pantry_names = [name for name, qty in self.pantry_stock.items() if qty > 0]
-
-        f = {name: LpVariable(f"f_{i}", lowBound=0.0) for i, name in enumerate(pantry_names)}
-
-        # pre-build a sparse map from ingredient name to (recipe_index, quantity) pairs,
-        # so pantry constraints only iterate over recipes that actually use each ingredient
-        ingredient_to_recipes: dict[str, list[tuple[int, float]]] = {}
-        for r in recipes_range:
-            for ing, qty in self.recipes[r].ingredients.items():
-                if qty > 0:
-                    ingredient_to_recipes.setdefault(ing, []).append((r, qty))
-
-        for i, name in enumerate(pantry_names):
-            prob += f[name] <= self.pantry_stock[name], f"pantry_cap_{i}"
-
-            days_exp = self.days_until_expiry.get(name, 999)
-            usable_days = [d for d in days if d < days_exp]
-
-            if usable_days:
-                prob += (
-                    f[name]
-                    <= lpSum(
-                        x[d, m, r] * qty
-                        for d in usable_days
-                        for m in meals
-                        for r, qty in ingredient_to_recipes.get(name, [])
-                    ),
-                    f"pantry_use_{i}",
-                )
-            else:
-                prob += f[name] <= 0, f"pantry_expired_{i}"
-
-        return f, pantry_names
-
-    def _setup_dietary_vars(
-        self,
-        prob: LpProblem,
-        x: dict,
-        days: range,
-        meals: range,
-        recipes_range: range,
-    ) -> tuple[dict, dict, dict, dict]:
-        """
-        Adds daily calorie and protein deviation variables to the ILP to linearise the
-        absolute-value terms in the dietary penalty
-
-        :return: tuple of (cal_over, cal_under, prot_over, prot_under) dicts keyed by day index
-        :rtype: tuple[dict, dict, dict, dict]
-        """
-
-        cal_over = {d: LpVariable(f"cal_over_{d}", lowBound=0.0) for d in days}
-        cal_under = {d: LpVariable(f"cal_under_{d}", lowBound=0.0) for d in days}
-        prot_over = {d: LpVariable(f"prot_over_{d}", lowBound=0.0) for d in days}
-        prot_under = {d: LpVariable(f"prot_under_{d}", lowBound=0.0) for d in days}
-
-        for d in days:
-            daily_cal = lpSum(x[d, m, r] * self.recipe_calories[r] for m in meals for r in recipes_range)
-            daily_prot = lpSum(x[d, m, r] * self.recipe_protein[r] for m in meals for r in recipes_range)
-            prob += (
-                cal_over[d] - cal_under[d] == daily_cal - self.preferences.calorie_target_per_day,
-                f"cal_dev_{d}",
-            )
-            prob += (
-                prot_over[d] - prot_under[d] == daily_prot - self.preferences.protein_target_per_day,
-                f"prot_dev_{d}",
-            )
-
-        return cal_over, cal_under, prot_over, prot_under
-
-    def _setup_budget_var(
-        self,
-        prob: LpProblem,
-        x: dict,
-        days: range,
-        meals: range,
-        recipes_range: range,
-        f: dict,
-        pantry_names: list[str],
-    ) -> LpVariable:
-        """
-        Adds the budget overrun variable and constraint to the ILP
-
-        :return: ``budget_over`` variable (zero when within budget, positive otherwise)
-        :rtype: LpVariable
-        """
-
-        recipe_full_costs = [
-            sum(qty * self.ingredient_costs.get(ing, 1.0) / 100.0 for ing, qty in recipe.ingredients.items())
-            for recipe in self.recipes
-        ]
-
-        full_cost_expr = lpSum(x[d, m, r] * recipe_full_costs[r] for d in days for m in meals for r in recipes_range)
-        pantry_savings = lpSum(f[name] * self.ingredient_costs.get(name, 1.0) / 100.0 for name in pantry_names)
-
-        budget_over = LpVariable("budget_over", lowBound=0.0)
-        prob += (
-            budget_over >= full_cost_expr - pantry_savings - self.preferences.weekly_budget,
-            "budget_constr",
-        )
-
-        return budget_over
+        return HIGHS_STATUS.get(self.solve_status, "Unknown")

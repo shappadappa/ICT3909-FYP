@@ -166,6 +166,6 @@ class MealPlanner:
                 }
             )
 
-        meal_plan_df = pd.DataFrame(meal_plan)
+        meal_plan_df = pd.DataFrame(meal_plan, index=[f"Day {d['Day']}" for d in meal_plan]).drop(columns=["Day"])
 
         return meal_plan_df
