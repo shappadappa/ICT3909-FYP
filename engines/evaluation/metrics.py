@@ -79,7 +79,7 @@ def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_
     """
     Calculates the food waste score for a given meal plan and pantry
 
-    Defined as the total grams of pantry stock that will expire within the planning week but are not consumed by the meal plan, divided by total pantry grams available.
+    Defined as the total grams of pantry stock that will expire within the planning week but are not consumed by the meal plan, divided by total pantry grams available
 
     The result is in [0, 1] and lower is better
 
@@ -90,7 +90,7 @@ def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_
     :param current_date: the current date used to determine days until expiry
     :type current_date: datetime
 
-    :return: expiry waste score as a float between 0 and 1 (lower is better)
+    :return: food waste score as a float between 0 and 1 (lower is better)
     :rtype: float
     """
 

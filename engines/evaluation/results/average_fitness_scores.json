@@ -1,6 +1,18 @@
 {
-    "RandomMealPlanner": 0.0,
-    "GAMealPlanner": -0.23520828590244458,
-    "ILPMealPlanner": -0.21098647609181143,
-    "LLMMealPlanner": 0.0
+    "RandomMealPlanner": {
+        "mean": 0.0,
+        "std": 0.0
+    },
+    "GAMealPlanner": {
+        "mean": -0.23520828590244458,
+        "std": 0.08637586993550089
+    },
+    "ILPMealPlanner": {
+        "mean": -0.21098647609181143,
+        "std": 0.10390139123832277
+    },
+    "LLMMealPlanner": {
+        "mean": 0.0,
+        "std": 0.0
+    }
 }
