@@ -1,13 +1,13 @@
-Use Claude to generate JSON files
-
-Evaluation using an LLM, added as a baseline against my system
-
 Claude cowork to combine pantries and generate a variety, setting parameters and allowing it to create pantries (synthetic data)
 
-- data supplementation: adding more recipes like replacing all "Pasta" dishes with "Gluten-free Pasta" dishes, or replacing all "Milk" with "Almond Milk" etc. to create more data for training and testing, and to test the generalisation of the model
-
-https://zenodo.org/records/7308053 - consider for evaluations
-
-Consider intergarting an ingredient costs dataset
+Consider integrating an ingredient costs dataset
 
 should re run every single notebook before submission
+
+1. Fix ILP meal planner (and testing notebook)
+2. Fix LLM meal planner
+3. Add different pantry scenarios to evaluation notebook
+4. Run evaluation notebook and print metrics for all planners
+5. Write up evaluation section in the report
+6. Write up conclusion in the report
+7. Write up abstract in the report
