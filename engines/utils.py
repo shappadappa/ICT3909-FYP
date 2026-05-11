@@ -207,6 +207,7 @@ def filter_and_add_recipes(
     pantry_ingredient_names: list[str],
     num_filtered_recipes: int,
     num_extra_recipes: int,
+    user_preferences: UserPreferences = make_preferences(),
 ) -> list[Recipe]:
     """
     Filters the recipe list to those that can be made with the pantry ingredients, then adds a few random extra recipes to increase variety
@@ -219,24 +220,43 @@ def filter_and_add_recipes(
     :type num_filtered_recipes: int
     :param num_extra_recipes: number of random extra recipes to add for variety
     :type num_extra_recipes: int
+    :param user_preferences: user preferences to filter recipes by dietary tags (default = no restrictions)
+    :type user_preferences: UserPreferences
 
     :return: filtered and augmented list of recipes
     :rtype: list[Recipe]
     """
 
+    required_tags: set[DietaryTag] = set()
+
+    if user_preferences.is_vegan:
+        required_tags.add(DietaryTag.VEGAN)
+    if user_preferences.is_vegetarian:
+        required_tags.add(DietaryTag.VEGETARIAN)
+    if user_preferences.requires_gluten_free:
+        required_tags.add(DietaryTag.GLUTEN_FREE)
+    if user_preferences.requires_lactose_free:
+        required_tags.add(DietaryTag.LACTOSE_FREE)
+
+    def satisfies_dietary_requirements(recipe: Recipe) -> bool:
+        return required_tags.issubset(set(recipe.dietary_tags))
+
+    eligible_recipes = [(i, recipe) for i, recipe in enumerate(all_recipes) if satisfies_dietary_requirements(recipe)]
+
     unique_ingredient_names = set(pantry_ingredient_names)
 
     filtered_recipe_indices = []
 
-    for i, recipe in enumerate(all_recipes):
+    for i, recipe in eligible_recipes:
         if any(ingredient_name in unique_ingredient_names for ingredient_name in recipe.ingredients.keys()):
             filtered_recipe_indices.append(i)
 
     if len(filtered_recipe_indices) > num_filtered_recipes:
         filtered_recipe_indices = sample(filtered_recipe_indices, num_filtered_recipes)
 
+    eligible_recipe_indices = {i for i, _ in eligible_recipes}
     sampled_recipe_indices = sample(
-        [i for i in range(len(all_recipes)) if i not in filtered_recipe_indices], num_extra_recipes
+        [i for i in eligible_recipe_indices if i not in filtered_recipe_indices], num_extra_recipes
     )
 
     assert len(set(sampled_recipe_indices).intersection(set(filtered_recipe_indices))) == 0, (
