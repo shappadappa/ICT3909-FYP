@@ -1,0 +1,81 @@
+\begin{longtblr}[
+    caption = {Metric scores for Scenario 3: Overcrowded Pantry.},
+    label   = {tab:scenario3_results},
+]{
+    width   = \textwidth,
+    colspec = {
+        X[m,l]
+        Q[m,c] Q[m,c]
+        Q[m,c]
+        Q[m,c]
+        Q[m,c]
+    },
+    hlines,
+    hline{3} = {2pt},
+    vlines,
+    vline{2,4,6,8} = {2pt},
+    cells   = {font=\footnotesize},
+    row{1,2} = {font=\bfseries\footnotesize},
+}
+    \SetCell[r=2]{m,l} Metric &
+    \SetCell[c=2]{c} Random &  &
+    \gls{llm} &
+    \gls{ilp} &
+    \gls{ga} \\
+    
+     & $\mu$ & $\sigma$ &  &  &  \\
+    
+    Ingredient Utilisation \hfill $\uparrow$ &
+    0.1035 & 0.0381 &
+    0.0819 &
+    \textbf{0.1891} &
+    0.1131 \\
+    
+    Expiry-Weighted Utilisation \hfill $\uparrow$ &
+    0.0535 & 0.0284 &
+    0.0385 &
+    \textbf{0.1080} &
+    0.0519 \\
+    
+    Food Waste \hfill $\downarrow$ &
+    0.3861 & 0.0253 &
+    0.4131 &
+    \textbf{0.3291} &
+    0.3708 \\
+    
+    Dietary Compliance \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Nutritional Target \hfill $\uparrow$ &
+    0.0000 & 0.0000 &
+    0.4839 &
+    \textbf{0.9598} &
+    0.9487 \\
+    
+    Budget Efficiency \hfill $\uparrow$ &
+    0.6333 & 0.1739 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Pantry Coverage \hfill $\uparrow$ &
+    0.0564 & 0.0186 &
+    0.1166 &
+    \textbf{0.1554} &
+    0.1545 \\
+    
+    Variety \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} &
+    0.5714 &
+    0.3333 \\
+    
+    Runtime (seconds) \hfill $\downarrow$ &
+    \textbf{0.0018} & 0.0011 &
+    3.4535 &
+    600.1352 &
+    13.5393 \\
+\end{longtblr}

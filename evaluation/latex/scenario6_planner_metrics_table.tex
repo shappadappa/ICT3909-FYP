@@ -1,0 +1,81 @@
+\begin{longtblr}[
+    caption = {Metric scores for Scenario 6: High Nutritional Targets.},
+    label   = {tab:scenario6_results},
+]{
+    width   = \textwidth,
+    colspec = {
+        X[m,l]
+        Q[m,c] Q[m,c]
+        Q[m,c]
+        Q[m,c]
+        Q[m,c]
+    },
+    hlines,
+    hline{3} = {2pt},
+    vlines,
+    vline{2,4,6,8} = {2pt},
+    cells   = {font=\footnotesize},
+    row{1,2} = {font=\bfseries\footnotesize},
+}
+    \SetCell[r=2]{m,l} Metric &
+    \SetCell[c=2]{c} Random &  &
+    \gls{llm} &
+    \gls{ilp} &
+    \gls{ga} \\
+    
+     & $\mu$ & $\sigma$ &  &  &  \\
+    
+    Ingredient Utilisation \hfill $\uparrow$ &
+    0.0701 & 0.0487 &
+    0.0907 &
+    \textbf{0.3613} &
+    0.2673 \\
+    
+    Expiry-Weighted Utilisation \hfill $\uparrow$ &
+    0.0379 & 0.0329 &
+    0.0616 &
+    \textbf{0.2813} &
+    0.2015 \\
+    
+    Food Waste \hfill $\downarrow$ &
+    0.5421 & 0.0181 &
+    0.5512 &
+    \textbf{0.3888} &
+    0.4221 \\
+    
+    Dietary Compliance \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Nutritional Target \hfill $\uparrow$ &
+    0.3019 & 0.1641 &
+    0.3399 &
+    0.9071 &
+    \textbf{0.9163} \\
+    
+    Budget Efficiency \hfill $\uparrow$ &
+    0.6622 & 0.1679 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Pantry Coverage \hfill $\uparrow$ &
+    0.0365 & 0.0254 &
+    0.0700 &
+    \textbf{0.1856} &
+    0.1534 \\
+    
+    Variety \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    0.1429 &
+    0.5714 &
+    0.5238 \\
+    
+    Runtime (seconds) \hfill $\downarrow$ &
+    \textbf{0.0020} & 0.0010 &
+    6.7828 &
+    600.0548 &
+    11.8673 \\
+\end{longtblr}

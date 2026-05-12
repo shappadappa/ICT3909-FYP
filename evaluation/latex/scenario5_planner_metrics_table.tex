@@ -1,0 +1,81 @@
+\begin{longtblr}[
+    caption = {Metric scores for Scenario 5: Dietary Restrictions (Lactose-Free + Vegetarian).},
+    label   = {tab:scenario5_results},
+]{
+    width   = \textwidth,
+    colspec = {
+        X[m,l]
+        Q[m,c] Q[m,c]
+        Q[m,c]
+        Q[m,c]
+        Q[m,c]
+    },
+    hlines,
+    hline{3} = {2pt},
+    vlines,
+    vline{2,4,6,8} = {2pt},
+    cells   = {font=\footnotesize},
+    row{1,2} = {font=\bfseries\footnotesize},
+}
+    \SetCell[r=2]{m,l} Metric &
+    \SetCell[c=2]{c} Random &  &
+    \gls{llm} &
+    \gls{ilp} &
+    \gls{ga} \\
+    
+     & $\mu$ & $\sigma$ &  &  &  \\
+    
+    Ingredient Utilisation \hfill $\uparrow$ &
+    0.0863 & 0.0340 &
+    0.0740 &
+    \textbf{0.3543} &
+    0.2084 \\
+    
+    Expiry-Weighted Utilisation \hfill $\uparrow$ &
+    0.0603 & 0.0358 &
+    0.0527 &
+    \textbf{0.3987} &
+    0.1536 \\
+    
+    Food Waste \hfill $\downarrow$ &
+    0.4502 & 0.0183 &
+    0.4491 &
+    \textbf{0.2386} &
+    0.4124 \\
+    
+    Dietary Compliance \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Nutritional Target \hfill $\uparrow$ &
+    0.2408 & 0.1951 &
+    0.4394 &
+    0.9526 &
+    \textbf{0.9634} \\
+    
+    Budget Efficiency \hfill $\uparrow$ &
+    0.8780 & 0.2754 &
+    \textbf{1.0000} &
+    \textbf{1.0000} &
+    \textbf{1.0000} \\
+    
+    Pantry Coverage \hfill $\uparrow$ &
+    0.0387 & 0.0182 &
+    0.0508 &
+    \textbf{0.1024} &
+    0.0965 \\
+    
+    Variety \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} &
+    0.5238 &
+    0.6190 \\
+    
+    Runtime (seconds) \hfill $\downarrow$ &
+    \textbf{0.0012} & 0.0013 &
+    3.5542 &
+    600.0729 &
+    13.4187 \\
+\end{longtblr}

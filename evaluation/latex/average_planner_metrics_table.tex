@@ -1,0 +1,81 @@
+\begin{longtblr}[
+    caption = {Mean (\(\mu\)) and standard deviation (\(\sigma\)) of metric scores across all six evaluation scenarios.},
+    label   = {tab:overall_results},
+]{
+    width   = \textwidth,
+    colspec = {
+        X[m,l]
+        Q[m,c] Q[m,c]
+        Q[m,c] Q[m,c]
+        Q[m,c] Q[m,c]
+        Q[m,c] Q[m,c]
+    },
+    hlines,
+    hline{3} = {2pt},
+    vlines,
+    vline{2,4,6,8} = {2pt},
+    cells   = {font=\scriptsize},
+    row{1,2} = {font=\bfseries\footnotesize},
+}
+    \SetCell[r=2]{m,l} Metric &
+    \SetCell[c=2]{c} Random & &
+    \SetCell[c=2]{c} \gls{llm} & &
+    \SetCell[c=2]{c} \gls{ilp} & &
+    \SetCell[c=2]{c} \gls{ga} & \\
+    
+    & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+    
+    Ingredient Utilisation \hfill $\uparrow$ &
+    0.1515 & 0.1292 &
+    0.1132 & 0.0716 &
+    \textbf{0.3018} & 0.0582 &
+    0.1939 & 0.0522 \\
+    
+    Expiry-Weighted Utilisation \hfill $\uparrow$ &
+    0.1344 & 0.1687 &
+    0.0761 & 0.0663 &
+    \textbf{0.2576} & 0.0861 &
+    0.1562 & 0.0684 \\
+    
+    Food Waste \hfill $\downarrow$ &
+    0.4246 & 0.1541 &
+    0.4665 & 0.1071 &
+    \textbf{0.3428} & 0.0750 &
+    0.4132 & 0.0613 \\
+    
+    Dietary Compliance \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} & 0.0000 &
+    \textbf{1.0000} & 0.0000 \\
+    
+    Nutritional Target \hfill $\uparrow$ &
+    0.1792 & 0.1368 &
+    0.4090 & 0.0906 &
+    \textbf{0.9550} & 0.0228 &
+    0.9263 & 0.0453 \\
+    
+    Budget Efficiency \hfill $\uparrow$ &
+    0.7046 & 0.2597 &
+    0.9451 & 0.1227 &
+    \textbf{1.0000} & 0.0000 &
+    0.9990 & 0.0021 \\
+    
+    Pantry Coverage \hfill $\uparrow$ &
+    0.0445 & 0.0106 &
+    0.0710 & 0.0212 &
+    \textbf{0.1208} & 0.0421 &
+    0.1133 & 0.0345 \\
+    
+    Variety \hfill $\uparrow$ &
+    \textbf{1.0000} & 0.0000 &
+    0.7460 & 0.3633 &
+    0.4683 & 0.1147 &
+    0.4286 & 0.1672 \\
+    
+    Runtime (seconds) \hfill $\downarrow$ &
+    \textbf{0.0018} & 0.0003 &
+    5.7689 & 3.0807 &
+    541.6885 & 130.5730 &
+    12.2622 & 1.5211 \\
+\end{longtblr}
