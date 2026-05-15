@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from random import sample
+from random import sample, seed
 
 from models import NutritionalInformation, Pantry, PantryIngredient, Recipe, UserPreferences
 from models.DietaryTag import DietaryTag
@@ -208,6 +208,7 @@ def filter_and_add_recipes(
     num_filtered_recipes: int,
     num_extra_recipes: int,
     user_preferences: UserPreferences = make_preferences(),
+    random_seed: int | None = None,
 ) -> list[Recipe]:
     """
     Filters the recipe list to those that can be made with the pantry ingredients, then adds a few random extra recipes to increase variety
@@ -222,10 +223,15 @@ def filter_and_add_recipes(
     :type num_extra_recipes: int
     :param user_preferences: user preferences to filter recipes by dietary tags (default = no restrictions)
     :type user_preferences: UserPreferences
+    :param random_seed: optional random seed for reproducibility
+    :type random_seed: int | None
 
     :return: filtered and augmented list of recipes
     :rtype: list[Recipe]
     """
+
+    if random_seed is not None:
+        seed(random_seed)
 
     required_tags: set[DietaryTag] = set()
 
