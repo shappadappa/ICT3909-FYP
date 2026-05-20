@@ -163,26 +163,34 @@ def generate_meal_plan(request: MealPlanRequest):
     meal_planning_environment = MealPlanningEnvironment(preferences=user_preferences, pantry=pantry, ingredient_costs={ingredient["name"]: random.random() for ingredient in INGREDIENTS})
     meal_planning_environment.load_recipes_from_json(str(DATA_DIR / "supplemented_structured_recipes.json"))
 
-    planner = GAMealPlanner(meal_planning_environment=meal_planning_environment)
-    best_plan_indices, fitness = ga_planner.generate_meal_plan(
-        num_days=request.num_days,
-        meals_per_day=request.meals_per_day,
-        num_generations=request.num_generations,
-        generation_print_interval=None,
-    ) # TODO pass best params here
+    # planner = GAMealPlanner(meal_planning_environment=meal_planning_environment)
+    # best_plan_indices, fitness = ga_planner.generate_meal_plan(
+    #     num_days=request.num_days,
+    #     meals_per_day=request.meals_per_day,
+    #     num_generations=request.num_generations,
+    #     generation_print_interval=None,
+    # ) # TODO pass best params here
+
+    print(meal_planning_environment)
+
+    planner = RandomMealPlanner(meal_planning_environment=meal_planning_environment)
+    best_plan_indices, fitness = planner.generate_meal_plan()
+
+    num_days = request.num_days
+    meals_per_day = request.meals_per_day
 
     meal_plan_names = [
-        [meal_planning_environment.recipes[idx].name for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day]]
-        for day in range(request.num_days)
+        [meal_planning_environment.recipes[idx].name for idx in best_plan_indices[day * meals_per_day:(day + 1) * meals_per_day]]
+        for day in range(num_days)
     ]
 
     calories_per_day = [
-        sum(planner.recipe_calories[idx] for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day])
-        for day in range(request.num_days)
+        sum(meal_planning_environment.recipes[idx].nutritional_information.calories or 0.0 for idx in best_plan_indices[day * meals_per_day:(day + 1) * meals_per_day])
+        for day in range(num_days)
     ]
     protein_per_day = [
-        sum(planner.recipe_protein[idx] for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day])
-        for day in range(request.num_days)
+        sum(meal_planning_environment.recipes[idx].nutritional_information.protein or 0.0 for idx in best_plan_indices[day * meals_per_day:(day + 1) * meals_per_day])
+        for day in range(num_days)
     ]
 
     shopping_df, _, estimated_cost = planner.get_shopping_list()

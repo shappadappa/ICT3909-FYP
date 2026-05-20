@@ -32,7 +32,7 @@ const fetchMeals = async () => {
 		}));
 
 		const RECIPE_NOT_FOUND: Recipe = {
-			id: "",
+			id: "RECIPE_NOT_FOUND",
 			name: "Recipe not found",
 			ingredients: [],
 			dietaryTags: [],
@@ -95,4 +95,9 @@ await fetchPantry();
 	if(errorOccured) {
 		window.showSnackbar("Something went wrong. Please try again later.", "error");
 	}
+
+	window.updateMealPlan = async (breakfastIds, lunchIds, dinnerIds) => {
+		// await fetchMeals(breakfastIds, lunchIds, dinnerIds);
+		window.showSnackbar("Meal plan updated!", "success");
+	};
 </script>

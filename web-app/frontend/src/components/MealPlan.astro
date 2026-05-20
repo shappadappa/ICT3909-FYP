@@ -126,8 +126,6 @@ const { breakfast, lunch, dinner } = Astro.props;
 <script define:vars={{ breakfast, lunch, dinner }}>
 	document.querySelectorAll(".recipe-card").forEach((card) => {
 		card.addEventListener("click", () => {
-			// make the corresponding recipemodal visible
-
 			const recipeId = card.getAttribute("data-recipe-id");
 
 			window.openModal(recipeId);
