@@ -1,62 +1,22 @@
 ---
 import { MealPlan, Pantry } from "../components";
 import Layout from "../layouts/Layout.astro";
-import { mockBreakfastMealIds, mockLunchMealIds, mockDinnerMealIds, mockPantryIngredients } from "../mock.const";
-import type { Ingredient, Recipe } from "../types";
+import { mockPantryIngredients } from "../mock.const";
+import type { Ingredient } from "../types";
 
-let breakfastRecipes: Recipe[] = [];
-let lunchRecipes: Recipe[] = [];
-let dinnerRecipes: Recipe[] = [];
 let pantryIngredients: Ingredient[] = [];
 
 let errorOccured = false;
 
-const fetchMeals = async () => {
+const fetchPantry = async () => {
 	try {
-		const uniqueRecipeIds = Array.from(new Set([...mockBreakfastMealIds, ...mockLunchMealIds, ...mockDinnerMealIds]));
-		const params = new URLSearchParams(uniqueRecipeIds.map((id) => ["recipe_ids", id]));
-
-		const res = await fetch(`http://localhost:8000/api/recipes?${params}`);
-
-		if (!res.ok) {
-			errorOccured = true;
-			return;
-		}
-
-		const rawRecipes = await res.json();
-
-		const recipes: Recipe[] = rawRecipes.map((recipe: any): Recipe => ({
-			...recipe,
-			dietaryTags: recipe.dietary_tags,
-			nutritionalInformation: recipe.nutritional_information,
-		}));
-
-		const RECIPE_NOT_FOUND: Recipe = {
-			id: "RECIPE_NOT_FOUND",
-			name: "Recipe not found",
-			ingredients: [],
-			dietaryTags: [],
-			instructions: [],
-			nutritionalInformation: null as any,
-		};
-
-		breakfastRecipes = mockBreakfastMealIds.map((id) => recipes.find((recipe) => recipe.id === id) ?? RECIPE_NOT_FOUND);
-		lunchRecipes = mockLunchMealIds.map((id) => recipes.find((recipe) => recipe.id === id) ?? RECIPE_NOT_FOUND);
-		dinnerRecipes = mockDinnerMealIds.map((id) => recipes.find((recipe) => recipe.id === id) ?? RECIPE_NOT_FOUND);
-	} catch (err) {
-		errorOccured = true;
-	}
-};
-
-const fetchPantry = async() => {
-	try {
-		console.log(mockPantryIngredients)
+		console.log(mockPantryIngredients);
 		const uniqueIngredientIds = Array.from(new Set(mockPantryIngredients.map((ingredient) => ingredient.id)));
-		console.log(uniqueIngredientIds)
+		console.log(uniqueIngredientIds);
 
 		const params = new URLSearchParams(uniqueIngredientIds.map((id) => ["ingredient_ids", id]));
 
-		console.log(params)
+		console.log(params);
 		const res = await fetch(`http://localhost:8000/api/ingredients?${params}`);
 
 		if (!res.ok) {
@@ -78,26 +38,20 @@ const fetchPantry = async() => {
 	} catch (err) {
 		errorOccured = true;
 	}
-}
+};
 
-await fetchMeals();
 await fetchPantry();
 ---
 
 <Layout>
 	<main class="bg-cream flex h-[calc(100vh-69px)] gap-5 p-6">
-		<MealPlan breakfast={breakfastRecipes} lunch={lunchRecipes} dinner={dinnerRecipes} />
+		<MealPlan client:load />
 		<Pantry pantryIngredients={pantryIngredients} />
 	</main>
 </Layout>
 
-<script define:vars={{errorOccured}}>
-	if(errorOccured) {
+<script define:vars={{ errorOccured }}>
+	if (errorOccured) {
 		window.showSnackbar("Something went wrong. Please try again later.", "error");
 	}
-
-	window.updateMealPlan = async (breakfastIds, lunchIds, dinnerIds) => {
-		// await fetchMeals(breakfastIds, lunchIds, dinnerIds);
-		window.showSnackbar("Meal plan updated!", "success");
-	};
 </script>

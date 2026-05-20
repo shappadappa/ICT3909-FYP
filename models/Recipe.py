@@ -10,6 +10,7 @@ class Recipe:
         ingredients: dict[str, float],
         dietary_tags: list[DietaryTag],
         instructions: list[str] = [],
+        id: str | None = None,
     ):
         """
         The `Recipe` class represents a recipe with its required ingredients and dietary properties.
@@ -23,12 +24,15 @@ class Recipe:
         :type dietary_tags: list[DietaryTag]
         :param instructions: list of step-by-step instructions for preparing the recipe (optional)
         :type instructions: list[str]
+        :param id: unique identifier for the recipe (optional)
+        :type id: str | None
         """
 
         self.name = name
         self.ingredients = ingredients
         self.dietary_tags = dietary_tags
         self.instructions = instructions
+        self.id = id
 
         self.is_vegan = DietaryTag.VEGAN in dietary_tags
         self.is_vegetarian = DietaryTag.VEGETARIAN in dietary_tags or self.is_vegan

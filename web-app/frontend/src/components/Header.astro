@@ -17,8 +17,9 @@ const weekEnd = new Date(currentDate.setDate(diff + 6)).toLocaleDateString("en-u
 			>{weekStart} - {weekEnd}</span
 		>
 		<button>
-			<button id="generate-meal-plan-btn"
-				class="bg-sage-600 hover:bg-sage-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+			<button
+				id="generate-meal-plan-btn"
+				class="bg-sage-600 hover:bg-sage-800 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
 				>+ Generate Meal Plan</button
 			>
 		</button>
@@ -30,57 +31,51 @@ const weekEnd = new Date(currentDate.setDate(diff + 6)).toLocaleDateString("en-u
 	const btn = document.getElementById("generate-meal-plan-btn") as HTMLButtonElement;
 
 	const generateMealPlan = async () => {
-		// document.dispatchEvent("mealPlanUpdated", {
-		// 	breakfastIds: ["1", "2", "3", "4", "5", "6", "7"],
-		// 	lunchIds: ["8", "9", "10", "11", "12", "13", "14"],
-		// 	dinnerIds: ["15", "16", "17", "18", "19", "20", "21"],
-		// })
+		if (isLoading) return;
+		isLoading = true;
+		btn.disabled = true;
 
-		window.updateMealPlan({
-			breakfastIds: ["1", "2", "3", "4", "5", "6", "7"],
-			lunchIds: ["8", "9", "10", "11", "12", "13", "14"],
-			dinnerIds: ["15", "16", "17", "18", "19", "20", "21"],
-		});
+		try {
+			const requestBody = {
+				user_preferences: {
+					weekly_budget: 50.0,
+					calorie_target_per_day: 2500.0,
+					protein_target_per_day: 50.0,
+					is_vegetarian: false,
+					is_vegan: false,
+					requires_gluten_free: false,
+					requires_lactose_free: false,
+				},
+				pantry_items: [],
+				num_days: 7,
+				meals_per_day: 3,
+				num_generations: 500,
+			};
 
-		// if (isLoading) return;
-		// isLoading = true;
-		// btn.disabled = true;
+			const res = await fetch(`http://localhost:8000/api/meal-plan`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(requestBody),
+			});
 
-		// try {
-		// 	const requestBody = {
-		// 		user_preferences: {
-		// 			weekly_budget: 50.0,
-		// 			calorie_target_per_day: 2500.0,
-		// 			protein_target_per_day: 50.0,
-		// 			is_vegetarian: false,
-		// 			is_vegan: false,
-		// 			requires_gluten_free: false,
-		// 			requires_lactose_free: false,
-		// 		},
-		// 		pantry_items: [],
-		// 		num_days: 7,
-		// 		meals_per_day: 3,
-		// 		num_generations: 500,
-		// 	};
+			if (!res.ok) {
+				throw new Error(`API error: ${res.status}`);
+			}
 
-		// 	const res = await fetch(`http://localhost:8000/api/meal-plan`, {
-		// 		method: "POST",
-		// 		headers: { "Content-Type": "application/json" },
-		// 		body: JSON.stringify(requestBody),
-		// 	});
+			const data = await res.json();
+			// console.log("Meal plan generated:", data);
 
-		// 	if (!res.ok) {
-		// 		throw new Error(`API error: ${res.status}`);
-		// 	}
+			const mealPlan = data.meal_plan;
 
-		// 	const data = await res.json();
-		// 	console.log("Meal plan generated:", data);
-		// } catch (err) {
-		// 	console.error("Failed to generate meal plan:", err);
-		// } finally {
-		// 	isLoading = false;
-		// 	btn.disabled = false;
-		// }
+			const [breakfastIds, lunchIds, dinnerIds] = [0, 1, 2].map((index) => mealPlan.map((day) => day[index]));
+
+			window.updateMealPlan({ breakfastIds, lunchIds, dinnerIds });
+		} catch (err) {
+			console.error("Failed to generate meal plan:", err);
+		} finally {
+			isLoading = false;
+			btn.disabled = false;
+		}
 	};
 
 	document.getElementById("generate-meal-plan-btn")?.addEventListener("click", generateMealPlan);

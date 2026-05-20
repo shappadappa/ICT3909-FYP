@@ -62,3 +62,11 @@ body {
 	background: #c9b49a;
 	border-radius: 10px;
 }
+
+.recipe-card {
+	@apply cursor-pointer rounded-xl border p-2.5 transition-transform duration-150 ease-in-out hover:-translate-y-0.5;
+}
+
+.recipe-card p {
+	@apply text-xs leading-snug font-medium;
+}
