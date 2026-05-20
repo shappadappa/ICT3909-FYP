@@ -1,0 +1,74 @@
+---
+import type { Ingredient } from "../types";
+import Modal from "./Modal.astro";
+
+interface Props {
+	ingredient: Ingredient;
+}
+
+const { ingredient } = Astro.props;
+
+const formattedDate = new Date(ingredient.expirationDate).toLocaleDateString(undefined, {
+	day: "2-digit",
+	month: "2-digit",
+	year: "numeric",
+});
+
+const ni = ingredient.nutritionalInformation;
+---
+
+<Modal id={ingredient.id} title={ingredient.name}>
+	<div class="max-h-[65vh] space-y-4 overflow-y-auto pr-1">
+		<div class="grid grid-cols-2 gap-3 text-sm">
+			<div class="rounded-lg bg-gray-50 px-3 py-2">
+				<p class="text-xs text-gray-400">Quantity</p>
+				<p class="font-semibold text-gray-800">{ingredient.quantity}<span class="font-normal text-gray-400">g</span></p>
+			</div>
+			<div class="rounded-lg bg-gray-50 px-3 py-2">
+				<p class="text-xs text-gray-400">Expires</p>
+				<p class="font-semibold text-gray-800">{formattedDate}</p>
+			</div>
+		</div>
+
+		<div>
+			<h4 class="mb-2 text-xs font-semibold tracking-wide text-gray-400 uppercase">Nutritional Info <span class="normal-case font-normal">(per 100g)</span></h4>
+			<div class="grid grid-cols-4 gap-2 rounded-lg bg-gray-50 p-3 text-center text-xs">
+				{[
+					{ label: "Calories", value: Math.round(ni.calories) ?? 0, unit: "kcal" },
+					{ label: "Protein", value: ni.protein?.toFixed(1) ?? 0, unit: "g" },
+					{ label: "Carbs", value: ni.carbohydrates?.toFixed(1) ?? 0, unit: "g" },
+					{ label: "Fat", value: ni.fat?.toFixed(1) ?? 0, unit: "g" },
+				].map(({ label, value, unit }) => (
+					<div>
+						<p class="font-semibold text-gray-800">
+							{value}<span class="font-normal text-gray-400">{unit}</span>
+						</p>
+						<p class="mt-0.5 text-gray-500">{label}</p>
+					</div>
+				))}
+			</div>
+			<div class="mt-2 grid grid-cols-4 gap-2 rounded-lg bg-gray-50 p-3 text-center text-xs">
+				{[
+					{ label: "Saturated Fat", value: ni.saturated_fat?.toFixed(1) ?? 0, unit: "g" },
+					{ label: "Sugar", value: ni.sugar?.toFixed(1) ?? 0, unit: "g" },
+					{ label: "Fiber", value: ni.fiber?.toFixed(1) ?? 0, unit: "g" },
+					{ label: "Sodium", value: ni.sodium?.toFixed(0) ?? 0, unit: "mg" },
+				].map(({ label, value, unit }) => (
+					<div>
+						<p class="font-semibold text-gray-800">
+							{value}<span class="font-normal text-gray-400">{unit}</span>
+						</p>
+						<p class="mt-0.5 text-gray-500">{label}</p>
+					</div>
+				))}
+			</div>
+		</div>
+
+		<div class="flex flex-wrap gap-1.5">
+			{ni.is_gluten_free && <span class="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs text-amber-700">Gluten Free</span>}
+			{ni.is_lactose_free && <span class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-700">Lactose Free</span>}
+			{ni.is_vegetarian && <span class="rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-xs text-green-700">Vegetarian</span>}
+			{ni.is_vegan && <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700">Vegan</span>}
+		</div>
+	</div>
+</Modal>

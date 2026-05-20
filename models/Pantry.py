@@ -61,7 +61,7 @@ class Pantry:
             for name, ingredient in self._ingredients.items()
         }
 
-    def add(self, ingredient: PantryIngredient, quantity: int):
+    def add(self, ingredient: PantryIngredient, quantity: float):
         """
         Adds a quantity of an ingredient to the pantry. If the ingredient already exists,
         its quantity is increased.
@@ -69,7 +69,7 @@ class Pantry:
         :param ingredient: ingredient to add
         :type ingredient: PantryIngredient
         :param quantity: number of units to add
-        :type quantity: int
+        :type quantity: float
         """
 
         if ingredient.name in self._ingredients:

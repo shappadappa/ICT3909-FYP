@@ -1,4 +1,10 @@
 export { default as Header } from "./Header.astro";
+export { default as IngredientModal } from "./IngredientModal.astro";
 export { default as MealPlan } from "./MealPlan.astro";
 export { default as MealPlanSummary } from "./MealPlanSummary.astro";
+export { default as Modal } from "./Modal.astro";
+export { default as NavMenu } from "./NavMenu.astro";
 export { default as Pantry } from "./Pantry.astro";
+export { default as RecipeModal } from "./RecipeModal.astro";
+export { default as Snackbar } from "./Snackbar.astro";
+export { default as UserPreferencesModal } from "./UserPreferencesModal.astro";

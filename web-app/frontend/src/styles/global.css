@@ -46,16 +46,6 @@ body {
 	border: 1px solid #b8cdb1;
 }
 
-.meal-card {
-	transition:
-		transform 0.15s ease,
-		box-shadow 0.15s ease;
-}
-
-.meal-card:hover {
-	transform: translateY(-2px);
-}
-
 .pantry-item:hover {
 	background: #f5f1eb;
 }

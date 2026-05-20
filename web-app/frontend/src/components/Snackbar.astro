@@ -1,0 +1,75 @@
+---
+interface Props {
+	id?: string;
+}
+const { id = "snackbar" } = Astro.props;
+---
+
+<div
+	id={id}
+	role="status"
+	aria-live="polite"
+	class="fixed bottom-6 left-1/2 z-[70] flex -translate-x-1/2 translate-y-4 items-center gap-3 rounded-lg px-4 py-3 opacity-0 shadow-lg transition-all duration-300"
+>
+	<svg
+		id={`${id}-icon`}
+		width="16"
+		height="16"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor"
+		stroke-width="2.5"
+		class="shrink-0"></svg>
+	<span id={`${id}-message`} class="text-sm font-medium"></span>
+</div>
+
+<script define:vars={{ id }}>
+	const VARIANTS = {
+		success: {
+			classes: "bg-sage-600 text-white",
+			icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />',
+		},
+		error: {
+			classes: "bg-terra-600 text-white",
+			icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />',
+		},
+		info: {
+			classes: "bg-walnut-600 text-white",
+			icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />',
+		},
+	};
+
+	let dismissTimer = null;
+
+	window.showSnackbar = (message, type = "success", duration = 3000) => {
+		const snackbar = document.getElementById(id);
+		const messageEl = document.getElementById(`${id}-message`);
+		const iconEl = document.getElementById(`${id}-icon`);
+		if (!snackbar || !messageEl || !iconEl) return;
+
+		const variant = VARIANTS[type] ?? VARIANTS.success;
+
+		Object.values(VARIANTS).forEach((v) => v.classes.split(" ").forEach((c) => snackbar.classList.remove(c)));
+		variant.classes.split(" ").forEach((c) => snackbar.classList.add(c));
+
+		messageEl.textContent = message;
+		iconEl.innerHTML = variant.icon;
+
+		snackbar.classList.remove("opacity-0", "translate-y-4");
+		snackbar.classList.add("opacity-100", "translate-y-0");
+
+		if (dismissTimer) clearTimeout(dismissTimer);
+		dismissTimer = setTimeout(() => window.hideSnackbar(), duration);
+	};
+
+	window.hideSnackbar = () => {
+		const snackbar = document.getElementById(id);
+		if (!snackbar) return;
+		snackbar.classList.remove("opacity-100", "translate-y-0");
+		snackbar.classList.add("opacity-0", "translate-y-4");
+	};
+
+	document.getElementById(id)?.addEventListener("click", () => {
+		window.hideSnackbar();
+	});
+</script>

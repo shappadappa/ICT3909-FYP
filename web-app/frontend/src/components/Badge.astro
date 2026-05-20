@@ -1,0 +1,13 @@
+---
+interface Props {
+	label: string;
+	additionalClasses?: string;
+}
+
+const { label, additionalClasses } = Astro.props;
+---
+
+<span
+	class={`rounded-full border px-2 py-0.5 text-xs font-medium ${additionalClasses ?? "bg-gray-100 text-gray-600 border-gray-200"}`}
+	>{label}</span
+>

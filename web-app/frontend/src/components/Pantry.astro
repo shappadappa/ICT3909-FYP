@@ -1,34 +1,13 @@
 ---
 import type { Ingredient } from "../types";
-import { IngredientGroupEnum } from "../types/IngredientGroup";
+import IngredientModal from "./IngredientModal.astro";
 
 interface Props {
 	pantryIngredients: Ingredient[];
 }
 
 const { pantryIngredients } = Astro.props;
-
-const groupedIngredients = pantryIngredients.reduce(
-	(groups, ingredient) => {
-		const group = ingredient.group;
-
-		if (!groups[group]) {
-			groups[group] = [];
-		}
-
-		groups[group].push(ingredient);
-		return groups;
-	},
-	{} as Record<IngredientGroupEnum, Ingredient[]>
-);
-
-const IngredientGroupLabels: Record<IngredientGroupEnum, string> = {
-	[IngredientGroupEnum.PRODUCE]: "🥦 Produce",
-	[IngredientGroupEnum.PROTEINS]: "🥩 Proteins",
-	[IngredientGroupEnum.GRAINS]: "🌾 Grains",
-	[IngredientGroupEnum.DAIRY]: "🧀 Dairy",
-	[IngredientGroupEnum.CONDIMENTS]: "🧂 Condiments",
-};
+const total = pantryIngredients.length;
 ---
 
 <aside class="flex w-72 shrink-0 flex-col">
@@ -41,7 +20,6 @@ const IngredientGroupLabels: Record<IngredientGroupEnum, string> = {
 	</div>
 
 	<div class="border-walnut-100 flex flex-1 flex-col overflow-hidden rounded-2xl border bg-white">
-		<!-- Search -->
 		<div class="border-walnut-50 border-b p-3">
 			<div class="relative">
 				<svg
@@ -52,6 +30,7 @@ const IngredientGroupLabels: Record<IngredientGroupEnum, string> = {
 					stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg
 				>
 				<input
+					id="pantry-search"
 					type="text"
 					placeholder="Search pantry…"
 					class="bg-parchment border-walnut-100 text-walnut-700 placeholder-walnut-300 focus:ring-sage-300 w-full rounded-lg border py-2 pr-3 pl-8 text-xs focus:ring-1 focus:outline-none"
@@ -59,47 +38,56 @@ const IngredientGroupLabels: Record<IngredientGroupEnum, string> = {
 			</div>
 		</div>
 
-		<div class="flex-1 space-y-4 overflow-y-auto p-3">
-			{
-				(Object.entries(IngredientGroupLabels) as [IngredientGroupEnum, string][])
-					.filter(([group]) => groupedIngredients[group]?.length > 0)
-					.map(([group, label]) => (
+		<div class="flex-1 space-y-1 overflow-y-auto p-3">
+			{pantryIngredients.length === 0 ? (
+				<div class="flex h-full flex-col items-center justify-center gap-2 py-8">
+					<p class="text-walnut-400 text-xs">Your pantry is empty.</p>
+				</div>
+			) : (
+				pantryIngredients.map((ingredient) => (
+					<div class="pantry-item flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors" data-ingredient-id={ingredient.id}>
 						<div>
-							<p class="text-walnut-400 mb-2 px-1 text-xs font-semibold tracking-wider uppercase">
-								{label}
-							</p>
-							<div class="space-y-1">
-								{groupedIngredients[group].map((ingredient) => (
-									<div class="pantry-item flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors">
-										<div>
-											<p class="text-walnut-700 text-xs font-medium">{ingredient.name}</p>
-											<p class="text-walnut-400 text-xs">{ingredient.description}</p>
-										</div>
-										<span
-											class={`badge-${ingredient.status === "OK" ? "ok" : "low"} rounded-full px-2 py-0.5 text-xs font-medium`}
-										>
-											{ingredient.status}
-										</span>
-									</div>
-								))}
-							</div>
+							<p class="text-walnut-700 text-xs font-medium capitalize">{ingredient.name}</p>
+							<p class="text-walnut-400 text-xs">Quantity (g): {ingredient.quantity}</p>
+							<p class="text-walnut-400 text-xs">Expiring on: {new Date(ingredient.expirationDate).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
 						</div>
-					))
-			}
+					</div>
+				))
+			)}
 		</div>
 
-		<!-- Pantry footer -->
-		<div class="border-walnut-100 bg-parchment flex items-center justify-between border-t px-4 py-3">
+		<footer class="border-walnut-100 bg-parchment flex items-center justify-between border-t px-4 py-3">
 			<div class="flex gap-3">
-				<span class="text-walnut-500 text-xs"
-					><span class="text-terra-600 font-semibold">6</span> low stock</span
-				>
-				<span class="text-walnut-500 text-xs"><span class="text-sage-600 font-semibold">13</span> stocked</span>
+				<span class="text-walnut-500 text-xs"><span class="text-sage-600 font-semibold">{total}</span> items</span>
 			</div>
 			<button
 				class="text-terra-600 hover:text-terra-800 bg-terra-50 border-terra-100 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
 				>Shopping List →</button
 			>
-		</div>
+		</footer>
 	</div>
+
+	{pantryIngredients.map((ingredient) => (
+		<IngredientModal ingredient={ingredient} />
+	))}
 </aside>
+
+<script>
+	const search = document.getElementById("pantry-search") as HTMLInputElement;
+	const items = document.querySelectorAll<HTMLElement>(".pantry-item");
+
+	search.addEventListener("input", () => {
+		const query = search.value.trim().toLowerCase();
+		items.forEach((item) => {
+			const name = item.querySelector("p")?.textContent?.toLowerCase() ?? "";
+			item.style.display = name.includes(query) ? "" : "none";
+		});
+	});
+
+	items.forEach((item) => {
+		item.addEventListener("click", () => {
+			const id = item.getAttribute("data-ingredient-id");
+			if (id) window.openModal(id);
+		});
+	});
+</script>

@@ -1,4 +1,7 @@
 should re run every single notebook before submission
 
-6. Write up conclusion in the report
-7. Write up abstract in the report
+- Make all notebooks in the same format. Ex. Bold and # for title, ## and italics for subtitles, etc. add any missing markdown cells where required 
+
+- use unique identifiers in the codebase rather than the name
+
+- before submitting, clone the repo and detail every step needed to get it needed

@@ -1,8 +1,9 @@
-import type { IngredientGroup } from "./IngredientGroup";
+import type { NutritionalInformation } from "./NutritionalInformation";
 
 export interface Ingredient {
+	id: string;
 	name: string;
-	description: string;
-	status: "OK" | "LOW";
-	group: IngredientGroup;
+	quantity: number;
+	expirationDate: string;
+	nutritionalInformation: NutritionalInformation;
 }
