@@ -1,5 +1,5 @@
 ---
-import NavMenu from "./NavMenu.astro";
+import NavMenu from "./NavMenu";
 
 const currentDate = new Date();
 const day = currentDate.getDay();
@@ -9,7 +9,7 @@ const weekEnd = new Date(currentDate.setDate(diff + 6)).toLocaleDateString("en-u
 ---
 
 <header class="border-walnut-100 flex items-center justify-between border-b bg-white px-8 py-4">
-	<NavMenu />
+	<NavMenu client:load />
 
 	<div class="flex items-center gap-3">
 		<span class="text-walnut-400 font-body text-sm">Week of</span>
@@ -49,7 +49,7 @@ const weekEnd = new Date(currentDate.setDate(diff + 6)).toLocaleDateString("en-u
 				pantry_items: [],
 				num_days: 7,
 				meals_per_day: 3,
-				num_generations: 500,
+				num_generations: 100,
 			};
 
 			const res = await fetch(`http://localhost:8000/api/meal-plan`, {

@@ -1,57 +1,11 @@
 ---
 import { MealPlan, Pantry } from "../components";
 import Layout from "../layouts/Layout.astro";
-import { mockPantryIngredients } from "../mock.const";
-import type { Ingredient } from "../types";
-
-let pantryIngredients: Ingredient[] = [];
-
-let errorOccured = false;
-
-const fetchPantry = async () => {
-	try {
-		console.log(mockPantryIngredients);
-		const uniqueIngredientIds = Array.from(new Set(mockPantryIngredients.map((ingredient) => ingredient.id)));
-		console.log(uniqueIngredientIds);
-
-		const params = new URLSearchParams(uniqueIngredientIds.map((id) => ["ingredient_ids", id]));
-
-		console.log(params);
-		const res = await fetch(`http://localhost:8000/api/ingredients?${params}`);
-
-		if (!res.ok) {
-			errorOccured = true;
-			return;
-		}
-
-		const rawIngredients = await res.json();
-
-		pantryIngredients = rawIngredients.map((ingredient: any) => {
-			const pantryInformation = mockPantryIngredients.find((item) => item.id === ingredient.id);
-			return {
-				...ingredient,
-				expirationDate: pantryInformation?.expirationDate,
-				nutritionalInformation: ingredient.nutritional_information,
-				quantity: pantryInformation?.quantity,
-			};
-		});
-	} catch (err) {
-		errorOccured = true;
-	}
-};
-
-await fetchPantry();
 ---
 
 <Layout>
 	<main class="bg-cream flex h-[calc(100vh-69px)] gap-5 p-6">
 		<MealPlan client:load />
-		<Pantry pantryIngredients={pantryIngredients} />
+		<Pantry client:load />
 	</main>
 </Layout>
-
-<script define:vars={{ errorOccured }}>
-	if (errorOccured) {
-		window.showSnackbar("Something went wrong. Please try again later.", "error");
-	}
-</script>
