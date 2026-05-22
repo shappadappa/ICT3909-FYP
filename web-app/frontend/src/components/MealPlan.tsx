@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { mockBreakfastMealIds, mockDinnerMealIds, mockLunchMealIds } from "../mock.const";
+import { useStore } from "@nanostores/react";
 import type { Recipe } from "../types";
 import type { DietaryTag } from "../types/DietaryTag";
 import Badge from "./Badge";
 import LoadingSpinner from "./LoadingSpinner";
 import RecipeModal from "./RecipeModal";
 import MealPlanSummary from "./MealPlanSummary";
+import { mealPlanStore } from "../stores";
 
 const RECIPE_NOT_FOUND: Recipe = {
 	id: "RECIPE_NOT_FOUND",
@@ -41,40 +42,29 @@ const fetchMeals = async (breakfastIds: string[], lunchIds: string[], dinnerIds:
 };
 
 export default function MealPlan() {
+	const mealPlanIds = useStore(mealPlanStore);
+
 	const [breakfast, setBreakfast] = useState<Recipe[]>([]);
 	const [lunch, setLunch] = useState<Recipe[]>([]);
 	const [dinner, setDinner] = useState<Recipe[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
-	const loadMeals = (breakfastIds: string[], lunchIds: string[], dinnerIds: string[]) => {
+	useEffect(() => {
+		if (!mealPlanIds) return;
+
 		setIsLoading(true);
-		fetchMeals(breakfastIds, lunchIds, dinnerIds)
+		fetchMeals(mealPlanIds.breakfastIds, mealPlanIds.lunchIds, mealPlanIds.dinnerIds)
 			.then(({ breakfastRecipes, lunchRecipes, dinnerRecipes }) => {
 				setBreakfast(breakfastRecipes);
 				setLunch(lunchRecipes);
 				setDinner(dinnerRecipes);
-				setIsLoading(false);
 			})
 			.catch(() => {
-				(window as any).showSnackbar("Something went wrong. Please try again later.", "error");
-				setIsLoading(false);
-			});
-	};
-
-	useEffect(() => {
-		loadMeals(mockBreakfastMealIds, mockLunchMealIds, mockDinnerMealIds);
-
-		const handler = (event: Event) => {
-			const { breakfastIds, lunchIds, dinnerIds } = (event as CustomEvent).detail;
-			loadMeals(breakfastIds, lunchIds, dinnerIds);
-		};
-
-		window.updateMealPlan = async (detail: { breakfastIds: string[]; lunchIds: string[]; dinnerIds: string[] }) => {
-			loadMeals(detail.breakfastIds, detail.lunchIds, detail.dinnerIds);
-		};
-		return () => window.removeEventListener("updateMealPlan", handler);
-	}, []);
+				(globalThis as any).showSnackbar("Something went wrong. Please try again later.", "error");
+			})
+			.finally(() => setIsLoading(false));
+	}, [mealPlanIds]);
 
 	const isEmpty = breakfast.length == 0 && lunch.length == 0 && dinner.length == 0;
 
@@ -104,13 +94,13 @@ export default function MealPlan() {
 
 				<div className="border-walnut-100 flex flex-1 flex-col overflow-hidden rounded-2xl border bg-white">
 					<div className="flex-1 overflow-auto">
-						<table className="w-full" style={{ minWidth: "700px" }}>
+						<table className="w-full table-fixed" style={{ minWidth: "700px" }}>
 							<thead>
 								<tr className="border-walnut-100 bg-parchment border-b">
 									{["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
 										<th
 											key={day}
-											className="text-walnut-600 px-3 py-3 text-center text-xs font-medium tracking-wider uppercase"
+											className={`text-walnut-600 px-3 py-3 text-center text-xs font-medium tracking-wider uppercase${day === "" ? "w-28" : ""}`}
 										>
 											{day}
 										</th>
@@ -126,7 +116,7 @@ export default function MealPlan() {
 										/>
 									</td>
 									{breakfast?.map((recipe, index) => (
-										<td key={recipe.id + index} className="px-2 py-3 align-top">
+										<td key={recipe.id + index} className="h-full px-2 py-3">
 											<div
 												className="recipe-card bg-terra-50 border-terra-100"
 												onClick={() => setSelectedRecipe(recipe)}
@@ -144,7 +134,7 @@ export default function MealPlan() {
 										/>
 									</td>
 									{lunch?.map((recipe, index) => (
-										<td key={recipe.id + index} className="px-2 py-3 align-top">
+										<td key={recipe.id + index} className="h-full px-2 py-3">
 											<div
 												className="recipe-card bg-sage-50 border-sage-100"
 												onClick={() => setSelectedRecipe(recipe)}
@@ -162,7 +152,7 @@ export default function MealPlan() {
 										/>
 									</td>
 									{dinner?.map((meal, index) => (
-										<td key={meal.id + index} className="px-2 py-3 align-top">
+										<td key={meal.id + index} className="h-full px-2 py-3">
 											<div
 												className="recipe-card bg-walnut-50 border-walnut-100"
 												onClick={() => setSelectedRecipe(meal)}

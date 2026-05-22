@@ -1,11 +1,12 @@
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState } from "react";
+import { useStore } from "@nanostores/react";
 import type { Ingredient } from "../types";
 import IngredientModal from "./IngredientModal";
 import AddIngredientModal from "./AddIngredientModal";
-import { pantryStore } from "../stores/pantry";
+import { pantryStore } from "../stores";
 
 export default function Pantry() {
-	const pantryIngredients = useSyncExternalStore(pantryStore.subscribe, pantryStore.get, () => []);
+	const pantryIngredients = useStore(pantryStore);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");
 	const [isAddIngredientModalOpen, setIsAddIngredientModalOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function Pantry() {
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="font-display text-walnut-800 text-lg font-semibold">Pantry</h2>
 				<button
-					className="text-sage-600 hover:text-sage-800 bg-sage-50 border-sage-100 hover:bg-sage-100 cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
+					className="text-sage-600 hover:text-sage-800 bg-sage-50 border-sage-100 hover:bg-sage-100 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
 					onClick={() => setIsAddIngredientModalOpen(true)}
 				>
 					+ Add Item
@@ -50,7 +51,7 @@ export default function Pantry() {
 						<div className="flex h-full flex-col items-center justify-center gap-2 py-8">
 							<p className="text-walnut-400 text-xs">Your pantry is empty.</p>
 							<button
-								className="text-sage-600 hover:text-sage-800 bg-sage-50 border-sage-100 hover:bg-sage-100 cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
+								className="text-sage-600 hover:text-sage-800 bg-sage-50 border-sage-100 hover:bg-sage-100 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
 								onClick={() => setIsAddIngredientModalOpen(true)}
 							>
 								Add Item
@@ -63,7 +64,7 @@ export default function Pantry() {
 								<button
 									key={ingredient.id + index}
 									type="button"
-									className="pantry-item flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left transition-colors"
+									className="pantry-item flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors"
 									onClick={() => setSelectedIngredient(ingredient)}
 								>
 									<div>

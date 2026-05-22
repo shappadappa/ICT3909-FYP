@@ -17,7 +17,7 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
 				<div className="mb-4 flex items-center justify-between">
 					<h2 className="text-xl font-semibold text-gray-800 capitalize">{title}</h2>
 					<button
-						className="cursor-pointer text-gray-400 hover:text-gray-600"
+						className="text-gray-400 hover:text-gray-600"
 						onClick={() => {
 							onClose();
 						}}

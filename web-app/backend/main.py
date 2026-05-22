@@ -1,5 +1,4 @@
 import json
-import random
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -8,7 +7,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from engines import GAMealPlanner, RandomMealPlanner
+from engines import GAMealPlanner
 from models import MealPlanningEnvironment
 from models.NutritionalInformation import NutritionalInformation
 from models.Pantry import Pantry
@@ -26,6 +25,18 @@ with open(DATA_DIR / "supplemented_structured_recipes.json") as file:
 with open(DATA_DIR / "best_ga_meal_planner_hyperparameters.json") as file:
     BEST_GA_HYPERPARAMETERS = json.load(file)
 
+with open(DATA_DIR / "priced_ingredients.json") as file:
+    _raw_priced = json.load(file)
+
+_ingredient_id_to_name = {ingredient["id"]: ingredient["name"] for ingredient in INGREDIENTS}
+
+# priced ingredients is {id: price_per_100_grams}
+# convert to {name: price_per_100_grams}
+PRICED_INGREDIENTS = {
+    _ingredient_id_to_name[ingredient_id]: price_per_100g
+    for ingredient_id, price_per_100g in _raw_priced.items()
+    if ingredient_id in _ingredient_id_to_name
+}
 
 class UserPreferencesSchema(BaseModel):
     weekly_budget: float = 50.0
@@ -182,7 +193,7 @@ def generate_meal_plan(request: MealPlanRequest):
     meal_planning_environment = MealPlanningEnvironment(
         preferences=user_preferences,
         pantry=pantry,
-        ingredient_costs={ingredient["name"]: random.random() for ingredient in INGREDIENTS},
+        ingredient_costs=PRICED_INGREDIENTS,
     )
     meal_planning_environment.load_recipes_from_json(str(DATA_DIR / "supplemented_structured_recipes.json"))
 

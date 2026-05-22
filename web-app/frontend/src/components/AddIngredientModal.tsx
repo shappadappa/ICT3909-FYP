@@ -4,7 +4,7 @@ import { DietaryTag } from "../types";
 import Modal from "./Modal";
 import NutritionalInformationCard from "./NutritionalInformationCard";
 import DietaryTagBadge from "./DietaryTagBadge";
-import { addPantryItem, pantryStore } from "../stores/pantry";
+import { addPantryItem, pantryStore } from "../stores";
 
 interface AddIngredientModalProps {
 	isOpen: boolean;
@@ -19,7 +19,8 @@ const fetchAllIngredients = async () => {
 
 	const ingredients: Ingredient[] = rawIngredients.map(
 		(ingredient: any): Ingredient => ({
-			...ingredient,
+			id: ingredient.id,
+			name: ingredient.name,
 			nutritionalInformation: ingredient.nutritional_information,
 		})
 	);
@@ -110,10 +111,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 							className="flex-1 focus:outline-none"
 						/>
 						{query && (
-							<button
-								onClick={() => setQuery("")}
-								className="ml-2 cursor-pointer text-gray-400 hover:text-gray-600"
-							>
+							<button onClick={() => setQuery("")} className="ml-2 text-gray-400 hover:text-gray-600">
 								<svg
 									width="18"
 									height="18"
@@ -135,7 +133,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 									<li key={ingredient.id}>
 										<button
 											type="button"
-											className="w-full cursor-pointer px-3 py-2 text-left text-sm text-gray-700 capitalize hover:bg-gray-100"
+											className="w-full px-3 py-2 text-left text-sm text-gray-700 capitalize hover:bg-gray-100"
 											onClick={() => {
 												setQuery("");
 
@@ -232,7 +230,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 
 						<button
 							type="submit"
-							className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+							className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
 						>
 							Add to Pantry
 						</button>

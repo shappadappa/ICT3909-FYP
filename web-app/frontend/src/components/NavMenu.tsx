@@ -12,10 +12,7 @@ export default function NavMenu() {
 
 	return (
 		<>
-			<button
-				className="bg-sage-400 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full"
-				onClick={openMenu}
-			>
+			<button className="bg-sage-400 flex h-8 w-8 items-center justify-center rounded-full" onClick={openMenu}>
 				<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2">
 					<path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18M3 9h18M3 15h18M3 21h18" />
 				</svg>
@@ -35,7 +32,7 @@ export default function NavMenu() {
 			>
 				<div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
 					<span className="font-semibold text-gray-800">Menu</span>
-					<button className="cursor-pointer text-gray-400 hover:text-gray-600" onClick={closeMenu}>
+					<button className="text-gray-400 hover:text-gray-600" onClick={closeMenu}>
 						<svg
 							width="18"
 							height="18"

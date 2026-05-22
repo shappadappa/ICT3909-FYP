@@ -1,7 +1,7 @@
 export { default as Badge } from "./Badge";
 export { default as DietaryTagBadge } from "./DietaryTagBadge";
 export { default as DisclaimerModal } from "./DisclaimerModal";
-export { default as Header } from "./Header.astro";
+export { default as Header } from "./Header.tsx";
 export { default as IngredientModal } from "./IngredientModal";
 export { default as LoadingSpinner } from "./LoadingSpinner";
 export { default as MealPlan } from "./MealPlan";

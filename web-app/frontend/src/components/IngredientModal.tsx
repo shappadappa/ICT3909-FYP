@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { DietaryTag, type Ingredient } from "../types";
-import { modifyPantryItem, removePantryItem } from "../stores/pantry";
+import { modifyPantryItem, removePantryItem } from "../stores";
 import DietaryTagBadge from "./DietaryTagBadge";
 import Modal from "./Modal";
 import NutritionalInformationCard from "./NutritionalInformationCard";
@@ -119,14 +119,14 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 							<button
 								type="button"
 								onClick={() => setIsEditing(false)}
-								className="cursor-pointer rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+								className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
 							>
 								Cancel
 							</button>
 							<button
 								type="button"
 								onClick={handleSave}
-								className="cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+								className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
 							>
 								Save Changes
 							</button>
@@ -136,7 +136,7 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 							<button
 								type="button"
 								onClick={() => setIsEditing(true)}
-								className="flex cursor-pointer items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+								className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
 							>
 								<svg
 									width="13"
@@ -160,7 +160,7 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 									removePantryItem(ingredient.id);
 									onClose();
 								}}
-								className="flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+								className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
 							>
 								<svg
 									width="13"

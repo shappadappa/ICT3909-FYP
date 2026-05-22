@@ -64,13 +64,20 @@ body {
 }
 
 .nav-menu-btn {
-	@apply cursor-pointer rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100;
+	@apply rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100;
 }
 
 .recipe-card {
-	@apply cursor-pointer rounded-xl border p-2.5 transition-transform duration-150 ease-in-out hover:-translate-y-0.5;
+	@apply h-full cursor-pointer rounded-xl border p-2.5 transition-transform duration-150 ease-in-out hover:-translate-y-0.5;
 }
 
 .recipe-card p {
 	@apply text-xs leading-snug font-medium;
+}
+
+button:not(:disabled) {
+	@apply cursor-pointer;
+}
+button:disabled {
+	@apply cursor-not-allowed;
 }
