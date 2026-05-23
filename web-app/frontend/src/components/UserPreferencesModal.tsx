@@ -32,6 +32,8 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 		weeklyBudget: savedPreferences?.weeklyBudget ?? "",
 		glutenIntolerant: savedPreferences?.glutenIntolerant ?? false,
 		lactoseIntolerant: savedPreferences?.lactoseIntolerant ?? false,
+		vegetarian: savedPreferences?.vegetarian ?? false,
+		vegan: savedPreferences?.vegan ?? false,
 	});
 
 	useEffect(() => {
@@ -42,6 +44,8 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 				weeklyBudget: savedPreferences.weeklyBudget ?? "",
 				glutenIntolerant: savedPreferences.glutenIntolerant ?? false,
 				lactoseIntolerant: savedPreferences.lactoseIntolerant ?? false,
+				vegetarian: savedPreferences.vegetarian ?? false,
+				vegan: savedPreferences.vegan ?? false,
 			});
 		}
 	}, [isOpen]);
@@ -64,7 +68,7 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 	};
 
 	return (
-		<Modal title="User Preferences" isOpen={isOpen} onClose={onClose}>
+		<Modal title="Your Preferences" isOpen={isOpen} onClose={onClose}>
 			<form className="flex flex-col gap-5" onSubmit={handleSubmit}>
 				<fieldset className="flex flex-col gap-2">
 					<legend className="mb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
@@ -91,6 +95,29 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 							onChange={(e) => setPreferences((p) => ({ ...p, lactoseIntolerant: e.target.checked }))}
 						/>
 						<span className="text-sm text-gray-700">Lactose-intolerant</span>
+					</label>
+
+					<label className="hover:bg-sage-50 flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5">
+						<input
+							type="checkbox"
+							name="vegetarian"
+							checked={preferences.vegetarian}
+							className="accent-sage-600 h-4 w-4 cursor-pointer rounded"
+							onChange={(e) => setPreferences((p) => ({ ...p, vegetarian: e.target.checked }))}
+							disabled={preferences.vegan}
+						/>
+						<span className="text-sm text-gray-700">Vegetarian</span>
+					</label>
+
+					<label className="hover:bg-sage-50 flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5">
+						<input
+							type="checkbox"
+							name="vegan"
+							checked={preferences.vegan}
+							className="accent-sage-600 h-4 w-4 cursor-pointer rounded"
+							onChange={(e) => setPreferences((p) => ({ ...p, vegan: e.target.checked }))}
+						/>
+						<span className="text-sm text-gray-700">Vegan</span>
 					</label>
 				</fieldset>
 

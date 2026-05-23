@@ -27,7 +27,7 @@ export default function RecipeModal({ recipe, isError, isOpen, onClose }: Recipe
 						</div>
 					</div>
 
-					<NutritionalInformationCard nutritional_information={recipe.nutritionalInformation} />
+					<NutritionalInformationCard nutritionalInformation={recipe.nutritionalInformation} />
 
 					<div>
 						<h4 className="mb-1.5 text-xs font-semibold tracking-wide text-gray-400 uppercase">

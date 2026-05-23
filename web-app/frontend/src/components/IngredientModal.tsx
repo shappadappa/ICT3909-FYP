@@ -97,7 +97,7 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 						Nutritional Information <span className="font-normal normal-case">(per 100g)</span>
 					</h4>
 
-					<NutritionalInformationCard nutritional_information={ingredient.nutritionalInformation} />
+					<NutritionalInformationCard nutritionalInformation={ingredient.nutritionalInformation} />
 				</div>
 
 				<div className="flex flex-wrap gap-1.5">

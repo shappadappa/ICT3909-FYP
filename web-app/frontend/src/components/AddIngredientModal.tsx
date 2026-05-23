@@ -209,7 +209,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 							</h3>
 
 							<NutritionalInformationCard
-								nutritional_information={selectedIngredient.nutritionalInformation}
+								nutritionalInformation={selectedIngredient.nutritionalInformation}
 							/>
 
 							<div className="flex flex-wrap gap-2 pt-1">

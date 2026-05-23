@@ -13,5 +13,7 @@ export const setPreferences = (preferences: UserPreferences) => {
 		weeklyBudget: Number(preferences.weeklyBudget),
 		glutenIntolerant: preferences.glutenIntolerant,
 		lactoseIntolerant: preferences.lactoseIntolerant,
+		vegetarian: preferences.vegetarian,
+		vegan: preferences.vegan,
 	});
 };

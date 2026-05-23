@@ -1,15 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import type { Ingredient } from "../types";
 import IngredientModal from "./IngredientModal";
 import AddIngredientModal from "./AddIngredientModal";
-import { pantryStore } from "../stores";
+import { pantryStore, mealPlanStore } from "../stores";
+import { fetchRecipesByIds } from "../api/recipes";
 
 export default function Pantry() {
 	const pantryIngredients = useStore(pantryStore);
+	const mealPlan = useStore(mealPlanStore);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");
 	const [isAddIngredientModalOpen, setIsAddIngredientModalOpen] = useState(false);
+	const [quantitiesUsedInMealPlan, setQuantitiesUsedInMealPlan] = useState<Record<string, number>>({});
+
+	useEffect(() => {
+		if (!mealPlan) {
+			setQuantitiesUsedInMealPlan({});
+			return;
+		}
+
+		const allIds = [...mealPlan.breakfastIds, ...mealPlan.lunchIds, ...mealPlan.dinnerIds];
+
+		fetchRecipesByIds(allIds)
+			.then((recipes) => {
+				const totals: Record<string, number> = {};
+				for (const id of allIds) {
+					const recipe = recipes.find((recipe) => recipe.id === id);
+					if (!recipe) continue;
+
+					for (const { ingredient, quantity } of recipe.ingredients) {
+						totals[ingredient] = (totals[ingredient] ?? 0) + quantity;
+					}
+				}
+
+				setQuantitiesUsedInMealPlan(totals);
+			})
+			.catch(console.error);
+	}, [mealPlan]);
 
 	return (
 		<aside className="flex w-72 shrink-0 flex-col">
@@ -72,6 +100,11 @@ export default function Pantry() {
 											{ingredient.name}
 										</p>
 										<p className="text-walnut-400 text-xs">Quantity (g): {ingredient.quantity}</p>
+										<p className="text-2xs text-amber-600">
+											{quantitiesUsedInMealPlan[ingredient.name]
+												? `${Math.round(quantitiesUsedInMealPlan[ingredient.name] * 100) / 100}g used in meal plan`
+												: "Unused in meal plan"}
+										</p>
 										<p className="text-walnut-400 text-xs">
 											Expiring on:{" "}
 											{ingredient.expirationDate

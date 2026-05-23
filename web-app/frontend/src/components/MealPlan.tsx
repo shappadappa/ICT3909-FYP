@@ -1,44 +1,22 @@
 import { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
 import type { Recipe } from "../types";
-import type { DietaryTag } from "../types/DietaryTag";
 import Badge from "./Badge";
 import LoadingSpinner from "./LoadingSpinner";
 import RecipeModal from "./RecipeModal";
 import MealPlanSummary from "./MealPlanSummary";
 import { mealPlanStore } from "../stores";
+import DayModal from "./DayModal/DayModal";
+import { fetchMeals } from "../api/recipes";
 
-const RECIPE_NOT_FOUND: Recipe = {
-	id: "RECIPE_NOT_FOUND",
-	name: "Recipe not found",
-	ingredients: [],
-	dietaryTags: [],
-	instructions: [],
-	nutritionalInformation: null as any,
-};
-
-const fetchMeals = async (breakfastIds: string[], lunchIds: string[], dinnerIds: string[]) => {
-	const uniqueRecipeIds = Array.from(new Set([...breakfastIds, ...lunchIds, ...dinnerIds]));
-	const params = new URLSearchParams(uniqueRecipeIds.map((id) => ["recipe_ids", id]));
-
-	const res = await fetch(`http://localhost:8000/api/recipes?${params}`);
-	if (!res.ok) throw new Error("Failed to fetch recipes");
-
-	const rawRecipes = await res.json();
-
-	const recipes: Recipe[] = rawRecipes.map(
-		(recipe: any): Recipe => ({
-			...recipe,
-			dietaryTags: recipe.dietary_tags as DietaryTag[],
-			nutritionalInformation: recipe.nutritional_information,
-		})
-	);
-
-	return {
-		breakfastRecipes: breakfastIds.map((id) => recipes.find((r) => r.id === id) ?? RECIPE_NOT_FOUND),
-		lunchRecipes: lunchIds.map((id) => recipes.find((r) => r.id === id) ?? RECIPE_NOT_FOUND),
-		dinnerRecipes: dinnerIds.map((id) => recipes.find((r) => r.id === id) ?? RECIPE_NOT_FOUND),
-	};
+const DAY_NAMES_SHORT_TO_LONG: Record<string, string> = {
+	Mon: "Monday",
+	Tue: "Tuesday",
+	Wed: "Wednesday",
+	Thu: "Thursday",
+	Fri: "Friday",
+	Sat: "Saturday",
+	Sun: "Sunday",
 };
 
 export default function MealPlan() {
@@ -49,6 +27,7 @@ export default function MealPlan() {
 	const [dinner, setDinner] = useState<Recipe[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+	const [selectedDayShort, setSelectedDayShort] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!mealPlanIds) return;
@@ -67,6 +46,15 @@ export default function MealPlan() {
 	}, [mealPlanIds]);
 
 	const isEmpty = breakfast.length == 0 && lunch.length == 0 && dinner.length == 0;
+
+	const handleDayClick = (shortDay: string) => {
+		if (shortDay === "" || isEmpty) return;
+
+		setSelectedDayShort(shortDay);
+	};
+
+	const selectedDayIndex = selectedDayShort ? Object.keys(DAY_NAMES_SHORT_TO_LONG).indexOf(selectedDayShort) : -1;
+	const selectedDayName = selectedDayShort ? DAY_NAMES_SHORT_TO_LONG[selectedDayShort] : null;
 
 	const renderContent = () => {
 		if (isLoading) return <LoadingSpinner />;
@@ -97,10 +85,11 @@ export default function MealPlan() {
 						<table className="w-full table-fixed" style={{ minWidth: "700px" }}>
 							<thead>
 								<tr className="border-walnut-100 bg-parchment border-b">
-									{["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+									{["", ...Object.keys(DAY_NAMES_SHORT_TO_LONG)].map((day) => (
 										<th
 											key={day}
-											className={`text-walnut-600 px-3 py-3 text-center text-xs font-medium tracking-wider uppercase${day === "" ? "w-28" : ""}`}
+											className={`text-walnut-600 px-3 py-3 text-center text-xs font-medium tracking-wider uppercase ${day === "" && "w-28"} ${day !== "" && !isEmpty ? "cursor-pointer" : ""}`}
+											onClick={() => handleDayClick(day)}
 										>
 											{day}
 										</th>
@@ -174,6 +163,17 @@ export default function MealPlan() {
 					isOpen={selectedRecipe !== null}
 					isError={selectedRecipe?.id === "RECIPE_NOT_FOUND"}
 					onClose={() => setSelectedRecipe(null)}
+				/>
+
+				<DayModal
+					dayName={selectedDayName}
+					meals={{
+						breakfast: selectedDayIndex >= 0 ? (breakfast[selectedDayIndex] ?? null) : null,
+						lunch: selectedDayIndex >= 0 ? (lunch[selectedDayIndex] ?? null) : null,
+						dinner: selectedDayIndex >= 0 ? (dinner[selectedDayIndex] ?? null) : null,
+					}}
+					isOpen={selectedDayShort !== null}
+					onClose={() => setSelectedDayShort(null)}
 				/>
 			</div>
 		);

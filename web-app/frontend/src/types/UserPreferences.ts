@@ -4,4 +4,6 @@ export interface UserPreferences {
 	weeklyBudget: number | string;
 	glutenIntolerant: boolean;
 	lactoseIntolerant: boolean;
+	vegetarian: boolean;
+	vegan: boolean;
 }

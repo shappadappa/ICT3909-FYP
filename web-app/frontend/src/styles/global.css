@@ -28,6 +28,8 @@
 	--color-walnut-400: #9d7e5a;
 	--color-walnut-600: #6e5438;
 	--color-walnut-800: #433020;
+
+	--text-2xs: 0.625rem;
 }
 
 body {

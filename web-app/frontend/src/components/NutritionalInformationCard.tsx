@@ -1,7 +1,7 @@
 import type { NutritionalInformation } from "../types";
 
 interface NutritionalInformationCardProps {
-	nutritional_information: NutritionalInformation;
+	nutritionalInformation: NutritionalInformation;
 }
 
 const ROWS: { label: string; key: keyof NutritionalInformation; unit: string; format: (v: number) => string }[][] = [
@@ -19,7 +19,7 @@ const ROWS: { label: string; key: keyof NutritionalInformation; unit: string; fo
 	],
 ];
 
-export default function NutritionalInformationCard({ nutritional_information }: NutritionalInformationCardProps) {
+export default function NutritionalInformationCard({ nutritionalInformation }: NutritionalInformationCardProps) {
 	return (
 		<div className="space-y-2">
 			{ROWS.map((row) => (
@@ -27,7 +27,7 @@ export default function NutritionalInformationCard({ nutritional_information }: 
 					{row.map(({ label, key, unit, format }) => (
 						<div key={label}>
 							<p className="font-semibold text-gray-800">
-								{format((nutritional_information[key] as number) ?? 0)}
+								{format((nutritionalInformation[key] as number) ?? 0)}
 								<span className="font-normal text-gray-400">{unit}</span>
 							</p>
 							<p className="mt-0.5 text-gray-500">{label}</p>
