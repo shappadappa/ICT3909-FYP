@@ -40,10 +40,10 @@ See `web-app/README.md` for full setup instructions for the frontend and backend
 
 The data pipeline and evaluation are driven by Jupyter notebooks. The recommended order for a full run from scratch is:
 
-1. `food_data_extraction/` — build FAISS indexes (see its README for setup steps)
-2. `recipe_extraction/` — parse and structure recipe data
-3. `engines/` — test individual planners
-4. `evaluation/` — run the full evaluation and export results
+1. `food_data_extraction/`: build FAISS indexes (see its README for setup steps)
+2. `recipe_extraction/`: parse and structure recipe data
+3. `engines/`: test individual planners
+4. `evaluation/`: run the full evaluation and export results
 
 ### Additional Files
 

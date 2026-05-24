@@ -93,13 +93,13 @@ class ILPMealPlanner(MealPlanner):
         n_pantry = len(pantry_names)
 
         # --- Variable layout (flat vector) ---
-        # x[d, m, r] : binary   — num_days * meals_per_day * n_recipes vars
-        # f[i]        : continuous pantry usage — n_pantry vars
-        # cal_over[d] : continuous — num_days vars
-        # cal_under[d]: continuous — num_days vars
-        # prot_over[d]: continuous — num_days vars
-        # prot_under[d]: continuous — num_days vars
-        # budget_over : continuous — 1 var
+        # x[d, m, r] : binary   - num_days * meals_per_day * n_recipes vars
+        # f[i]        : continuous pantry usage - n_pantry vars
+        # cal_over[d] : continuous - num_days vars
+        # cal_under[d]: continuous - num_days vars
+        # prot_over[d]: continuous - num_days vars
+        # prot_under[d]: continuous - num_days vars
+        # budget_over : continuous - 1 var
         n_x = num_days * meals_per_day * n_recipes
         x_start = 0
         f_start = n_x
@@ -160,7 +160,7 @@ class ILPMealPlanner(MealPlanner):
             a_cols.append(col)
             a_data.append(val)
 
-        # 1. Assignment: exactly one recipe per meal slot — sum_r x[d,m,r] == 1
+        # 1. Assignment: exactly one recipe per meal slot - sum_r x[d,m,r] == 1
         for d in range(num_days):
             for m in range(meals_per_day):
                 for r in range(n_recipes):

@@ -12,14 +12,14 @@ The following metric functions are declared in `metrics.py`, each returning a sc
 
 | Metric | Description |
 |--------|-------------|
-| `get_ingredient_utilisation_score()` | The proportion of total pantry stock (by weight) consumed by the meal plan — higher is better. |
-| `get_expiry_weighted_utilisation_score()` | Like ingredient utilisation, but weights each ingredient by urgency (`1 / days_to_expiry`), prioritising soon-to-expire items — higher is better. |
-| `get_food_waste_score()` | The proportion of pantry stock that expires within the planning week but is not consumed — lower is better. |
+| `get_ingredient_utilisation_score()` | The proportion of total pantry stock (by weight) consumed by the meal plan - higher is better. |
+| `get_expiry_weighted_utilisation_score()` | Like ingredient utilisation, but weights each ingredient by urgency (`1 / days_to_expiry`), prioritising soon-to-expire items - higher is better. |
+| `get_food_waste_score()` | The proportion of pantry stock that expires within the planning week but is not consumed - lower is better. |
 | `get_dietary_constraint_compliance()` | A binary check (0 or 1) for whether all recipes in the meal plan comply with the user's dietary constraints. |
-| `get_nutritional_target_score()` | Measures how closely daily calorie and protein totals match the user's targets, based on mean relative error across the week — higher is better. |
-| `get_budget_efficiency()` | The ratio of weekly budget to the cost of ingredients not already available in the pantry, capped at 1.0 — higher is better. |
-| `get_pantry_coverage_score()` | The proportion of total required ingredient quantities that are already available in the pantry — higher is better. |
-| `get_variety_score()` | The number of unique recipes divided by total meal slots — higher is better. |
+| `get_nutritional_target_score()` | Measures how closely daily calorie and protein totals match the user's targets, based on mean relative error across the week - higher is better. |
+| `get_budget_efficiency()` | The ratio of weekly budget to the cost of ingredients not already available in the pantry, capped at 1.0 - higher is better. |
+| `get_pantry_coverage_score()` | The proportion of total required ingredient quantities that are already available in the pantry - higher is better. |
+| `get_variety_score()` | The number of unique recipes divided by total meal slots - higher is better. |
 
 ## Results
 
