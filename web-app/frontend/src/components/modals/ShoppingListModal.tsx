@@ -1,4 +1,4 @@
-import type { Ingredient, MealPlan } from "../types";
+import type { Ingredient, MealPlan } from "../../types";
 import Modal from "./Modal";
 
 interface ShoppingListModalProps {
@@ -9,6 +9,7 @@ interface ShoppingListModalProps {
 }
 
 export default function ShoppingListModal({ mealPlan, pantry, isOpen, onClose }: ShoppingListModalProps) {
+	console.log(mealPlan);
 	return (
 		<Modal title="Shopping List" isOpen={isOpen} onClose={onClose}>
 			<div className="max-h-[65vh] overflow-y-auto p-4">
@@ -16,13 +17,13 @@ export default function ShoppingListModal({ mealPlan, pantry, isOpen, onClose }:
 					<p className="text-walnut-600 text-sm">Your shopping list is empty!</p>
 				) : (
 					<ul className="text-walnut-600 text-sm">
-						{Object.entries(mealPlan.shoppingList).map(([item, [quantity, cost]]) => (
+						{mealPlan.shoppingList.map(({ name, quantity, cost }) => (
 							<li
-								key={item}
-								className={`my-1 list-disc capitalize ${pantry.find((ingredient) => ingredient.name === item) && "line-through"}`}
-								title={pantry.find((ingredient) => ingredient.name === item) && "Already in pantry"}
+								key={name}
+								className="my-1 list-disc capitalize"
+								title={pantry.find((ingredient) => ingredient.name === name) && "Already in pantry"}
 							>
-								{item}: {quantity}g (&euro;{cost.toFixed(2)})
+								{name}: {quantity}g (&euro;{cost.toFixed(2)})
 							</li>
 						))}
 					</ul>

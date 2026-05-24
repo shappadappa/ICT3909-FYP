@@ -53,6 +53,9 @@ def _with_recipe_cost(recipe: dict) -> dict:
     return {**recipe, "estimated_cost": round(cost, 2)}
 
 
+# schema and other type declarations
+
+
 class UserPreferencesSchema(BaseModel):
     weekly_budget: float = 50.0
     calorie_target_per_day: float = 2500.0
@@ -88,7 +91,7 @@ class MealPlanResponse(BaseModel):
     estimated_cost: float
     calories_per_day: list[float]
     protein_per_day: list[float]
-    shopping_list: dict[str, tuple[float, float]]  # ingredient name to quantity to buy (g) and cost (€)
+    shopping_list: list[dict[str, str | float]]  # list of ingredients with name, quantity to buy (g) and cost (€)
 
 
 app = FastAPI(title="GA Meal Planner API")
@@ -216,8 +219,6 @@ def generate_meal_plan(request: MealPlanRequest):
     )
     meal_planning_environment.load_recipes_from_json(str(DATA_DIR / "supplemented_structured_recipes.json"))
 
-    print("received these user preferences:", request.user_preferences.dietary_weight)
-
     planner = GAMealPlanner(
         meal_planning_environment=meal_planning_environment,
         pantry_weight=request.user_preferences.pantry_weight,
@@ -260,11 +261,15 @@ def generate_meal_plan(request: MealPlanRequest):
     ]
 
     shopping_df, _, estimated_cost = planner.get_shopping_list()
-    shopping_list = {
-        row["Ingredient"]: (float(row["Quantity to Buy (g)"]), float(row["Cost (€)"]))
+    shopping_list = [
+        {
+            "ingredient_name": row["Ingredient"],
+            "quantity_grams": float(row["Quantity to Buy (g)"]),
+            "estimated_cost": float(row["Cost (€)"]),
+        }
         for _, row in shopping_df.iterrows()
         if row["Ingredient"] != "TOTAL"
-    }
+    ]
 
     return MealPlanResponse(
         meal_plan=meal_plan_ids,

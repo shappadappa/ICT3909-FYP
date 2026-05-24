@@ -8,5 +8,6 @@ export interface MealPlan {
 	shoppingList: {
 		name: string;
 		quantity: number;
+		cost: number;
 	}[];
 }

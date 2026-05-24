@@ -1,5 +1,6 @@
 import { persistentAtom } from "@nanostores/persistent";
 import type { UserPreferences } from "../types";
+import { mealPlanStaleStore, mealPlanStore } from "./mealPlan";
 
 export const preferencesStore = persistentAtom<UserPreferences | null>("user-preferences", null, {
 	encode: JSON.stringify,
@@ -20,4 +21,8 @@ export const setPreferences = (preferences: UserPreferences) => {
 		budgetWeight: preferences.budgetWeight ?? 1,
 		dietaryWeight: preferences.dietaryWeight ?? 1,
 	});
+
+	if (mealPlanStore.get()) {
+		mealPlanStaleStore.set(true);
+	}
 };

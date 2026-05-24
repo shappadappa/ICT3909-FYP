@@ -2,14 +2,14 @@ import { isLoadingStore, pantryStore, preferencesStore, setIsLoading, setMealPla
 
 export function useGenerateMealPlan() {
 	const isLoading = isLoadingStore.get();
+	const preferences = preferencesStore.get();
+	const pantry = pantryStore.get();
 
 	const generateMealPlan = async () => {
 		if (isLoading) return;
 		setIsLoading(true);
 
 		try {
-			const preferences = preferencesStore.get();
-
 			const requestBody = {
 				user_preferences: {
 					weekly_budget: preferences ? Number(preferences.weeklyBudget) || 50.0 : 50.0,
@@ -24,7 +24,7 @@ export function useGenerateMealPlan() {
 					budget_weight: preferences?.budgetWeight ?? 1.0,
 					dietary_weight: preferences?.dietaryWeight ?? 1.0,
 				},
-				pantry_items: pantryStore.get().map((ingredient) => ({
+				pantry_items: pantry.map((ingredient) => ({
 					id: ingredient.id,
 					ingredient_name: ingredient.name,
 					quantity_grams: ingredient.quantity ?? 0,
@@ -59,7 +59,11 @@ export function useGenerateMealPlan() {
 				cost: data.estimated_cost,
 				dailyCalories: data.calories_per_day,
 				dailyProtein: data.protein_per_day,
-				shoppingList: data.shopping_list,
+				shoppingList: data.shopping_list.map((item: any) => ({
+					name: item.ingredient_name,
+					quantity: item.quantity_grams,
+					cost: item.estimated_cost,
+				})),
 			});
 		} catch (err) {
 			console.error("Failed to generate meal plan:", err);

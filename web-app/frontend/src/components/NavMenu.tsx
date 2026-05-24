@@ -1,6 +1,6 @@
 import { useState } from "react";
-import UserPreferencesModal from "./UserPreferencesModal";
-import DisclaimerModal from "./DisclaimerModal";
+import DisclaimerModal from "./modals/DisclaimerModal";
+import UserPreferencesModal from "./modals/UserPreferencesModal";
 
 export default function NavMenu() {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);

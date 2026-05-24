@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { modifyPantryItem, removePantryItem } from "../stores";
-import { DietaryTag, type Ingredient } from "../types";
-import DietaryTagBadge from "./DietaryTagBadge";
+import { modifyPantryItem, removePantryItem } from "../../stores";
+import { DietaryTag, type Ingredient } from "../../types";
+import DietaryTagBadge from "../badges/DietaryTagBadge";
+import NutritionalInformationCard from "../NutritionalInformationCard";
 import Modal from "./Modal";
-import NutritionalInformationCard from "./NutritionalInformationCard";
 
 interface IngredientModalProps {
 	readonly ingredient: Ingredient | null;

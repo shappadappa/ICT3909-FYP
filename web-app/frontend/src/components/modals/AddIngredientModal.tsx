@@ -1,10 +1,11 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { addPantryItem, pantryStore } from "../stores";
-import type { Ingredient } from "../types";
-import { DietaryTag } from "../types";
-import DietaryTagBadge from "./DietaryTagBadge";
+import { useStore } from "@nanostores/react";
+import { useEffect, useState } from "react";
+import { addPantryItem, pantryStore } from "../../stores";
+import type { Ingredient } from "../../types";
+import { DietaryTag } from "../../types";
+import DietaryTagBadge from "../badges/DietaryTagBadge";
+import NutritionalInformationCard from "../NutritionalInformationCard";
 import Modal from "./Modal";
-import NutritionalInformationCard from "./NutritionalInformationCard";
 
 interface AddIngredientModalProps {
 	isOpen: boolean;
@@ -30,7 +31,7 @@ const fetchAllIngredients = async () => {
 };
 
 export default function AddIngredientModal({ isOpen, onClose }: AddIngredientModalProps) {
-	const pantryIngredients = useSyncExternalStore(pantryStore.subscribe, pantryStore.get, () => []);
+	const pantryIngredients = useStore(pantryStore);
 	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");

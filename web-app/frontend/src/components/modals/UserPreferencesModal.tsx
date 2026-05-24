@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
-import { mealPlanStore, preferencesStore, setPreferences as savePreferences } from "../stores";
-import type { UserPreferences } from "../types";
+import { mealPlanStore, preferencesStore, setPreferences as savePreferences } from "../../stores";
+import type { UserPreferences } from "../../types";
 import Modal from "./Modal";
 
 interface UserPreferencesProps {

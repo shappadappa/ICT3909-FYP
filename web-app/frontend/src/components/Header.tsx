@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
 import { pantryStore, preferencesStore } from "../stores";
 import { isLoadingStore } from "../stores/loading";
-import ConfirmGenerationModal from "./ConfirmGenerationModal";
+import ConfirmGenerationModal from "./modals/ConfirmGenerationModal";
 import NavMenu from "./NavMenu";
 
 export default function Header() {

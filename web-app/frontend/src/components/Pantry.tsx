@@ -2,9 +2,9 @@ import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
 import { mealPlanStore, pantryStore } from "../stores";
 import type { Ingredient } from "../types";
-import AddIngredientModal from "./AddIngredientModal";
-import IngredientModal from "./IngredientModal";
-import ShoppingListModal from "./ShoppingListModal";
+import AddIngredientModal from "./modals/AddIngredientModal";
+import IngredientModal from "./modals/IngredientModal";
+import ShoppingListModal from "./modals/ShoppingListModal";
 import { fetchRecipesByIds } from "./utils/recipes";
 
 export default function Pantry() {

@@ -1,14 +1,14 @@
 import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
 import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
-import { isLoadingStore, mealPlanStore, pantryStore, preferencesStore } from "../stores";
+import { isLoadingStore, mealPlanStaleStore, mealPlanStore, pantryStore, preferencesStore } from "../stores";
 import type { Recipe } from "../types";
-import Badge from "./Badge";
-import ConfirmGenerationModal from "./ConfirmGenerationModal";
-import DayModal from "./DayModal/DayModal";
+import Badge from "./badges/Badge";
 import LoadingSpinner from "./LoadingSpinner";
 import MealPlanSummary from "./MealPlanSummary";
-import RecipeModal from "./RecipeModal";
+import ConfirmGenerationModal from "./modals/ConfirmGenerationModal";
+import DayModal from "./modals/DayModal/DayModal";
+import RecipeModal from "./modals/RecipeModal";
 import { fetchMeals } from "./utils/recipes";
 
 const DAY_NAMES_SHORT_TO_LONG: Record<string, string> = {
@@ -23,6 +23,7 @@ const DAY_NAMES_SHORT_TO_LONG: Record<string, string> = {
 
 export default function MealPlan() {
 	const mealPlan = useStore(mealPlanStore);
+	const mealPlanStale = useStore(mealPlanStaleStore);
 	const preferences = useStore(preferencesStore);
 	const isLoading = useStore(isLoadingStore);
 
@@ -203,7 +204,7 @@ export default function MealPlan() {
 					</div>
 				</div>
 
-				<MealPlanSummary mealPlan={mealPlan} preferences={preferences} />
+				<MealPlanSummary mealPlan={mealPlan} preferences={preferences} isStale={mealPlanStale} />
 
 				<RecipeModal
 					recipe={selectedRecipe}

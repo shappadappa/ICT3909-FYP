@@ -1,4 +1,4 @@
-import type { Recipe } from "../../types";
+import type { Recipe } from "../../../types";
 
 interface MealRowProps {
 	readonly mealKey: keyof typeof MEAL_STYLES;

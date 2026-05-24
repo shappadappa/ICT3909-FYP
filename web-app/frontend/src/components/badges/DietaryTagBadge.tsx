@@ -1,4 +1,4 @@
-import { DietaryTag } from "../types";
+import { DietaryTag } from "../../types";
 import Badge from "./Badge";
 
 interface DietaryTagBadgeProps {

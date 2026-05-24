@@ -1,8 +1,8 @@
 import { useStore } from "@nanostores/react";
-import { preferencesStore } from "../../stores";
-import type { NutritionalInformation, Recipe } from "../../types";
+import { preferencesStore } from "../../../stores";
+import type { NutritionalInformation, Recipe } from "../../../types";
+import NutritionalInformationCard from "../../NutritionalInformationCard";
 import Modal from "../Modal";
-import NutritionalInformationCard from "../NutritionalInformationCard";
 import { GoalRow } from "./GoalRow";
 import { MealRow } from "./MealRow";
 

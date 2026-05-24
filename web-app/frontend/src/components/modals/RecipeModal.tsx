@@ -1,7 +1,7 @@
-import type { Recipe } from "../types";
-import DietaryTagBadge from "./DietaryTagBadge";
+import type { Recipe } from "../../types";
+import DietaryTagBadge from "../badges/DietaryTagBadge";
+import NutritionalInformationCard from "../NutritionalInformationCard";
 import Modal from "./Modal";
-import NutritionalInformationCard from "./NutritionalInformationCard";
 
 interface RecipeModalProps {
 	recipe: Recipe | null;
