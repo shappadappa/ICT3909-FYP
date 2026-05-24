@@ -9,7 +9,6 @@ interface ShoppingListModalProps {
 }
 
 export default function ShoppingListModal({ mealPlan, pantry, isOpen, onClose }: ShoppingListModalProps) {
-	console.log(mealPlan);
 	return (
 		<Modal title="Shopping List" isOpen={isOpen} onClose={onClose}>
 			<div className="max-h-[65vh] overflow-y-auto p-4">
