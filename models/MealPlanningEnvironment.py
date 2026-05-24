@@ -55,6 +55,7 @@ class MealPlanningEnvironment:
                 ingredients=ingredients,
                 dietary_tags=dietary_tags,
                 instructions=item.get("instructions", []),
+                id=item["id"] if "id" in item else None,
             )
 
             recipe.nutritional_information = self._parse_nutritional_information(item["nutritional_information"])

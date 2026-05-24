@@ -76,13 +76,16 @@ class MealPlanner:
         """
 
         shopping_list = {}
+        consumed_from_pantry: dict[str, float] = dict.fromkeys(self.pantry_stock, 0.0)
 
         for index in self.best_meal_plan:
             recipe = self.recipes[int(index)]
 
             for ingredient_name, quantity_needed in recipe.ingredients.items():
-                available = self.pantry_stock.get(ingredient_name, 0) - self.consumed_stock.get(ingredient_name, 0)
-                to_buy = max(0, quantity_needed - available)
+                available = self.pantry_stock.get(ingredient_name, 0) - consumed_from_pantry.get(ingredient_name, 0.0)
+                from_pantry = max(0.0, min(available, quantity_needed))
+                to_buy = quantity_needed - from_pantry
+                consumed_from_pantry[ingredient_name] = consumed_from_pantry.get(ingredient_name, 0.0) + from_pantry
                 if to_buy > 0:
                     shopping_list[ingredient_name] = shopping_list.get(ingredient_name, 0.0) + to_buy
 

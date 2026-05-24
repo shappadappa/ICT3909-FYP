@@ -1,14 +1,13 @@
 import json
 from datetime import datetime
 from pathlib import Path
-import random
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from engines import GAMealPlanner, RandomMealPlanner
+from engines import GAMealPlanner
 from models import MealPlanningEnvironment
 from models.NutritionalInformation import NutritionalInformation
 from models.Pantry import Pantry
@@ -23,6 +22,40 @@ with open(DATA_DIR / "supplemented_structured_ingredients.json") as file:
 with open(DATA_DIR / "supplemented_structured_recipes.json") as file:
     RECIPES = json.load(file)
 
+with open(DATA_DIR / "best_ga_meal_planner_hyperparameters.json") as file:
+    BEST_GA_HYPERPARAMETERS = json.load(file)
+
+with open(DATA_DIR / "priced_ingredients.json") as file:
+    _raw_priced = json.load(file)
+
+_ingredient_id_to_name = {ingredient["id"]: ingredient["name"] for ingredient in INGREDIENTS}
+_ingredient_id_to_price: dict[str, float] = dict(_raw_priced.items())
+
+# priced ingredients is {id: price_per_100_grams}
+# convert to {name: price_per_100_grams}
+PRICED_INGREDIENTS = {
+    _ingredient_id_to_name[ingredient_id]: price_per_100g
+    for ingredient_id, price_per_100g in _raw_priced.items()
+    if ingredient_id in _ingredient_id_to_name
+}
+
+
+def _with_ingredient_cost(ingredient: dict) -> dict:
+    price = _ingredient_id_to_price.get(ingredient["id"])
+    return {**ingredient, "price_per_100g": price}
+
+
+def _with_recipe_cost(recipe: dict) -> dict:
+    cost = sum(
+        (entry["quantity"] / 100.0) * PRICED_INGREDIENTS.get(entry["ingredient"], 0.0)
+        for entry in recipe["ingredients"]
+    )
+    return {**recipe, "estimated_cost": round(cost, 2)}
+
+
+# schema and other type declarations
+
+
 class UserPreferencesSchema(BaseModel):
     weekly_budget: float = 50.0
     calorie_target_per_day: float = 2500.0
@@ -31,6 +64,10 @@ class UserPreferencesSchema(BaseModel):
     is_vegan: bool = False
     requires_gluten_free: bool = False
     requires_lactose_free: bool = False
+    pantry_weight: float = 1.0
+    waste_weight: float = 1.0
+    budget_weight: float = 1.0
+    dietary_weight: float = 1.0
 
 
 class PantryItemSchema(BaseModel):
@@ -54,7 +91,8 @@ class MealPlanResponse(BaseModel):
     estimated_cost: float
     calories_per_day: list[float]
     protein_per_day: list[float]
-    shopping_list: dict[str, float]  # ingredient name to quantity to buy (g)
+    shopping_list: list[dict[str, str | float]]  # list of ingredients with name, quantity to buy (g) and cost (€)
+
 
 app = FastAPI(title="GA Meal Planner API")
 
@@ -75,28 +113,40 @@ async def get_ingredients(
     ingredient_ids: Annotated[list[str] | None, Query()] = None,
 ):
     filtered_ingredients = INGREDIENTS
-    
+
     if gluten_free:
-        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_gluten_free"]]
+        filtered_ingredients = [
+            ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_gluten_free"]
+        ]
     if lactose_free:
-        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_lactose_free"]]
+        filtered_ingredients = [
+            ingredient
+            for ingredient in filtered_ingredients
+            if ingredient["nutritional_information"]["is_lactose_free"]
+        ]
     if vegetarian:
-        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegetarian"]]
+        filtered_ingredients = [
+            ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegetarian"]
+        ]
     if vegan:
-        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegan"]]
+        filtered_ingredients = [
+            ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegan"]
+        ]
     if ingredient_ids:
         filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["id"] in ingredient_ids]
 
-    return filtered_ingredients
+    return [_with_ingredient_cost(i) for i in filtered_ingredients]
+
 
 @app.get("/api/ingredients/{ingredient_id}")
 async def get_ingredient(ingredient_id: str):
     matched_ingredient = next((ingredient for ingredient in INGREDIENTS if ingredient["id"] == ingredient_id), None)
 
     if matched_ingredient is None:
-        raise HTTPException(status_code = 404, detail = "Ingredient not found")
-    
-    return matched_ingredient
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+
+    return _with_ingredient_cost(matched_ingredient)
+
 
 @app.get("/api/recipes")
 async def get_recipes(
@@ -119,16 +169,18 @@ async def get_recipes(
     if recipe_ids:
         filtered_recipes = [recipe for recipe in filtered_recipes if recipe["id"] in recipe_ids]
 
-    return filtered_recipes
+    return [_with_recipe_cost(r) for r in filtered_recipes]
+
 
 @app.get("/api/recipes/{recipe_id}")
 async def get_recipe(recipe_id: str):
     matched_recipe = next((recipe for recipe in RECIPES if recipe["id"] == recipe_id), None)
 
     if matched_recipe is None:
-        raise HTTPException(status_code = 404, detail = "Recipe not found")
+        raise HTTPException(status_code=404, detail="Recipe not found")
 
-    return matched_recipe
+    return _with_recipe_cost(matched_recipe)
+
 
 @app.post("/api/meal-plan", response_model=MealPlanResponse)
 def generate_meal_plan(request: MealPlanRequest):
@@ -149,7 +201,7 @@ def generate_meal_plan(request: MealPlanRequest):
 
         if ingredient_data is None:
             raise HTTPException(status_code=400, detail=f"Ingredient with ID '{item.id}' not found")
-        
+
         nutritional_information = NutritionalInformation(**ingredient_data["nutritional_information"])
 
         expiry = datetime.fromisoformat(item.expiry_date) if item.expiry_date else datetime(9999, 12, 31)
@@ -160,40 +212,67 @@ def generate_meal_plan(request: MealPlanRequest):
         )
         pantry.add(pantry_ingredient, item.quantity_grams)
 
-    meal_planning_environment = MealPlanningEnvironment(preferences=user_preferences, pantry=pantry, ingredient_costs={ingredient["name"]: random.random() for ingredient in INGREDIENTS})
+    meal_planning_environment = MealPlanningEnvironment(
+        preferences=user_preferences,
+        pantry=pantry,
+        ingredient_costs=PRICED_INGREDIENTS,
+    )
     meal_planning_environment.load_recipes_from_json(str(DATA_DIR / "supplemented_structured_recipes.json"))
 
-    planner = GAMealPlanner(meal_planning_environment=meal_planning_environment)
-    best_plan_indices, fitness = ga_planner.generate_meal_plan(
+    planner = GAMealPlanner(
+        meal_planning_environment=meal_planning_environment,
+        pantry_weight=request.user_preferences.pantry_weight,
+        waste_weight=request.user_preferences.waste_weight,
+        budget_weight=request.user_preferences.budget_weight,
+        dietary_weight=request.user_preferences.dietary_weight,
+    )
+    best_plan_indices, fitness = planner.generate_meal_plan(
         num_days=request.num_days,
         meals_per_day=request.meals_per_day,
         num_generations=request.num_generations,
         generation_print_interval=None,
-    ) # TODO pass best params here
+        **BEST_GA_HYPERPARAMETERS,
+    )
 
-    meal_plan_names = [
-        [meal_planning_environment.recipes[idx].name for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day]]
-        for day in range(request.num_days)
+    num_days = request.num_days
+    meals_per_day = request.meals_per_day
+
+    meal_plan_ids = [
+        [
+            meal_planning_environment.recipes[index].id
+            for index in best_plan_indices[day * meals_per_day : (day + 1) * meals_per_day]
+        ]
+        for day in range(num_days)
     ]
 
     calories_per_day = [
-        sum(planner.recipe_calories[idx] for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day])
-        for day in range(request.num_days)
+        sum(
+            meal_planning_environment.recipes[index].nutritional_information.calories or 0.0
+            for index in best_plan_indices[day * meals_per_day : (day + 1) * meals_per_day]
+        )
+        for day in range(num_days)
     ]
     protein_per_day = [
-        sum(planner.recipe_protein[idx] for idx in best_plan_indices[day * request.meals_per_day:(day + 1) * request.meals_per_day])
-        for day in range(request.num_days)
+        sum(
+            meal_planning_environment.recipes[index].nutritional_information.protein or 0.0
+            for index in best_plan_indices[day * meals_per_day : (day + 1) * meals_per_day]
+        )
+        for day in range(num_days)
     ]
 
     shopping_df, _, estimated_cost = planner.get_shopping_list()
-    shopping_list = {
-        row["Ingredient"]: float(row["Quantity to Buy (g)"])
+    shopping_list = [
+        {
+            "ingredient_name": row["Ingredient"],
+            "quantity_grams": float(row["Quantity to Buy (g)"]),
+            "estimated_cost": float(row["Cost (€)"]),
+        }
         for _, row in shopping_df.iterrows()
         if row["Ingredient"] != "TOTAL"
-    }
+    ]
 
     return MealPlanResponse(
-        meal_plan=meal_plan_names,
+        meal_plan=meal_plan_ids,
         fitness_score=round(fitness, 4),
         estimated_cost=round(estimated_cost, 2),
         calories_per_day=[round(c, 1) for c in calories_per_day],
