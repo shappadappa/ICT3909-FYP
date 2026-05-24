@@ -1,10 +1,15 @@
+import { useStore } from "@nanostores/react";
 import { useState } from "react";
+import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
+import { pantryStore, preferencesStore } from "../stores";
+import { isLoadingStore } from "../stores/loading";
+import ConfirmGenerationModal from "./ConfirmGenerationModal";
 import NavMenu from "./NavMenu";
-import Modal from "./Modal";
-import { pantryStore, preferencesStore, setMealPlan } from "../stores";
 
 export default function Header() {
-	const [isLoading, setIsLoading] = useState(false);
+	const isLoading = useStore(isLoadingStore);
+
+	const generateMealPlan = useGenerateMealPlan();
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 	const [confirmWarnings, setConfirmWarnings] = useState<string[]>([]);
 
@@ -41,58 +46,6 @@ export default function Header() {
 		}
 	};
 
-	const generateMealPlan = async () => {
-		if (isLoading) return;
-		setIsLoading(true);
-
-		try {
-			const preferences = preferencesStore.get();
-
-			const requestBody = {
-				user_preferences: {
-					weekly_budget: preferences ? Number(preferences.weeklyBudget) : 50.0,
-					calorie_target_per_day: preferences ? Number(preferences.dailyCalories) : 2500.0,
-					protein_target_per_day: preferences ? Number(preferences.dailyProtein) : 50.0,
-					is_vegetarian: preferences?.vegetarian ?? false,
-					is_vegan: preferences?.vegan ?? false,
-					requires_gluten_free: preferences?.glutenIntolerant ?? false,
-					requires_lactose_free: preferences?.lactoseIntolerant ?? false,
-				},
-				pantry_items: pantryStore.get().map((ingredient) => ({
-					id: ingredient.id,
-					ingredient_name: ingredient.name,
-					quantity_grams: ingredient.quantity ?? 0,
-					expiry_date: ingredient.expirationDate ?? null,
-				})),
-				num_days: 7,
-				meals_per_day: 3,
-				num_generations: 100,
-			};
-
-			const res = await fetch(`http://localhost:8000/api/meal-plan`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(requestBody),
-			});
-
-			if (!res.ok) {
-				throw new Error(`API error: ${res.status}`);
-			}
-
-			const data = await res.json();
-
-			const mealPlan = data.meal_plan;
-
-			const [breakfastIds, lunchIds, dinnerIds] = [0, 1, 2].map((index) => mealPlan.map((day) => day[index]));
-
-			setMealPlan({ breakfastIds, lunchIds, dinnerIds });
-		} catch (err) {
-			console.error("Failed to generate meal plan:", err);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	return (
 		<header className="border-walnut-100 flex items-center justify-between border-b bg-white px-8 py-4">
 			<NavMenu />
@@ -112,41 +65,12 @@ export default function Header() {
 				</button>
 			</div>
 
-			<Modal title="Before you Continue" isOpen={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
-				<div className="flex flex-col gap-4">
-					<ul className="flex flex-col gap-2">
-						{confirmWarnings.map((w) => (
-							<li
-								key={w}
-								className="flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2.5 text-sm text-amber-800"
-							>
-								<span className="mt-0.5 shrink-0">⚠️</span>
-								{w}
-							</li>
-						))}
-					</ul>
-					<p className="text-sm text-gray-500">
-						You can still generate a meal plan, but the results may not match your needs.
-					</p>
-					<div className="flex justify-end gap-2">
-						<button
-							className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-							onClick={() => setIsConfirmOpen(false)}
-						>
-							Cancel
-						</button>
-						<button
-							className="bg-sage-600 hover:bg-sage-800 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
-							onClick={() => {
-								setIsConfirmOpen(false);
-								generateMealPlan();
-							}}
-						>
-							Generate Anyway
-						</button>
-					</div>
-				</div>
-			</Modal>
+			<ConfirmGenerationModal
+				isOpen={isConfirmOpen}
+				onClose={() => setIsConfirmOpen(false)}
+				confirmWarnings={confirmWarnings}
+				generateMealPlan={generateMealPlan}
+			/>
 		</header>
 	);
 }

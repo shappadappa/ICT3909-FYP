@@ -6,4 +6,8 @@ export interface UserPreferences {
 	lactoseIntolerant: boolean;
 	vegetarian: boolean;
 	vegan: boolean;
+	pantryWeight?: number;
+	wasteWeight?: number;
+	budgetWeight?: number;
+	dietaryWeight?: number;
 }

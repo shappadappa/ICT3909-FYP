@@ -1,5 +1,5 @@
-import type { Recipe } from "../types";
-import type { DietaryTag } from "../types/DietaryTag";
+import type { Recipe } from "../../types";
+import type { DietaryTag } from "../../types/DietaryTag";
 
 const RECIPE_NOT_FOUND: Recipe = {
 	id: "RECIPE_NOT_FOUND",

@@ -34,7 +34,7 @@ export function MealRow({ mealKey, recipe }: MealRowProps) {
 				{style.label}
 			</span>
 			<div className="min-w-0 flex-1">
-				<p className={`truncate text-sm font-medium ${style.text}`}>{recipe?.name ?? "—"}</p>
+				<p className={`truncate text-sm font-medium ${style.text}`}>{recipe?.name ?? "-"}</p>
 				{recipe?.nutritionalInformation ? (
 					<p className="mt-0.5 text-xs text-gray-400">
 						{Math.round(recipe?.nutritionalInformation.calories)} kcal &middot;{" "}

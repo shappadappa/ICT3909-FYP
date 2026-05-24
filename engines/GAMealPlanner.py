@@ -104,6 +104,7 @@ class GAMealPlanner(MealPlanner):
                 weekly_budget=self.preferences.weekly_budget,
                 calorie_target_per_day=self.preferences.calorie_target_per_day,
                 protein_target_per_day=self.preferences.protein_target_per_day,
+                meals_per_day=meals_per_day,
                 pantry_weight=self.pantry_weight,
                 waste_weight=self.waste_weight,
                 budget_weight=self.budget_weight,

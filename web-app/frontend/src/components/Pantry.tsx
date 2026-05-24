@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
+import { useEffect, useState } from "react";
+import { mealPlanStore, pantryStore } from "../stores";
 import type { Ingredient } from "../types";
-import IngredientModal from "./IngredientModal";
 import AddIngredientModal from "./AddIngredientModal";
-import { pantryStore, mealPlanStore } from "../stores";
-import { fetchRecipesByIds } from "../api/recipes";
+import IngredientModal from "./IngredientModal";
+import ShoppingListModal from "./ShoppingListModal";
+import { fetchRecipesByIds } from "./utils/recipes";
 
 export default function Pantry() {
 	const pantryIngredients = useStore(pantryStore);
@@ -12,6 +13,7 @@ export default function Pantry() {
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");
 	const [isAddIngredientModalOpen, setIsAddIngredientModalOpen] = useState(false);
+	const [isShoppingListOpen, setIsShoppingListOpen] = useState(false);
 	const [quantitiesUsedInMealPlan, setQuantitiesUsedInMealPlan] = useState<Record<string, number>>({});
 
 	useEffect(() => {
@@ -23,7 +25,7 @@ export default function Pantry() {
 		const allIds = [...mealPlan.breakfastIds, ...mealPlan.lunchIds, ...mealPlan.dinnerIds];
 
 		fetchRecipesByIds(allIds)
-			.then((recipes) => {
+			?.then((recipes) => {
 				const totals: Record<string, number> = {};
 				for (const id of allIds) {
 					const recipe = recipes.find((recipe) => recipe.id === id);
@@ -38,6 +40,9 @@ export default function Pantry() {
 			})
 			.catch(console.error);
 	}, [mealPlan]);
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
 
 	return (
 		<aside className="flex w-72 shrink-0 flex-col">
@@ -100,20 +105,32 @@ export default function Pantry() {
 											{ingredient.name}
 										</p>
 										<p className="text-walnut-400 text-xs">Quantity (g): {ingredient.quantity}</p>
-										<p className="text-2xs text-amber-600">
-											{quantitiesUsedInMealPlan[ingredient.name]
-												? `${Math.round(quantitiesUsedInMealPlan[ingredient.name] * 100) / 100}g used in meal plan`
-												: "Unused in meal plan"}
-										</p>
+										{mealPlan && (
+											<p className="text-2xs text-amber-600">
+												{quantitiesUsedInMealPlan[ingredient.name]
+													? `${Math.round(quantitiesUsedInMealPlan[ingredient.name] * 100) / 100}g used in meal plan`
+													: "Unused in meal plan"}
+											</p>
+										)}
+										{new Date(ingredient.expirationDate) < today ? (
+											<p className="text-2xs text-red-500">Expired</p>
+										) : (
+											<p className="text-walnut-400 text-xs">
+												Expiring on:{" "}
+												{ingredient.expirationDate
+													? new Date(ingredient.expirationDate).toLocaleDateString(
+															undefined,
+															{
+																day: "2-digit",
+																month: "2-digit",
+																year: "numeric",
+															}
+														)
+													: "N/A"}
+											</p>
+										)}
 										<p className="text-walnut-400 text-xs">
-											Expiring on:{" "}
-											{ingredient.expirationDate
-												? new Date(ingredient.expirationDate).toLocaleDateString(undefined, {
-														day: "2-digit",
-														month: "2-digit",
-														year: "numeric",
-													})
-												: "N/A"}
+											Price: {ingredient.cost ? `€${ingredient.cost.toFixed(2)}` : "N/A"}
 										</p>
 									</div>
 								</button>
@@ -127,9 +144,14 @@ export default function Pantry() {
 							<span className="text-sage-600 font-semibold">{pantryIngredients.length}</span> items
 						</span>
 					</div>
-					<button className="text-terra-600 hover:text-terra-800 bg-terra-50 border-terra-100 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors">
-						Shopping List →
-					</button>
+					{mealPlan && (
+						<button
+							className="text-terra-600 hover:bg-terra-100 bg-terra-50 border-terra-100 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
+							onClick={() => setIsShoppingListOpen(true)}
+						>
+							Shopping List
+						</button>
+					)}
 				</footer>
 			</div>
 
@@ -139,6 +161,15 @@ export default function Pantry() {
 				onClose={() => setSelectedIngredient(null)}
 			/>
 			<AddIngredientModal isOpen={isAddIngredientModalOpen} onClose={() => setIsAddIngredientModalOpen(false)} />
+
+			{mealPlan && (
+				<ShoppingListModal
+					isOpen={isShoppingListOpen}
+					onClose={() => setIsShoppingListOpen(false)}
+					mealPlan={mealPlan}
+					pantry={pantryIngredients}
+				/>
+			)}
 		</aside>
 	);
 }

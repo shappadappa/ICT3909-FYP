@@ -1,16 +1,11 @@
 import { persistentAtom } from "@nanostores/persistent";
+import type { MealPlan } from "../types";
 
-interface MealPlanIds {
-	breakfastIds: string[];
-	lunchIds: string[];
-	dinnerIds: string[];
-}
-
-export const mealPlanStore = persistentAtom<MealPlanIds | null>("meal-plan", null, {
+export const mealPlanStore = persistentAtom<MealPlan | null>("meal-plan", null, {
 	encode: JSON.stringify,
 	decode: JSON.parse,
 });
 
-export const setMealPlan = (ids: MealPlanIds) => {
-	mealPlanStore.set(ids);
+export const setMealPlan = (mealPlan: MealPlan) => {
+	mealPlanStore.set(mealPlan);
 };

@@ -12,7 +12,9 @@ export default function DisclaimerModal({ isOpen, onClose }: { isOpen: boolean; 
 				fully accurate, therefore the system should not be relied solely upon for dietary or nutritional advice.
 			</p>
 			<p className="my-2 text-sm">
-				Given the current implementation, recipes suggested are designed for one serving only.
+				To begin planning meals, you are encouraged to set your preferences and add pantry entries to improve
+				the quality of suggestions. Given the current implementation, recipes suggested are designed for one
+				serving only.
 			</p>
 			<a
 				className="my-2 text-sm text-blue-500 underline"

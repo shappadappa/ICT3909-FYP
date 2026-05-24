@@ -1,22 +1,22 @@
 import { useStore } from "@nanostores/react";
-import Modal from "../Modal";
-import type { NutritionalInformation, Recipe } from "../../types";
 import { preferencesStore } from "../../stores";
+import type { NutritionalInformation, Recipe } from "../../types";
+import Modal from "../Modal";
 import NutritionalInformationCard from "../NutritionalInformationCard";
 import { GoalRow } from "./GoalRow";
 import { MealRow } from "./MealRow";
 
 interface DayMeals {
-	readonly breakfast: Recipe | null;
-	readonly lunch: Recipe | null;
-	readonly dinner: Recipe | null;
+	breakfast: Recipe | null;
+	lunch: Recipe | null;
+	dinner: Recipe | null;
 }
 
 interface DayModalProps {
-	readonly dayName: string | null;
-	readonly meals: DayMeals;
-	readonly isOpen: boolean;
-	readonly onClose: () => void;
+	dayName: string | null;
+	meals: DayMeals;
+	isOpen: boolean;
+	onClose: () => void;
 }
 
 const sumNutrition = (recipes: (Recipe | null)[]): NutritionalInformation => {
@@ -37,7 +37,9 @@ const sumNutrition = (recipes: (Recipe | null)[]): NutritionalInformation => {
 
 	return recipes.reduce((acc, recipe) => {
 		if (!recipe?.nutritionalInformation) return acc;
+
 		const nutritionalInformation = recipe.nutritionalInformation;
+
 		return {
 			...acc,
 			calories: acc.calories + nutritionalInformation.calories,
@@ -66,10 +68,10 @@ export default function DayModal({ dayName, meals, isOpen, onClose }: DayModalPr
 
 	const totals = sumNutrition([meals.breakfast, meals.lunch, meals.dinner]);
 
-	const calTarget = preferences ? Number(preferences.dailyCalories) : null;
+	const calorieTarget = preferences ? Number(preferences.dailyCalories) : null;
 	const proteinTarget = preferences ? Number(preferences.dailyProtein) : null;
 
-	const calDiff = calTarget !== null && calTarget > 0 ? totals.calories - calTarget : null;
+	const calDiff = calorieTarget !== null && calorieTarget > 0 ? totals.calories - calorieTarget : null;
 	const proteinDiff = proteinTarget !== null && proteinTarget > 0 ? totals.protein - proteinTarget : null;
 
 	const allMeals = [meals.breakfast, meals.lunch, meals.dinner].filter((r): r is Recipe => r !== null);
@@ -130,17 +132,32 @@ export default function DayModal({ dayName, meals, isOpen, onClose }: DayModalPr
 
 				<NutritionalInformationCard nutritionalInformation={totals} />
 
-				{preferences && Boolean(calTarget ?? proteinTarget) && (
+				<div>
+					<h4 className="mb-2 text-xs font-semibold tracking-wide text-gray-400 uppercase">Estimated Cost</h4>
+					<div className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2">
+						<span className="text-sm text-gray-600">Total</span>
+						<span className="text-sm font-semibold text-gray-800">
+							&euro;
+							{meals
+								? Object.values(meals)
+										.reduce((acc, meal) => acc + (meal?.estimated_cost ?? 0), 0)
+										.toFixed(2)
+								: "0.00"}
+						</span>
+					</div>
+				</div>
+
+				{preferences && Boolean(calorieTarget ?? proteinTarget) && (
 					<div>
 						<h4 className="mb-2 text-xs font-semibold tracking-wide text-gray-400 uppercase">
 							vs. Your Goals
 						</h4>
 						<div className="space-y-2">
-							{calTarget !== null && calTarget > 0 && (
+							{calorieTarget !== null && calorieTarget > 0 && (
 								<GoalRow
 									label="Calories"
 									actual={Math.round(totals.calories)}
-									target={calTarget}
+									target={calorieTarget}
 									diff={calDiff ?? 0}
 									unit="kcal"
 									higherIsBetter={false}

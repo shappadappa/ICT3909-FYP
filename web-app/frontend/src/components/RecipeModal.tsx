@@ -1,6 +1,6 @@
-import Modal from "./Modal";
 import type { Recipe } from "../types";
 import DietaryTagBadge from "./DietaryTagBadge";
+import Modal from "./Modal";
 import NutritionalInformationCard from "./NutritionalInformationCard";
 
 interface RecipeModalProps {
@@ -12,6 +12,7 @@ interface RecipeModalProps {
 
 export default function RecipeModal({ recipe, isError, isOpen, onClose }: RecipeModalProps) {
 	if (!isOpen || !recipe) return null;
+
 	return (
 		<Modal title="Recipe Details" isOpen={isOpen} onClose={onClose}>
 			{isError ? (
@@ -27,7 +28,22 @@ export default function RecipeModal({ recipe, isError, isOpen, onClose }: Recipe
 						</div>
 					</div>
 
-					<NutritionalInformationCard nutritionalInformation={recipe.nutritionalInformation} />
+					<div>
+						<h4 className="mb-1.5 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+							Nutritional Information
+						</h4>
+
+						<NutritionalInformationCard nutritionalInformation={recipe.nutritionalInformation} />
+					</div>
+
+					<div>
+						<h4 className="mb-1.5 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+							Estimated Cost
+						</h4>
+						<p className="text-sm text-gray-700">
+							{recipe.estimated_cost ? `€${recipe.estimated_cost.toFixed(2)}` : "N/A"}
+						</p>
+					</div>
 
 					<div>
 						<h4 className="mb-1.5 text-xs font-semibold tracking-wide text-gray-400 uppercase">

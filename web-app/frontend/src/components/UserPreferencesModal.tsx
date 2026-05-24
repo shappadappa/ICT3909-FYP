@@ -1,31 +1,81 @@
-import { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
+import { useEffect, useState } from "react";
+import { mealPlanStore, preferencesStore, setPreferences as savePreferences } from "../stores";
+import type { UserPreferences } from "../types";
 import Modal from "./Modal";
-import { preferencesStore, setPreferences as savePreferences } from "../stores";
 
 interface UserPreferencesProps {
 	isOpen: boolean;
 	onClose: () => void;
 }
 
-const validate = (
-	calories: number | string,
-	protein: number | string,
-	weeklyBudget: number | string
-): string | null => {
-	if (!calories) return "Caloric intake is required.";
-	if (!protein) return "Protein intake is required.";
-	if (!weeklyBudget) return "Weekly budget is required.";
-	if (Number.isNaN(Number(calories)) || Number(calories) < 0) return "Caloric intake must be a non-negative number.";
-	if (Number.isNaN(Number(protein)) || Number(protein) < 0) return "Protein intake must be a non-negative number.";
-	if (Number.isNaN(Number(weeklyBudget)) || Number(weeklyBudget) < 0)
+const preferenceWeights = [
+	{
+		key: "pantryWeight",
+		label: "Pantry Utilisation",
+		description: "How strongly to reward meals that use ingredients already in your pantry.",
+	},
+	{
+		key: "wasteWeight",
+		label: "Food Waste",
+		description: "How strongly to penalise meal plans that let pantry items expire unused.",
+	},
+	{
+		key: "budgetWeight",
+		label: "Budget Adherence",
+		description: "How strongly to penalise meal plans that exceed your weekly budget.",
+	},
+	{
+		key: "dietaryWeight",
+		label: "Dietary Targets",
+		description: "How strongly to penalise meal plans that miss your calorie and protein goals.",
+	},
+] as const;
+
+const validate = (preferences: UserPreferences): string | null => {
+	if (!preferences.dailyCalories) return "Caloric intake is required.";
+	if (!preferences.dailyProtein) return "Protein intake is required.";
+	if (!preferences.weeklyBudget) return "Weekly budget is required.";
+	if (Number.isNaN(Number(preferences.dailyCalories)) || Number(preferences.dailyCalories) < 0)
+		return "Caloric intake must be a non-negative number.";
+	if (Number.isNaN(Number(preferences.dailyProtein)) || Number(preferences.dailyProtein) < 0)
+		return "Protein intake must be a non-negative number.";
+	if (Number.isNaN(Number(preferences.weeklyBudget)) || Number(preferences.weeklyBudget) < 0)
 		return "Weekly budget must be a non-negative number.";
+
+	if (
+		preferences.pantryWeight &&
+		(Number.isNaN(Number(preferences.pantryWeight)) || preferences.pantryWeight < 0 || preferences.pantryWeight > 1)
+	) {
+		return "Pantry weight must be a number between 0 and 1.";
+	}
+	if (
+		preferences.wasteWeight &&
+		(Number.isNaN(Number(preferences.wasteWeight)) || preferences.wasteWeight < 0 || preferences.wasteWeight > 1)
+	) {
+		return "Waste weight must be a number between 0 and 1.";
+	}
+	if (
+		preferences.budgetWeight &&
+		(Number.isNaN(Number(preferences.budgetWeight)) || preferences.budgetWeight < 0 || preferences.budgetWeight > 1)
+	) {
+		return "Budget weight must be a number between 0 and 1.";
+	}
+	if (
+		preferences.dietaryWeight &&
+		(Number.isNaN(Number(preferences.dietaryWeight)) ||
+			preferences.dietaryWeight < 0 ||
+			preferences.dietaryWeight > 1)
+	) {
+		return "Dietary weight must be a number between 0 and 1.";
+	}
 
 	return null;
 };
 
 export default function UserPreferencesModal({ isOpen, onClose }: UserPreferencesProps) {
 	const savedPreferences = useStore(preferencesStore);
+
 	const [preferences, setPreferences] = useState({
 		dailyCalories: savedPreferences?.dailyCalories ?? "",
 		dailyProtein: savedPreferences?.dailyProtein ?? "",
@@ -34,6 +84,10 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 		lactoseIntolerant: savedPreferences?.lactoseIntolerant ?? false,
 		vegetarian: savedPreferences?.vegetarian ?? false,
 		vegan: savedPreferences?.vegan ?? false,
+		pantryWeight: savedPreferences?.pantryWeight ?? 1.0,
+		wasteWeight: savedPreferences?.wasteWeight ?? 1.0,
+		budgetWeight: savedPreferences?.budgetWeight ?? 1.0,
+		dietaryWeight: savedPreferences?.dietaryWeight ?? 1.0,
 	});
 
 	useEffect(() => {
@@ -46,6 +100,10 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 				lactoseIntolerant: savedPreferences.lactoseIntolerant ?? false,
 				vegetarian: savedPreferences.vegetarian ?? false,
 				vegan: savedPreferences.vegan ?? false,
+				pantryWeight: savedPreferences.pantryWeight ?? 1.0,
+				wasteWeight: savedPreferences.wasteWeight ?? 1.0,
+				budgetWeight: savedPreferences.budgetWeight ?? 1.0,
+				dietaryWeight: savedPreferences.dietaryWeight ?? 1.0,
 			});
 		}
 	}, [isOpen]);
@@ -53,7 +111,7 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 	const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const error = validate(preferences.dailyCalories, preferences.dailyProtein, preferences.weeklyBudget);
+		const error = validate(preferences);
 
 		if (error) {
 			(globalThis as any).showSnackbar(error, "error");
@@ -64,12 +122,20 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 
 		onClose();
 
+		if (mealPlanStore.get()) {
+			(globalThis as any).showSnackbar(
+				"Preferences saved successfully. You might want to regenerate your meal plan.",
+				"info"
+			);
+			return;
+		}
+
 		(globalThis as any).showSnackbar("Preferences saved successfully!", "success");
 	};
 
 	return (
 		<Modal title="Your Preferences" isOpen={isOpen} onClose={onClose}>
-			<form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+			<form className="flex max-h-[65vh] flex-col gap-5 overflow-y-auto pr-4" onSubmit={handleSubmit}>
 				<fieldset className="flex flex-col gap-2">
 					<legend className="mb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
 						Dietary Restrictions
@@ -175,7 +241,7 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 
 				<fieldset className="flex flex-col gap-3">
 					<legend className="mb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
-						Other targets
+						Fiscal Targets
 					</legend>
 
 					<div className="flex flex-col gap-1">
@@ -200,6 +266,44 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 							</span>
 						</div>
 					</div>
+				</fieldset>
+
+				<fieldset className="flex flex-col gap-3">
+					<legend className="mb-1 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+						Meal Planner Weights (optional)
+					</legend>
+
+					{preferenceWeights.map(({ key, label, description }) => (
+						<div key={key} className="flex flex-col gap-1">
+							<label htmlFor={key} className="text-sm font-medium text-gray-600">
+								{label}
+							</label>
+
+							<p className="text-xs text-gray-400">{description}</p>
+
+							<div className="relative">
+								<input
+									type="number"
+									id={key}
+									name={key}
+									min="0"
+									max="1"
+									step="0.1"
+									value={preferences[key]}
+									className="focus:border-sage-400 w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pr-16 pl-3 text-sm text-gray-800 outline-none focus:bg-white"
+									onChange={(e) =>
+										setPreferences((preferences) => ({
+											...preferences,
+											[key]: Number(e.target.value),
+										}))
+									}
+								/>
+								<span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gray-400">
+									0 - 1
+								</span>
+							</div>
+						</div>
+					))}
 				</fieldset>
 
 				<button

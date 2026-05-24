@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
+import { useEffect, useState } from "react";
+import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
+import { isLoadingStore, mealPlanStore, pantryStore, preferencesStore } from "../stores";
 import type { Recipe } from "../types";
 import Badge from "./Badge";
-import LoadingSpinner from "./LoadingSpinner";
-import RecipeModal from "./RecipeModal";
-import MealPlanSummary from "./MealPlanSummary";
-import { mealPlanStore } from "../stores";
+import ConfirmGenerationModal from "./ConfirmGenerationModal";
 import DayModal from "./DayModal/DayModal";
-import { fetchMeals } from "../api/recipes";
+import LoadingSpinner from "./LoadingSpinner";
+import MealPlanSummary from "./MealPlanSummary";
+import RecipeModal from "./RecipeModal";
+import { fetchMeals } from "./utils/recipes";
 
 const DAY_NAMES_SHORT_TO_LONG: Record<string, string> = {
 	Mon: "Monday",
@@ -20,21 +22,26 @@ const DAY_NAMES_SHORT_TO_LONG: Record<string, string> = {
 };
 
 export default function MealPlan() {
-	const mealPlanIds = useStore(mealPlanStore);
+	const mealPlan = useStore(mealPlanStore);
+	const preferences = useStore(preferencesStore);
+	const isLoading = useStore(isLoadingStore);
 
 	const [breakfast, setBreakfast] = useState<Recipe[]>([]);
 	const [lunch, setLunch] = useState<Recipe[]>([]);
 	const [dinner, setDinner] = useState<Recipe[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
+	const generateMealPlan = useGenerateMealPlan();
+	const [isFetchingMeals, setIsFetchingMeals] = useState(false);
 	const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 	const [selectedDayShort, setSelectedDayShort] = useState<string | null>(null);
+	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+	const [confirmWarnings, setConfirmWarnings] = useState<string[]>([]);
 
 	useEffect(() => {
-		if (!mealPlanIds) return;
+		if (!mealPlan) return;
 
-		setIsLoading(true);
-		fetchMeals(mealPlanIds.breakfastIds, mealPlanIds.lunchIds, mealPlanIds.dinnerIds)
-			.then(({ breakfastRecipes, lunchRecipes, dinnerRecipes }) => {
+		setIsFetchingMeals(true);
+		fetchMeals(mealPlan.breakfastIds, mealPlan.lunchIds, mealPlan.dinnerIds)
+			?.then(({ breakfastRecipes, lunchRecipes, dinnerRecipes }) => {
 				setBreakfast(breakfastRecipes);
 				setLunch(lunchRecipes);
 				setDinner(dinnerRecipes);
@@ -42,8 +49,8 @@ export default function MealPlan() {
 			.catch(() => {
 				(globalThis as any).showSnackbar("Something went wrong. Please try again later.", "error");
 			})
-			.finally(() => setIsLoading(false));
-	}, [mealPlanIds]);
+			.finally(() => setIsFetchingMeals(false));
+	}, [mealPlan]);
 
 	const isEmpty = breakfast.length == 0 && lunch.length == 0 && dinner.length == 0;
 
@@ -53,21 +60,61 @@ export default function MealPlan() {
 		setSelectedDayShort(shortDay);
 	};
 
+	const handleGenerateClick = () => {
+		if (isLoading) return;
+
+		const warnings: string[] = [];
+
+		if (!preferences)
+			warnings.push(
+				"You haven't set your dietary preferences yet. The meal planner will default to a 2500 calorie and 50g protein target with no dietary restrictions and a weekly budget of 50 EUR."
+			);
+
+		if (pantryStore.get().length === 0)
+			warnings.push("Your pantry is empty. The planner won't be able to use any ingredients you already have.");
+
+		if (warnings.length > 0) {
+			setConfirmWarnings(warnings);
+			setIsConfirmOpen(true);
+		} else {
+			generateMealPlan();
+		}
+	};
+
 	const selectedDayIndex = selectedDayShort ? Object.keys(DAY_NAMES_SHORT_TO_LONG).indexOf(selectedDayShort) : -1;
 	const selectedDayName = selectedDayShort ? DAY_NAMES_SHORT_TO_LONG[selectedDayShort] : null;
 
-	const renderContent = () => {
-		if (isLoading) return <LoadingSpinner />;
+	const renderLoading = () => (
+		<div>
+			<h2 className="font-display text-walnut-800 text-lg font-semibold">Generating Meal Plan...</h2>
 
-		if (isEmpty)
-			return (
-				<div className="flex h-full flex-col items-center justify-center gap-4">
-					<p className="text-walnut-600 text-sm">No meals planned for this week.</p>
-					<button className="bg-sage-600 hover:bg-sage-700 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors duration-150">
-						Plan Meals
-					</button>
-				</div>
-			);
+			<LoadingSpinner />
+		</div>
+	);
+
+	const renderEmpty = () => (
+		<div className="flex h-full flex-col items-center justify-center gap-4">
+			<p className="text-walnut-600 text-sm">No meals planned for this week.</p>
+			<button
+				className="bg-sage-600 hover:bg-sage-800 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors duration-150"
+				onClick={handleGenerateClick}
+			>
+				Plan Meals
+			</button>
+
+			<ConfirmGenerationModal
+				isOpen={isConfirmOpen}
+				onClose={() => setIsConfirmOpen(false)}
+				confirmWarnings={confirmWarnings}
+				generateMealPlan={generateMealPlan}
+			/>
+		</div>
+	);
+
+	const renderContent = () => {
+		if (isLoading || isFetchingMeals) return renderLoading();
+
+		if (isEmpty) return renderEmpty();
 
 		return (
 			<div>
@@ -156,7 +203,7 @@ export default function MealPlan() {
 					</div>
 				</div>
 
-				<MealPlanSummary />
+				<MealPlanSummary mealPlan={mealPlan} preferences={preferences} />
 
 				<RecipeModal
 					recipe={selectedRecipe}

@@ -29,6 +29,7 @@ with open(DATA_DIR / "priced_ingredients.json") as file:
     _raw_priced = json.load(file)
 
 _ingredient_id_to_name = {ingredient["id"]: ingredient["name"] for ingredient in INGREDIENTS}
+_ingredient_id_to_price: dict[str, float] = dict(_raw_priced.items())
 
 # priced ingredients is {id: price_per_100_grams}
 # convert to {name: price_per_100_grams}
@@ -38,6 +39,20 @@ PRICED_INGREDIENTS = {
     if ingredient_id in _ingredient_id_to_name
 }
 
+
+def _with_ingredient_cost(ingredient: dict) -> dict:
+    price = _ingredient_id_to_price.get(ingredient["id"])
+    return {**ingredient, "price_per_100g": price}
+
+
+def _with_recipe_cost(recipe: dict) -> dict:
+    cost = sum(
+        (entry["quantity"] / 100.0) * PRICED_INGREDIENTS.get(entry["ingredient"], 0.0)
+        for entry in recipe["ingredients"]
+    )
+    return {**recipe, "estimated_cost": round(cost, 2)}
+
+
 class UserPreferencesSchema(BaseModel):
     weekly_budget: float = 50.0
     calorie_target_per_day: float = 2500.0
@@ -46,6 +61,10 @@ class UserPreferencesSchema(BaseModel):
     is_vegan: bool = False
     requires_gluten_free: bool = False
     requires_lactose_free: bool = False
+    pantry_weight: float = 1.0
+    waste_weight: float = 1.0
+    budget_weight: float = 1.0
+    dietary_weight: float = 1.0
 
 
 class PantryItemSchema(BaseModel):
@@ -69,7 +88,7 @@ class MealPlanResponse(BaseModel):
     estimated_cost: float
     calories_per_day: list[float]
     protein_per_day: list[float]
-    shopping_list: dict[str, float]  # ingredient name to quantity to buy (g)
+    shopping_list: dict[str, tuple[float, float]]  # ingredient name to quantity to buy (g) and cost (€)
 
 
 app = FastAPI(title="GA Meal Planner API")
@@ -113,7 +132,7 @@ async def get_ingredients(
     if ingredient_ids:
         filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["id"] in ingredient_ids]
 
-    return filtered_ingredients
+    return [_with_ingredient_cost(i) for i in filtered_ingredients]
 
 
 @app.get("/api/ingredients/{ingredient_id}")
@@ -123,7 +142,7 @@ async def get_ingredient(ingredient_id: str):
     if matched_ingredient is None:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 
-    return matched_ingredient
+    return _with_ingredient_cost(matched_ingredient)
 
 
 @app.get("/api/recipes")
@@ -147,7 +166,7 @@ async def get_recipes(
     if recipe_ids:
         filtered_recipes = [recipe for recipe in filtered_recipes if recipe["id"] in recipe_ids]
 
-    return filtered_recipes
+    return [_with_recipe_cost(r) for r in filtered_recipes]
 
 
 @app.get("/api/recipes/{recipe_id}")
@@ -157,7 +176,7 @@ async def get_recipe(recipe_id: str):
     if matched_recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
-    return matched_recipe
+    return _with_recipe_cost(matched_recipe)
 
 
 @app.post("/api/meal-plan", response_model=MealPlanResponse)
@@ -197,7 +216,15 @@ def generate_meal_plan(request: MealPlanRequest):
     )
     meal_planning_environment.load_recipes_from_json(str(DATA_DIR / "supplemented_structured_recipes.json"))
 
-    planner = GAMealPlanner(meal_planning_environment=meal_planning_environment)
+    print("received these user preferences:", request.user_preferences.dietary_weight)
+
+    planner = GAMealPlanner(
+        meal_planning_environment=meal_planning_environment,
+        pantry_weight=request.user_preferences.pantry_weight,
+        waste_weight=request.user_preferences.waste_weight,
+        budget_weight=request.user_preferences.budget_weight,
+        dietary_weight=request.user_preferences.dietary_weight,
+    )
     best_plan_indices, fitness = planner.generate_meal_plan(
         num_days=request.num_days,
         meals_per_day=request.meals_per_day,
@@ -234,7 +261,7 @@ def generate_meal_plan(request: MealPlanRequest):
 
     shopping_df, _, estimated_cost = planner.get_shopping_list()
     shopping_list = {
-        row["Ingredient"]: float(row["Quantity to Buy (g)"])
+        row["Ingredient"]: (float(row["Quantity to Buy (g)"]), float(row["Cost (€)"]))
         for _, row in shopping_df.iterrows()
         if row["Ingredient"] != "TOTAL"
     }

@@ -8,6 +8,7 @@ export { default as MealPlan } from "./MealPlan";
 export { default as MealPlanSummary } from "./MealPlanSummary";
 export { default as Modal } from "./Modal";
 export { default as NavMenu } from "./NavMenu";
+export { default as OnboardingModal } from "./OnboardingModal";
 export { default as Pantry } from "./Pantry";
 export { default as RecipeModal } from "./RecipeModal";
 export { default as Snackbar } from "./Snackbar.astro";

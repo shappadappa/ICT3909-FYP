@@ -1,10 +1,10 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { addPantryItem, pantryStore } from "../stores";
 import type { Ingredient } from "../types";
 import { DietaryTag } from "../types";
+import DietaryTagBadge from "./DietaryTagBadge";
 import Modal from "./Modal";
 import NutritionalInformationCard from "./NutritionalInformationCard";
-import DietaryTagBadge from "./DietaryTagBadge";
-import { addPantryItem, pantryStore } from "../stores";
 
 interface AddIngredientModalProps {
 	isOpen: boolean;
@@ -22,6 +22,7 @@ const fetchAllIngredients = async () => {
 			id: ingredient.id,
 			name: ingredient.name,
 			nutritionalInformation: ingredient.nutritional_information,
+			cost: ingredient.price_per_100g,
 		})
 	);
 
@@ -35,9 +36,13 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 	const [query, setQuery] = useState("");
 	const [quantity, setQuantity] = useState("");
 	const [expirationDate, setExpirationDate] = useState("");
+	const [price, setPrice] = useState("");
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
 
 	useEffect(() => {
-		fetchAllIngredients().then(setAllIngredients).catch(console.error);
+		fetchAllIngredients()?.then(setAllIngredients).catch(console.error);
 	}, []);
 
 	const filtered = query.trim()
@@ -69,8 +74,21 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 			(window as any).showSnackbar("Please enter an expiration date.", "error");
 			return;
 		}
-		if (new Date(expirationDate) < new Date()) {
+		if (new Date(expirationDate) < today) {
 			(window as any).showSnackbar("Expiration date cannot be in the past.", "error");
+			return;
+		}
+
+		if (!price) {
+			(window as any).showSnackbar("Please enter a price.", "error");
+			return;
+		}
+		if (isNaN(Number(price))) {
+			(window as any).showSnackbar("Please enter a valid price.", "error");
+			return;
+		}
+		if (Number(price) < 0) {
+			(window as any).showSnackbar("Price cannot be negative.", "error");
 			return;
 		}
 
@@ -79,12 +97,18 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 			return;
 		}
 
-		addPantryItem({ ...selectedIngredient, quantity: Number(quantity), expirationDate });
+		addPantryItem({
+			...selectedIngredient,
+			quantity: Number(quantity),
+			expirationDate,
+			cost: Math.trunc(Number(price) * 100) / 100,
+		});
 
 		setSelectedIngredient(null);
 		setQuery("");
 		setQuantity("");
 		setExpirationDate("");
+		setPrice("");
 		onClose();
 	};
 
@@ -98,6 +122,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 				setQuery("");
 				setQuantity("");
 				setExpirationDate("");
+				setPrice("");
 			}}
 		>
 			<div className="flex flex-col gap-3">
@@ -152,6 +177,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 												setSelectedIngredient(ingredient);
 												setQuantity("");
 												setExpirationDate("");
+												setPrice("");
 											}}
 										>
 											{ingredient.name}
@@ -183,7 +209,18 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 									min="0"
 									placeholder="e.g 500"
 									value={quantity}
-									onChange={(e) => setQuantity(e.target.value)}
+									onChange={(e) => {
+										setQuantity(e.target.value);
+
+										const numericValue = Number(e.target.value);
+
+										if (!isNaN(numericValue) && selectedIngredient.cost !== undefined) {
+											const calculatedPrice = (numericValue / 100) * selectedIngredient.cost;
+											setPrice(calculatedPrice.toFixed(2));
+										} else {
+											setPrice("");
+										}
+									}}
 									required
 									className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
 								/>
@@ -200,6 +237,27 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 									required
 									className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
 								/>
+							</div>
+							<div className="flex flex-col gap-1">
+								<label htmlFor="price" className="text-xs font-medium text-gray-500">
+									Price (EUR)
+								</label>
+								<input
+									id="price"
+									type="number"
+									min="0"
+									step="0.01"
+									placeholder="e.g. 2.99"
+									value={price}
+									onChange={(e) => setPrice(e.target.value)}
+									required
+									className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+								/>
+							</div>
+							<div className="flex items-center self-end pb-2">
+								<p className="text-xs text-gray-400 italic">
+									Auto-estimated from quantity, but adjustable
+								</p>
 							</div>
 						</div>
 

@@ -72,6 +72,7 @@ def fitness_score(
     weekly_budget: float,
     calorie_target_per_day: float,
     protein_target_per_day: float,
+    meals_per_day: int = 3,
     pantry_weight: float = 1.0,
     waste_weight: float = 1.0,
     budget_weight: float = 1.0,
@@ -127,7 +128,7 @@ def fitness_score(
     purchase_cost = 0.0
 
     for recipe_position, index in enumerate(recipe_indices):
-        day = recipe_position // 3
+        day = recipe_position // meals_per_day
         recipe = recipes[index]
 
         for ingredient_name, quantity_needed in recipe.ingredients.items():
@@ -167,11 +168,11 @@ def fitness_score(
     # each daily deviation is normalised by the target and clamped to [0, 1],
     # then averaged equally across calories and protein and across all days
 
-    num_days = len(recipe_indices) // 3
+    num_days = len(recipe_indices) // meals_per_day
     dietary_penalty = 0.0
 
     for day in range(num_days):
-        day_indices = recipe_indices[day * 3 : day * 3 + 3]
+        day_indices = recipe_indices[day * meals_per_day : (day + 1) * meals_per_day]
 
         if recipe_calories is not None and recipe_protein is not None:
             daily_calories = sum(recipe_calories[i] for i in day_indices)

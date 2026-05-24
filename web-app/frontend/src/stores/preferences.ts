@@ -15,5 +15,9 @@ export const setPreferences = (preferences: UserPreferences) => {
 		lactoseIntolerant: preferences.lactoseIntolerant,
 		vegetarian: preferences.vegetarian,
 		vegan: preferences.vegan,
+		pantryWeight: preferences.pantryWeight ?? 1,
+		wasteWeight: preferences.wasteWeight ?? 1,
+		budgetWeight: preferences.budgetWeight ?? 1,
+		dietaryWeight: preferences.dietaryWeight ?? 1,
 	});
 };
