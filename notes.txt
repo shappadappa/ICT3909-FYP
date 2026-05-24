@@ -1,11 +1,9 @@
-should re run every single notebook before submission
+- Should re run every single notebook before submission
 
-- Make all notebooks in the same format. Ex. Bold and # for title, ## and italics for subtitles, etc. add any missing markdown cells where required 
+- Use unique identifiers in the codebase rather than the name
 
-- use unique identifiers in the codebase rather than the name
+- Before submitting, clone the repo and detail every step needed to get it needed
 
-- before submitting, clone the repo and detail every step needed to get it needed
-
-- One problem: The NLP resolves to many different names ex. cut chicken breast, chicken breast, chicken breast halves, etc.
+- Limitation: The NLP resolves to many different names ex. cut chicken breast, chicken breast, chicken breast halves, etc.
 
 - TODO update readme eventually with URL

@@ -44,3 +44,7 @@ The data pipeline and evaluation are driven by Jupyter notebooks. The recommende
 2. `recipe_extraction/` — parse and structure recipe data
 3. `engines/` — test individual planners
 4. `evaluation/` — run the full evaluation and export results
+
+### Additional Files
+
+To avoid having to run every single notebook, other files such as the FAISS indexes and structured recipe data are included [on Google Drive](https://drive.google.com/drive/u/2/folders/18xP_p8C6MNsTHAR0-9VHS4qiftSl8XT5). Make sure to place them in the correct folders as per required by the notebook, unzipping any compressed files if needs be.
