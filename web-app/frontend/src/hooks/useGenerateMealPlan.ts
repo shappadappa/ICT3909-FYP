@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { isLoadingStore, pantryStore, preferencesStore, setIsLoading, setMealPlan } from "../stores";
 
 export function useGenerateMealPlan() {
@@ -35,7 +36,7 @@ export function useGenerateMealPlan() {
 				num_generations: 100,
 			};
 
-			const res = await fetch(`http://localhost:8000/api/meal-plan`, {
+			const res = await fetch(`${API_BASE_URL}/api/meal-plan`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(requestBody),

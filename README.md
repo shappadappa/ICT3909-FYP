@@ -5,6 +5,8 @@
 
 This repository contains the code for my Final Year Project of my Bachelor of Science in Information Technology (Honours) (Artificial Intelligence) at the University of Malta (2025/26), titled "Smart, Personalised and Efficient Meal Planning: Using AI to Combat Food Waste". The project focuses on developing an AI-powered meal planning system that generates personalised weekly meal plans whilst minimising food waste and respecting dietary constraints and budgetary limits.
 
+The live web application demonstrating the functionality of this project can be found at [https://ict-3909-fyp.vercel.app/](https://ict-3909-fyp.vercel.app/).
+
 ## Project Structure
 
 Each module has its own README with more detailed documentation.

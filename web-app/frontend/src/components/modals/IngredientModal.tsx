@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BinIcon, PencilIcon } from "../../assets";
 import { modifyPantryItem, removePantryItem } from "../../stores";
 import { DietaryTag, type Ingredient } from "../../types";
 import DietaryTagBadge from "../badges/DietaryTagBadge";
@@ -198,20 +199,7 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 								onClick={() => setIsEditing(true)}
 								className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
 							>
-								<svg
-									width="13"
-									height="13"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									strokeWidth="2"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z"
-									/>
-								</svg>
+								<PencilIcon />
 								Edit
 							</button>
 							<button
@@ -222,20 +210,7 @@ export default function IngredientModal({ ingredient, isOpen, onClose }: Ingredi
 								}}
 								className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
 							>
-								<svg
-									width="13"
-									height="13"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									strokeWidth="2"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-									/>
-								</svg>
+								<BinIcon />
 								Remove
 							</button>
 						</>

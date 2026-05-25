@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/react";
 import { useState } from "react";
+import { PlusIcon } from "../assets";
 import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
 import { pantryStore, preferencesStore } from "../stores";
 import { isLoadingStore } from "../stores/loading";
@@ -47,21 +48,23 @@ export default function Header() {
 	};
 
 	return (
-		<header className="border-walnut-100 flex items-center justify-between border-b bg-white px-8 py-4">
+		<header className="border-walnut-100 flex items-center justify-between border-b bg-white px-4 py-3 sm:px-8 sm:py-4">
 			<NavMenu />
 
-			<div className="flex items-center gap-3">
-				<span className="text-walnut-400 font-body text-sm">Week of</span>
-				<span className="text-walnut-600 bg-parchment border-walnut-100 rounded-full border px-3 py-1 text-sm font-medium">
-					{weekStart} - {weekEnd}
+			<div className="flex items-center gap-2 sm:gap-3">
+				<span className="text-walnut-400 font-body hidden text-sm sm:inline">Week of</span>
+				<span className="text-walnut-600 bg-parchment border-walnut-100 hidden rounded-full border px-3 py-1 text-xs font-medium sm:inline sm:text-sm">
+					{weekStart} – {weekEnd}
 				</span>
 				<button
 					id="generate-meal-plan-btn"
 					disabled={isLoading}
-					className="bg-sage-600 hover:bg-sage-800 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50"
+					className="bg-sage-600 hover:bg-sage-800 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 sm:px-4"
 					onClick={handleGenerateClick}
 				>
-					+ Generate Meal Plan
+					<PlusIcon />
+					<span className="hidden sm:inline">Generate Meal Plan</span>
+					<span className="sm:hidden">Generate</span>
 				</button>
 			</div>
 

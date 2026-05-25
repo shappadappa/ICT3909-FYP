@@ -1,5 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
+import { CloseIcon } from "../../assets";
+import { API_BASE_URL } from "../../config";
 import { addPantryItem, pantryStore } from "../../stores";
 import type { Ingredient } from "../../types";
 import { DietaryTag } from "../../types";
@@ -13,7 +15,7 @@ interface AddIngredientModalProps {
 }
 
 const fetchAllIngredients = async () => {
-	const res = await fetch("http://localhost:8000/api/ingredients");
+	const res = await fetch(`${API_BASE_URL}/api/ingredients`);
 	if (!res.ok) throw new Error("Failed to fetch ingredients");
 
 	const rawIngredients = await res.json();
@@ -138,16 +140,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 						/>
 						{query && (
 							<button onClick={() => setQuery("")} className="ml-2 text-gray-400 hover:text-gray-600">
-								<svg
-									width="18"
-									height="18"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									strokeWidth="2"
-								>
-									<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-								</svg>
+								<CloseIcon />
 							</button>
 						)}
 					</div>

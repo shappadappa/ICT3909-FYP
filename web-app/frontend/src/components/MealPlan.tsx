@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGenerateMealPlan } from "../hooks/useGenerateMealPlan";
 import { isLoadingStore, mealPlanStaleStore, mealPlanStore, pantryStore, preferencesStore } from "../stores";
 import type { Recipe } from "../types";
@@ -36,6 +36,8 @@ export default function MealPlan() {
 	const [selectedDayShort, setSelectedDayShort] = useState<string | null>(null);
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 	const [confirmWarnings, setConfirmWarnings] = useState<string[]>([]);
+	const [activeDayIndex, setActiveDayIndex] = useState(0);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (!mealPlan) return;
@@ -53,7 +55,7 @@ export default function MealPlan() {
 			.finally(() => setIsFetchingMeals(false));
 	}, [mealPlan]);
 
-	const isEmpty = breakfast.length == 0 && lunch.length == 0 && dinner.length == 0;
+	const isEmpty = breakfast?.length == 0 && lunch?.length == 0 && dinner?.length == 0;
 
 	const handleDayClick = (shortDay: string) => {
 		if (shortDay === "" || isEmpty) return;
@@ -84,6 +86,30 @@ export default function MealPlan() {
 
 	const selectedDayIndex = selectedDayShort ? Object.keys(DAY_NAMES_SHORT_TO_LONG).indexOf(selectedDayShort) : -1;
 	const selectedDayName = selectedDayShort ? DAY_NAMES_SHORT_TO_LONG[selectedDayShort] : null;
+
+	const mealRows = [
+		{
+			label: "Breakfast",
+			recipes: breakfast,
+			cardClass: "bg-terra-50 border-terra-100",
+			textClass: "text-terra-800",
+			badgeClass: "border-terra-100 text-terra-600 bg-terra-50",
+		},
+		{
+			label: "Lunch",
+			recipes: lunch,
+			cardClass: "bg-sage-50 border-sage-100",
+			textClass: "text-sage-800",
+			badgeClass: "border-sage-100 text-sage-600 bg-sage-50",
+		},
+		{
+			label: "Dinner",
+			recipes: dinner,
+			cardClass: "bg-walnut-50 border-walnut-100",
+			textClass: "text-walnut-800",
+			badgeClass: "border-walnut-100 text-walnut-600 bg-walnut-50",
+		},
+	];
 
 	const renderLoading = () => (
 		<div>
@@ -119,7 +145,7 @@ export default function MealPlan() {
 
 		return (
 			<div>
-				<div className="mb-4 flex items-center justify-between">
+				<div className="mb-4 flex flex-col items-center justify-between sm:flex-row">
 					<h2 className="font-display text-walnut-800 text-lg font-semibold">Weekly Meal Plan</h2>
 					<div className="flex gap-2 text-xs font-medium">
 						<Badge label="Breakfast" additionalClasses="bg-terra-50 text-terra-600 border-terra-100" />
@@ -128,7 +154,68 @@ export default function MealPlan() {
 					</div>
 				</div>
 
-				<div className="border-walnut-100 flex flex-1 flex-col overflow-hidden rounded-2xl border bg-white">
+				{/* mobile: horizontal snap-scroll, one day at a time */}
+				<div className="lg:hidden">
+					<div
+						ref={scrollContainerRef}
+						className="flex snap-x snap-mandatory overflow-x-auto"
+						onScroll={(e) => {
+							const el = e.currentTarget;
+							setActiveDayIndex(Math.round(el.scrollLeft / el.clientWidth));
+						}}
+					>
+						{Object.entries(DAY_NAMES_SHORT_TO_LONG).map(([short, long], dayIndex) => (
+							<div key={short} className="w-full shrink-0 snap-start">
+								<div className="border-walnut-100 overflow-hidden rounded-2xl border bg-white">
+									<div
+										className="bg-parchment border-walnut-100 text-walnut-600 flex cursor-pointer items-center justify-between border-b p-4 text-center text-xs font-medium tracking-wider uppercase"
+										onClick={() => handleDayClick(short)}
+									>
+										<span className="text-walnut-700 text-sm font-semibold tracking-wide">
+											{long}
+										</span>
+										<span className="text-walnut-400 text-xs">Tap for details</span>
+									</div>
+
+									<div className="divide-walnut-50 divide-y">
+										{mealRows.map(({ label, recipes, cardClass, textClass, badgeClass }) => (
+											<div key={label} className="flex items-start gap-3 p-3">
+												<Badge
+													label={label}
+													additionalClasses={`rounded-md ${badgeClass} uppercase tracking-wider font-semibold shrink-0`}
+												/>
+												{recipes[dayIndex] ? (
+													<div
+														className={`recipe-card ${cardClass} flex-1`}
+														onClick={() => setSelectedRecipe(recipes[dayIndex])}
+													>
+														<p className={textClass}>{recipes[dayIndex].name}</p>
+													</div>
+												) : (
+													<p className="text-walnut-300 py-1 text-xs italic">—</p>
+												)}
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+
+					<div className="mt-2.5 flex justify-center gap-1.5">
+						{Object.keys(DAY_NAMES_SHORT_TO_LONG).map((short, i) => (
+							<div
+								key={short}
+								className={`h-1.5 rounded-full transition-all duration-200 ${
+									i === activeDayIndex ? "bg-walnut-600 w-4" : "bg-walnut-200 w-1.5"
+								}`}
+							/>
+						))}
+					</div>
+				</div>
+
+				{/* desktop: full week table */}
+				<div className="border-walnut-100 hidden overflow-hidden rounded-2xl border bg-white lg:flex lg:flex-1 lg:flex-col">
 					<div className="flex-1 overflow-auto">
 						<table className="w-full table-fixed" style={{ minWidth: "700px" }}>
 							<thead>
@@ -145,60 +232,26 @@ export default function MealPlan() {
 								</tr>
 							</thead>
 							<tbody className="divide-walnut-50 divide-y">
-								<tr className="h-36">
-									<td className="px-4 py-3 align-top">
-										<Badge
-											label="Breakfast"
-											additionalClasses="rounded-md border-terra-100 text-terra-600 bg-terra-50 uppercase tracking-wider font-semibold"
-										/>
-									</td>
-									{breakfast?.map((recipe, index) => (
-										<td key={recipe.id + index} className="h-full px-2 py-3">
-											<div
-												className="recipe-card bg-terra-50 border-terra-100"
-												onClick={() => setSelectedRecipe(recipe)}
-											>
-												<p className="text-terra-800">{recipe.name}</p>
-											</div>
+								{mealRows.map(({ label, recipes, cardClass, textClass, badgeClass }) => (
+									<tr key={label} className="h-36">
+										<td className="px-4 py-3 align-top">
+											<Badge
+												label={label}
+												additionalClasses={`rounded-md ${badgeClass} uppercase tracking-wider font-semibold`}
+											/>
 										</td>
-									))}
-								</tr>
-								<tr className="bg-sage-50/30 h-36">
-									<td className="px-4 py-3 align-top">
-										<Badge
-											label="Lunch"
-											additionalClasses="rounded-md border-sage-100 text-sage-600 bg-sage-50 uppercase tracking-wider font-semibold"
-										/>
-									</td>
-									{lunch?.map((recipe, index) => (
-										<td key={recipe.id + index} className="h-full px-2 py-3">
-											<div
-												className="recipe-card bg-sage-50 border-sage-100"
-												onClick={() => setSelectedRecipe(recipe)}
-											>
-												<p className="text-sage-800">{recipe.name}</p>
-											</div>
-										</td>
-									))}
-								</tr>
-								<tr className="h-36">
-									<td className="px-4 py-3 align-top">
-										<Badge
-											label="Dinner"
-											additionalClasses="rounded-md border-walnut-100 text-walnut-600 bg-walnut-50 uppercase tracking-wider font-semibold"
-										/>
-									</td>
-									{dinner?.map((meal, index) => (
-										<td key={meal.id + index} className="h-full px-2 py-3">
-											<div
-												className="recipe-card bg-walnut-50 border-walnut-100"
-												onClick={() => setSelectedRecipe(meal)}
-											>
-												<p className="text-walnut-800">{meal.name}</p>
-											</div>
-										</td>
-									))}
-								</tr>
+										{recipes?.map((recipe, index) => (
+											<td key={recipe.id + index} className="h-full px-2 py-3">
+												<div
+													className={`recipe-card ${cardClass}`}
+													onClick={() => setSelectedRecipe(recipe)}
+												>
+													<p className={textClass}>{recipe.name}</p>
+												</div>
+											</td>
+										))}
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

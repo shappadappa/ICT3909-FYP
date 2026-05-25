@@ -1,6 +1,6 @@
 ﻿# Frontend
 
-This folder provides the Astro + React frontend for the meal planning web application.
+This folder provides the Astro + React frontend for the meal planning web application. This frontend is deployed live at [https://ict-3909-fyp.vercel.app/](https://ict-3909-fyp.vercel.app/).
 
 ## Overview
 

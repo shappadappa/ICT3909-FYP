@@ -1,0 +1,9 @@
+export { default as BinIcon } from "./BinIcon";
+export { default as BurgerMenuIcon } from "./BurgerMenuIcon";
+export { default as CalendarIcon } from "./CalendarIcon";
+export { default as ClipboardIcon } from "./ClipboardIcon";
+export { default as CloseIcon } from "./CloseIcon";
+export { default as EuroIcon } from "./EuroIcon";
+export { default as PencilIcon } from "./PencilIcon";
+export { default as PlusIcon } from "./PlusIcon";
+export { default as SearchIcon } from "./SearchIcon";

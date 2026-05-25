@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import { CloseIcon } from "../../assets";
 
 interface ModalProps {
 	title: string;
@@ -8,6 +9,12 @@ interface ModalProps {
 }
 
 export default function Modal({ title, isOpen, onClose, children }: ModalProps) {
+	useEffect(() => {
+		document.body.classList.toggle("overflow-hidden", isOpen);
+
+		return () => document.body.classList.remove("overflow-hidden");
+	}, [isOpen]);
+
 	return (
 		<div
 			className={`fixed inset-0 z-[60] ${isOpen ? "flex" : "hidden"} items-center justify-center bg-black/50`}
@@ -22,16 +29,7 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
 							onClose();
 						}}
 					>
-						<svg
-							width="18"
-							height="18"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							strokeWidth="2"
-						>
-							<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-						</svg>
+						<CloseIcon />
 					</button>
 				</div>
 

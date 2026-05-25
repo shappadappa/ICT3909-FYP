@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BurgerMenuIcon, CloseIcon } from "../assets";
 import DisclaimerModal from "./modals/DisclaimerModal";
 import UserPreferencesModal from "./modals/UserPreferencesModal";
 
@@ -12,10 +13,8 @@ export default function NavMenu() {
 
 	return (
 		<>
-			<button className="bg-sage-400 flex h-8 w-8 items-center justify-center rounded-full" onClick={openMenu}>
-				<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2">
-					<path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18M3 9h18M3 15h18M3 21h18" />
-				</svg>
+			<button className="bg-sage-600 flex h-8 w-8 items-center justify-center rounded-full" onClick={openMenu}>
+				<BurgerMenuIcon />
 			</button>
 			<button
 				type="button"
@@ -26,23 +25,14 @@ export default function NavMenu() {
 				onClick={closeMenu}
 			/>
 			<aside
-				className={`fixed top-0 left-0 z-50 flex h-full w-64 flex-col bg-white shadow-xl transition-transform duration-300 ${
+				className={`fixed top-0 left-0 z-50 flex h-full w-56 flex-col bg-white shadow-xl transition-transform duration-300 sm:w-64 ${
 					isDrawerOpen ? "translate-x-0" : "-translate-x-full"
 				}`}
 			>
-				<div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-					<span className="font-semibold text-gray-800">Menu</span>
-					<button className="text-gray-400 hover:text-gray-600" onClick={closeMenu}>
-						<svg
-							width="18"
-							height="18"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-							strokeWidth="2"
-						>
-							<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-						</svg>
+				<div className="border-walnut-100 flex items-center justify-between border-b px-5 py-4">
+					<span className="text-walnut-800 font-semibold">Menu</span>
+					<button className="text-walnut-400 hover:text-walnut-600" onClick={closeMenu}>
+						<CloseIcon />
 					</button>
 				</div>
 

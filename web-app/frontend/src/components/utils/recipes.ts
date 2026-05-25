@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config";
 import type { Recipe } from "../../types";
 import type { DietaryTag } from "../../types/DietaryTag";
 
@@ -14,7 +15,7 @@ export const fetchRecipesByIds = async (ids: string[]): Promise<Recipe[]> => {
 	const uniqueIds = Array.from(new Set(ids));
 	const params = new URLSearchParams(uniqueIds.map((id) => ["recipe_ids", id]));
 
-	const res = await fetch(`http://localhost:8000/api/recipes?${params}`);
+	const res = await fetch(`${API_BASE_URL}/api/recipes?${params}`);
 	if (!res.ok) throw new Error("Failed to fetch recipes");
 
 	const rawRecipes = await res.json();

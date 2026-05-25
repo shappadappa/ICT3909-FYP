@@ -5,5 +5,3 @@
 - Before submitting, clone the repo and detail every step needed to get it needed
 
 - Limitation: The NLP resolves to many different names ex. cut chicken breast, chicken breast, chicken breast halves, etc.
-
-- TODO update readme eventually with URL
