@@ -1,0 +1,13 @@
+*
+
+!models/
+!models/**
+!engines/
+!engines/**
+!main.py
+!best_ga_meal_planner_hyperparameters.json
+!priced_ingredients.json
+!railway.toml
+!requirements.txt
+!supplemented_structured_ingredients.json
+!supplemented_structured_recipes.json
