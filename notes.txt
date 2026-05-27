@@ -1,7 +1,0 @@
-- Should re run every single notebook before submission
-
-- Use unique identifiers in the codebase rather than the name
-
-- Before submitting, clone the repo and detail every step needed to get it needed
-
-- Limitation: The NLP resolves to many different names ex. cut chicken breast, chicken breast, chicken breast halves, etc.
