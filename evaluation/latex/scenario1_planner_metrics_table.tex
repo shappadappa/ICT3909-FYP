@@ -9,74 +9,75 @@
         Q[m,c] Q[m,c]
         Q[m,c]
         Q[m,c]
-        Q[m,c]
+        Q[m,c] Q[m,c]
     },
     hlines,
     hline{3} = {2pt},
     vlines,
-    vline{2,4,5,6, 7} = {2pt},
+    vline{2,4,5,6} = {2pt},
     cells   = {font=\scriptsize},
     row{1,2} = {font=\bfseries\footnotesize},
+    row{3,5,7,9,11} = {bg=gray!15},
 }
     \SetCell[r=2]{m,l} Metric &
     \SetCell[c=2]{c} Random &  &
     \gls{llm} &
     \gls{ilp} &
-    \gls{ga} \\
+    \SetCell[c=2]{c} \gls{ga} &  \\
     
-     & $\mu$ & $\sigma$ &  &  &  \\
+     & $\mu$ & $\sigma$ &  &  & $\mu$ & $\sigma$ \\
     
     Ingredient Utilisation \hfill $\uparrow$ &
     0.1228 & 0.0246 &
-    0.0837 &
-    \textbf{0.3115} &
-    0.1390 \\
+    0.0956 &
+    \textbf{0.3087} &
+    0.1927 & 0.0310 \\
     
     Expiry-Weighted Utilisation \hfill $\uparrow$ &
     0.0803 & 0.0209 &
-    0.0543 &
-    \textbf{0.2588} &
-    0.0942 \\
+    0.0654 &
+    \textbf{0.2658} &
+    0.1350 & 0.0330 \\
     
     Food Waste \hfill $\downarrow$ &
     0.4902 & 0.0121 &
-    0.5076 &
-    \textbf{0.3609} &
-    0.4941 \\
+    0.5008 &
+    \textbf{0.3630} &
+    0.4575 & 0.0313 \\
     
     Dietary Compliance \hfill $\uparrow$ &
     \textbf{1.0000} & 0.0000 &
     \textbf{1.0000} &
     \textbf{1.0000} &
-    \textbf{1.0000} \\
+    \textbf{1.0000} & 0.0000 \\
     
     Nutritional Target \hfill $\uparrow$ &
     0.1582 & 0.2001 &
-    0.5525 &
-    0.9778 &
-    \textbf{0.9806} \\
+    0.5241 &
+    \textbf{0.9777} &
+    0.9621 & 0.0267 \\
     
     Budget Efficiency \hfill $\uparrow$ &
-    0.8677 & 0.1327 &
+    0.7669 & 0.2610 &
     \textbf{1.0000} &
     \textbf{1.0000} &
-    \textbf{1.0000} \\
+    \textbf{1.0000} & 0.0000 \\
     
     Pantry Coverage \hfill $\uparrow$ &
     0.0501 & 0.0299 &
-    0.0647 &
-    0.1075 &
-    \textbf{0.1157} \\
+    0.0691 &
+    0.1061 &
+    \textbf{0.1409} & 0.0229 \\
     
     Variety \hfill $\uparrow$ &
     \textbf{1.0000} & 0.0000 &
-    \textbf{1.0000} &
-    0.4286 &
-    0.2857 \\
+    0.5714 &
+    0.5238 &
+    0.3143 & 0.1151 \\
     
     Runtime (seconds) \hfill $\downarrow$ &
-    \textbf{0.0019} & 0.0010 &
-    12.2017 &
-    600.0776 &
-    13.8939 \\
+    \textbf{0.0000} & 0.0000 &
+    3.5601 &
+    600.1143 &
+    13.8402 & 1.8504 \\
 \end{longtblr}
