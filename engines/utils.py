@@ -9,11 +9,10 @@ from models.Ingredient import Ingredient
 
 def load_all_ingredients(filepath: str) -> list[Ingredient]:
     """
-    Loads all ingredients from a structured JSON file
+    Loads all ingredients from a structured JSON file.
 
     :param filepath: path to the JSON file containing ingredient data
     :type filepath: str
-
     :return: list of Ingredient objects
     :rtype: list[Ingredient]
     """
@@ -33,13 +32,12 @@ def load_all_ingredients(filepath: str) -> list[Ingredient]:
 
 def get_ingredient(ingredient_name: str, all_ingredients: list[Ingredient]) -> Ingredient | None:
     """
-    Finds an ingredient by name from a list of ingredients
+    Finds an ingredient by name from a list of ingredients.
 
     :param ingredient_name: the name of the ingredient to find
     :type ingredient_name: str
     :param all_ingredients: list of available Ingredient objects to search
     :type all_ingredients: list[Ingredient]
-
     :return: the matching Ingredient, or None if not found
     :rtype: Ingredient | None
     """
@@ -53,7 +51,7 @@ def get_pantry_ingredient(
     all_ingredients: list[Ingredient],
 ) -> PantryIngredient:
     """
-    Creates a PantryIngredient from a named ingredient in a known ingredient list
+    Creates a PantryIngredient from a named ingredient in a known ingredient list.
 
     :param ingredient_name: name of the ingredient to look up
     :type ingredient_name: str
@@ -61,10 +59,8 @@ def get_pantry_ingredient(
     :type estimated_expiration_date: datetime
     :param all_ingredients: list of available Ingredient objects to search
     :type all_ingredients: list[Ingredient]
-
     :return: a PantryIngredient built from the matching Ingredient
     :rtype: PantryIngredient
-
     :raises ValueError: if the ingredient name is not found in all_ingredients
     """
 
@@ -88,7 +84,8 @@ def make_recipe(
     tags: list[DietaryTag] | None = None,
 ) -> Recipe:
     """
-    Builds a Recipe with the given nutritional values and dietary tags. Nutritional information is set directly rather than computed from ingredients when using this function
+    Builds a Recipe with the given nutritional values and dietary tags. Nutritional information is set directly rather
+    than computed from ingredients when using this function.
 
     :param name: display name of the recipe
     :type name: str
@@ -100,7 +97,6 @@ def make_recipe(
     :type protein: float
     :param tags: list of dietary tags
     :type tags: list[DietaryTag] | None
-
     :return: a Recipe with pre-set nutritional information
     :rtype: Recipe
     """
@@ -112,11 +108,11 @@ def make_recipe(
 
 def make_pantry(items: dict[str, tuple[float, int]]) -> Pantry:
     """
-    Builds a Pantry from a plain dictionary. Ingredients are created with empty nutritional information, which is useful for testing metric calculations
+    Builds a Pantry from a plain dictionary. Ingredients are created with empty nutritional information, which is useful
+    for testing metric calculations.
 
     :param items: mapping of ingredient name to (quantity_in_grams, days_until_expiry)
     :type items: dict[str, tuple[float, int]]
-
     :return: a populated Pantry object
     :rtype: Pantry
     """
@@ -145,7 +141,7 @@ def make_preferences(
     requires_lactose_free: bool = False,
 ) -> UserPreferences:
     """
-    Builds a UserPreferences object with the given targets and restrictions
+    Builds a UserPreferences object with the given targets and restrictions.
 
     :param calorie_target: daily calorie target in kcal
     :type calorie_target: float
@@ -161,7 +157,6 @@ def make_preferences(
     :type requires_gluten_free: bool
     :param requires_lactose_free: whether the user requires lactose-free meals
     :type requires_lactose_free: bool
-
     :return: a UserPreferences object
     :rtype: UserPreferences
     """
@@ -179,13 +174,12 @@ def make_preferences(
 
 def get_consumed_stock(meal_plan: list[list[Recipe]], pantry_stock: dict[str, float]) -> dict[str, float]:
     """
-    Returns a mapping of ingredient name to total quantity consumed from the pantry across a meal plan
+    Returns a mapping of ingredient name to total quantity consumed from the pantry across a meal plan.
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param pantry_stock: mapping of ingredient name to available quantity in grams
     :type pantry_stock: dict[str, float]
-
     :return: mapping of ingredient name to total quantity consumed from the pantry in grams
     :rtype: dict[str, float]
     """
@@ -211,7 +205,8 @@ def filter_and_add_recipes(
     random_seed: int | None = None,
 ) -> list[Recipe]:
     """
-    Filters the recipe list to those that can be made with the pantry ingredients, then adds a few random extra recipes to increase variety
+    Filters the recipe list to those that can be made with the pantry ingredients, then adds a few random extra recipes
+    to increase variety.
 
     :param all_recipes: full list of recipes loaded from supplemented_structured_recipes.json
     :type all_recipes: list[Recipe]
@@ -225,7 +220,6 @@ def filter_and_add_recipes(
     :type user_preferences: UserPreferences
     :param random_seed: optional random seed for reproducibility
     :type random_seed: int | None
-
     :return: filtered and augmented list of recipes
     :rtype: list[Recipe]
     """
@@ -282,11 +276,11 @@ _TAG_MAP: dict[str, DietaryTag] = {
 
 def parse_recipes(unparsed_recipes: list[dict]) -> list[Recipe]:
     """
-    Parses a list of unparsed recipe dictionaries (loaded from json) into Recipe objects with nutritional information and dietary tags set
+    Parses a list of unparsed recipe dictionaries (loaded from json) into Recipe objects with nutritional information
+    and dietary tags set.
 
     :param unparsed_recipes: list of unparsed recipe dictionaries
     :type unparsed_recipes: list[dict]
-
     :return: list of parsed Recipe objects
     :rtype: list[Recipe]
     """

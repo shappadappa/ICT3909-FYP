@@ -25,7 +25,8 @@ class ILPMealPlanner(MealPlanner):
         dietary_weight: float = 1.0,
     ):
         """
-        The `ILPMealPlanner` class uses integer linear programming (ILP) to find a provably near-optimal meal plan, making it suitable as an oracle / ground-truth upper bound when comparing meal planning strategies
+        The `ILPMealPlanner` class uses integer linear programming (ILP) to find a provably near-optimal meal plan,
+        making it suitable as an oracle / ground-truth upper bound when comparing meal planning strategies.
 
         The returned fitness score is recomputed post-solve using the same fitness function as the GA planner to ensure comparability, even though the ILP objective is a linear approximation of the GA formula
 
@@ -64,21 +65,25 @@ class ILPMealPlanner(MealPlanner):
         msg: bool = True,
     ) -> tuple[list[int], float]:
         """
-        Solves the meal planning problem as an ILP using SciPy's milp (HiGHS backend) to find a provably near-optimal plan
+        Solves the meal planning problem as an ILP using SciPy's milp (HiGHS backend) to find a provably near-optimal
+        plan.
 
-        The ILP maximises a linear approximation of the GA fitness function. The pantry score term is linearised by normalising against the average total ingredient weight per plan slot across the recipe pool. All other penalty terms are exact linear equivalents of the GA objective
+        The ILP maximises a linear approximation of the GA fitness function. The pantry score term is linearised by
+        normalising against the average total ingredient weight per plan slot across the recipe pool. All other penalty
+        terms are exact linear equivalents of the GA objective
 
         :param num_days: number of days to plan meals for (default = 7)
         :type num_days: int
         :param meals_per_day: number of meals per day (default = 3)
         :type meals_per_day: int
-        :param time_limit: maximum solver time in seconds; returns best incumbent if the limit is reached before proving optimality (default = 300)
+        :param time_limit: maximum solver time in seconds; returns best incumbent if the limit is reached before proving
+            optimality (default = 300)
         :type time_limit: int
-        :param mip_gap: relative MIP gap tolerance; solver stops as soon as the best integer solution is within this fraction of the LP relaxation bound (default = 0.01, i.e. 1%)
+        :param mip_gap: relative MIP gap tolerance; solver stops as soon as the best integer solution is within this
+            fraction of the LP relaxation bound (default = 0.01, i.e. 1%)
         :type mip_gap: float
         :param msg: whether to print HiGHS solver output (default = True)
         :type msg: bool
-
         :return: tuple of best meal plan as a list of recipe indices, fitness score computed using the exact GA formula
         :rtype: tuple[list[int], float]
         """
@@ -307,7 +312,7 @@ class ILPMealPlanner(MealPlanner):
 
     def get_solve_status(self) -> str:
         """
-        Returns a string describing the status of the last ILP solve attempt
+        Returns a string describing the status of the last ILP solve attempt.
 
         :return: status message
         :rtype: str

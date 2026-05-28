@@ -9,7 +9,8 @@ from models import MealPlanningEnvironment
 class MealPlanner:
     def __init__(self, meal_planning_environment: MealPlanningEnvironment):
         """
-        The `MealPlanner` class is an abstract class used by other meal planner implementations, providing common methods and properties for meal planning
+        The `MealPlanner` class is an abstract class used by other meal planner implementations, providing common
+        methods and properties for meal planning.
 
         :param meal_planning_environment: the meal planning environment containing recipes, pantry, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
@@ -31,7 +32,8 @@ class MealPlanner:
 
     def get_pantry_consumption(self) -> pd.DataFrame:
         """
-        Calculates how much of each pantry ingredient is consumed across the best meal plan, and returns a DataFrame showing available, consumed, and unused quantities along with days until expiry
+        Calculates how much of each pantry ingredient is consumed across the best meal plan, and returns a DataFrame
+        showing available, consumed, and unused quantities along with days until expiry.
 
         :return: DataFrame with columns "Ingredient", "Available", "Consumed", "Unused", and "Expires in"
         :rtype: pd.DataFrame
@@ -69,9 +71,12 @@ class MealPlanner:
 
     def get_shopping_list(self) -> tuple[pd.DataFrame, int, float]:
         """
-        Generates a shopping list based on the best meal plan, considering pantry stock and ingredient costs, and returns a DataFrame with the shopping list along with total number of ingredients to buy and total estimated cost
+        Generates a shopping list based on the best meal plan, considering pantry stock and ingredient costs, and
+        returns a DataFrame with the shopping list along with total number of ingredients to buy and total estimated
+        cost.
 
-        :return: tuple of (shopping list DataFrame with columns "Ingredient", "Quantity to Buy (g)", and "Cost (€)", total number of ingredients to buy, total estimated cost)
+        :return: tuple of (shopping list DataFrame with columns "Ingredient", "Quantity to Buy (g)", and "Cost (€)",
+            total number of ingredients to buy, total estimated cost)
         :rtype: tuple[pd.DataFrame, int, float]
         """
 
@@ -108,9 +113,11 @@ class MealPlanner:
 
     def get_daily_nutrition(self) -> pd.DataFrame:
         """
-        Calculates the total calories and protein for each day in the best meal plan, and returns a DataFrame showing daily calories, daily protein, and how they compare to the user's targets
+        Calculates the total calories and protein for each day in the best meal plan, and returns a DataFrame showing
+        daily calories, daily protein, and how they compare to the user's targets.
 
-        :return: DataFrame with columns "Day", "Calories", "Protein (g)", "Calorie Target", "Protein Target (g)", "Calorie Difference", and "Protein Difference"
+        :return: DataFrame with columns "Day", "Calories", "Protein (g)", "Calorie Target", "Protein Target (g)",
+            "Calorie Difference", and "Protein Difference"
         :rtype: pd.DataFrame
         """
 
@@ -149,7 +156,7 @@ class MealPlanner:
 
     def get_meal_plan_recipes(self) -> pd.DataFrame:
         """
-        Returns a DataFrame showing the names of the meals planned for each day based on the best meal plan
+        Returns a DataFrame showing the names of the meals planned for each day based on the best meal plan.
 
         :return: DataFrame with columns "Day", "Meal 1", "Meal 2", and "Meal 3"
         :rtype: pd.DataFrame

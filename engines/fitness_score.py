@@ -32,7 +32,6 @@ def _get_pantry_score(total_units_from_pantry: float, total_units_needed: float)
     :type total_units_from_pantry: float
     :param total_units_needed: total quantity of ingredients required across the meal plan
     :type total_units_needed: float
-
     :return: fraction of ingredient units covered by pantry stock, or 0 if no ingredients are needed
     :rtype: float
     """
@@ -52,7 +51,6 @@ def _get_budget_penalty(total_cost: float, budget: float) -> float:
     :type total_cost: float
     :param budget: user's weekly grocery budget
     :type budget: float
-
     :return: fractional budget overspend in [0, 1], or 0 if within budget
     :rtype: float
     """
@@ -81,7 +79,7 @@ def fitness_score(
     recipe_protein: list[float] | None = None,
 ) -> float:
     """
-    Evaluates a meal plan (encoded as recipe indices) and returns a fitness score
+    Evaluates a meal plan (encoded as recipe indices) and returns a fitness score.
 
     All four components are normalised to [0, 1] before weights are applied, so the weights are directly comparable across features. The overall score ranges from -3 to 1 when all weights are 1.0 (one reward, three penalties).
 

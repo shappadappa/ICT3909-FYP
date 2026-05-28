@@ -10,7 +10,7 @@ class UserPreferences:
         requires_lactose_free: bool = False,
     ):
         """
-        The 'UserPreferences' class captures user dietary constraints and budget for use in the fitness function
+        The 'UserPreferences' class captures user dietary constraints and budget for use in the fitness function.
 
         :param weekly_budget: maximum spend on groceries for the week in EUR (default = 50)
         :type weekly_budget: float
@@ -20,9 +20,11 @@ class UserPreferences:
         :type protein_target_per_day: float
         :param is_vegetarian: if the user requires vegetarian meals (default = False)
         :type is_vegetarian: bool
-        :param is_vegan: if the user requires vegan meals (default = False, but if True then is_vegetarian will also be set to True)
+        :param is_vegan: if the user requires vegan meals (default = False, but if True then is_vegetarian will also be
+            set to True)
         :type is_vegan: bool
-        :param requires_gluten_free: if the user requires gluten-free meals (gluten intolerant or celiac) (default = False)
+        :param requires_gluten_free: if the user requires gluten-free meals (gluten intolerant or celiac) (default =
+            False)
         :type requires_gluten_free: bool
         :param requires_lactose_free: if the user requires lactose-free meals (lactose intolerant) (default = False)
         :type requires_lactose_free: bool
@@ -45,7 +47,7 @@ class UserPreferences:
 
     def to_dict(self) -> dict:
         """
-        Converts the user preferences to a dictionary format
+        Converts the user preferences to a dictionary format.
 
         :return: dictionary representation of the user preferences
         :rtype: dict

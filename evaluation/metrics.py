@@ -6,13 +6,12 @@ from models import Pantry, Recipe, UserPreferences
 
 def get_ingredient_utilisation_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> float:
     """
-    Calculates the ingredient utilisation score for a given meal plan and pantry
+    Calculates the ingredient utilisation score for a given meal plan and pantry.
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param pantry: a Pantry object representing the available ingredients
     :type pantry: Pantry
-
     :return: the ingredient utilisation score as a float between 0 and 1
     :rtype: float
     """
@@ -33,7 +32,7 @@ def get_expiry_weighted_utilisation_score(
     meal_plan: list[list[Recipe]], pantry: Pantry, current_date: datetime
 ) -> float:
     """
-    Calculates the expiry-weighted utilisation score for a given meal plan and pantry
+    Calculates the expiry-weighted utilisation score for a given meal plan and pantry.
 
     Each pantry ingredient is assigned an urgency weight of 1 / max(days_to_expiry, 1)
 
@@ -77,9 +76,10 @@ def get_expiry_weighted_utilisation_score(
 
 def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_date: datetime) -> float:
     """
-    Calculates the food waste score for a given meal plan and pantry
+    Calculates the food waste score for a given meal plan and pantry.
 
-    Defined as the total grams of pantry stock that will expire within the planning week but are not consumed by the meal plan, divided by total pantry grams available
+    Defined as the total grams of pantry stock that will expire within the planning week but are not consumed by the
+    meal plan, divided by total pantry grams available
 
     The result is in [0, 1] and lower is better
 
@@ -89,7 +89,6 @@ def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_
     :type pantry: Pantry
     :param current_date: the current date used to determine days until expiry
     :type current_date: datetime
-
     :return: food waste score as a float between 0 and 1 (lower is better)
     :rtype: float
     """
@@ -114,13 +113,13 @@ def get_food_waste_score(meal_plan: list[list[Recipe]], pantry: Pantry, current_
 
 def get_dietary_constraint_compliance(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
     """
-    Checks if the meal plan is compliant with the user's dietary constraints (vegan, vegetarian, gluten-free, lactose-free)
+    Checks if the meal plan is compliant with the user's dietary constraints (vegan, vegetarian, gluten-free, lactose-
+    free)
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param user_preferences: the user's dietary preferences and nutritional targets
     :type user_preferences: UserPreferences
-
     :return: dietary constraint compliance score, either 0 (not compliant) or 1 (fully compliant)
     :rtype: float
     """
@@ -140,13 +139,12 @@ def get_dietary_constraint_compliance(meal_plan: list[list[Recipe]], user_prefer
 
 def get_nutritional_target_score(meal_plan: list[list[Recipe]], user_preferences: UserPreferences) -> float:
     """
-    Calculates a nutritional target score for a given meal plan and user preferences
+    Calculates a nutritional target score for a given meal plan and user preferences.
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
     :param user_preferences: the user's dietary preferences and nutritional targets
     :type user_preferences: UserPreferences
-
     :return: nutritional target score as a float between 0 and 1 (higher is better)
     :rtype: float
     """
@@ -175,9 +173,10 @@ def get_budget_efficiency(
     meal_plan: list[list[Recipe]], pantry: Pantry, ingredient_costs: dict[str, float], weekly_budget: float
 ) -> float:
     """
-    Calculates the budget efficiency score for a given meal plan, pantry, ingredient costs, and weekly budget
+    Calculates the budget efficiency score for a given meal plan, pantry, ingredient costs, and weekly budget.
 
-    The score is defined as (weekly_budget / total_cost_of_purchased_ingredients), capped at 1.0, since spending less than the budget is better but there's no additional reward for being significantly under budget
+    The score is defined as (weekly_budget / total_cost_of_purchased_ingredients), capped at 1.0, since spending less
+    than the budget is better but there's no additional reward for being significantly under budget
 
     :param meal_plan: a list of lists of Recipe objects representing the meal plan
     :type meal_plan: list[list[Recipe]]
@@ -187,7 +186,6 @@ def get_budget_efficiency(
     :type ingredient_costs: dict[str, float]
     :param weekly_budget: the user's weekly budget for purchasing ingredients
     :type weekly_budget: float
-
     :return: budget efficiency score as a float between 0 and 1 (higher is better)
     :rtype: float
     """
@@ -216,9 +214,10 @@ def get_budget_efficiency(
 
 def get_pantry_coverage_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> float:
     """
-    Calculates the pantry coverage score for a given meal plan and pantry
+    Calculates the pantry coverage score for a given meal plan and pantry.
 
-    Defined as the proportion of total needed ingredients that are already available in the pantry, weighted by quantity needed
+    Defined as the proportion of total needed ingredients that are already available in the pantry, weighted by quantity
+    needed
 
     Higher means the meal plan covers more of the pantry stock and requires fewer additional purchases
 
@@ -226,7 +225,6 @@ def get_pantry_coverage_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> 
     :type meal_plan: list[list[Recipe]]
     :param pantry: a Pantry object representing the available ingredients
     :type pantry: Pantry
-
     :return: pantry coverage score as a float between 0 and 1 (higher is better)
     :rtype: float
     """
@@ -250,9 +248,10 @@ def get_pantry_coverage_score(meal_plan: list[list[Recipe]], pantry: Pantry) -> 
 
 def get_variety_score(meal_plan: list[list[Recipe]], num_days: int = 7, meals_per_day: int = 3) -> float:
     """
-    Calculates the variety score for a given meal plan
+    Calculates the variety score for a given meal plan.
 
-    Defined as the number of unique recipe names used divided by the total number of meal slots (num_days * meals_per_day)
+    Defined as the number of unique recipe names used divided by the total number of meal slots (num_days *
+    meals_per_day)
 
     The result is in [0, 1] where higher means more variety
 
@@ -262,7 +261,6 @@ def get_variety_score(meal_plan: list[list[Recipe]], num_days: int = 7, meals_pe
     :type num_days: int
     :param meals_per_day: number of meals per day (default = 3)
     :type meals_per_day: int
-
     :return: variety score as a float between 0 and 1 (higher is better)
     :rtype: float
     """

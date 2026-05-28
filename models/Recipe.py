@@ -13,8 +13,8 @@ class Recipe:
         id: str | None = None,
     ):
         """
-        The `Recipe` class represents a recipe with its required ingredients and dietary properties.
-        Nutritional information is computed separately by calling `compute_nutritional_information`.
+        The `Recipe` class represents a recipe with its required ingredients and dietary properties. Nutritional
+        information is computed separately by calling `compute_nutritional_information`.
 
         :param name: display name of the recipe
         :type name: str
@@ -43,11 +43,11 @@ class Recipe:
 
     def compute_nutritional_information(self, ingredient_lookup: dict[str, Ingredient]) -> NutritionalInformation:
         """
-        Sums the per-unit nutritional values of all ingredients, scaled by their quantities, to produce the total nutritional information for the recipe
+        Sums the per-unit nutritional values of all ingredients, scaled by their quantities, to produce the total
+        nutritional information for the recipe.
 
         :param ingredient_lookup: mapping of ingredient names to Ingredient objects
         :type ingredient_lookup: dict[str, Ingredient]
-
         :return: total nutritional information for the recipe
         :rtype: NutritionalInformation
         """
@@ -111,9 +111,7 @@ class Recipe:
         return self.nutritional_information
 
     def print(self):
-        """
-        Prints a summary of the recipe's details
-        """
+        """Prints a summary of the recipe's details."""
 
         instructions_text = "\n".join(self.instructions)
 
@@ -129,7 +127,7 @@ class Recipe:
 
     def to_dict(self) -> dict:
         """
-        Converts the recipe object to a dictionary format
+        Converts the recipe object to a dictionary format.
 
         :return: dictionary representation of the recipe
         :rtype: dict

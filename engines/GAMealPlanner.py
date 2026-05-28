@@ -15,7 +15,8 @@ class GAMealPlanner(MealPlanner):
         dietary_weight: float = 1.0,
     ):
         """
-        The `GAMealPlanner` class supports a genetic-algorithm-based meal planner that optimises meal plans based on dietary compliance, ingredient expiry, waste reduction, and budget adherence
+        The `GAMealPlanner` class supports a genetic-algorithm-based meal planner that optimises meal plans based on
+        dietary compliance, ingredient expiry, waste reduction, and budget adherence.
 
         :meal_planning_environment: the meal planning environment containing recipes, pantry stock, and user preferences
         :type meal_planning_environment: MealPlanningEnvironment
@@ -57,7 +58,7 @@ class GAMealPlanner(MealPlanner):
         seed: int | None = 1,
     ) -> tuple[list[int], float]:
         """
-        Runs the genetic algorithm to find an optimised meal plan
+        Runs the genetic algorithm to find an optimised meal plan.
 
         :param num_days: number of days to plan meals for
         :type num_days: int
@@ -71,7 +72,8 @@ class GAMealPlanner(MealPlanner):
         :type population_size: int
         :param parent_selection_type: parent selection method (e.g. "tournament", "sss", "rws", "sus", "random")
         :type parent_selection_type: str
-        :param K_tournament: number of solutions competing in each tournament (only used when parent_selection_type="tournament")
+        :param K_tournament: number of solutions competing in each tournament (only used when
+            parent_selection_type="tournament")
         :type K_tournament: int
         :param keep_elitism: number of best solutions to carry over unchanged each generation
         :type keep_elitism: int
@@ -87,7 +89,6 @@ class GAMealPlanner(MealPlanner):
         :type generation_print_interval: int | None
         :param seed: random seed for reproducibility
         :type seed: int | None
-
         :return: tuple of (best meal plan as a list of recipe indices, best fitness score)
         :rtype: tuple[list[int], float]
         """

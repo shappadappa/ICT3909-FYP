@@ -16,7 +16,8 @@ class MealPlanningEnvironment:
         ingredient_costs: dict[str, float] = {},
     ):
         """
-        The `MealPlanningEnvironment` class encapsulates all the data and information needed for meal planning, including recipes, pantry stock, user preferences, and ingredient costs
+        The `MealPlanningEnvironment` class encapsulates all the data and information needed for meal planning,
+        including recipes, pantry stock, user preferences, and ingredient costs.
 
         :param recipes: list of available recipes to choose from (default = empty list)
         :type recipes: list[Recipe]
@@ -92,7 +93,9 @@ class MealPlanningEnvironment:
 
     def _filter_ingredients_by_dietary_preferences(self):
         """
-        Filters the ingredients stored in the pantry based on the user's dietary preferences. For example, if the user is vegan, all non-vegan ingredients will be filtered out
+        Filters the ingredients stored in the pantry based on the user's dietary preferences.
+
+        For example, if the user is vegan, all non-vegan ingredients will be filtered out
         """
 
         names_to_remove = []
@@ -114,7 +117,9 @@ class MealPlanningEnvironment:
 
     def _filter_recipes_by_dietary_preferences(self):
         """
-        Filters the recipes stored in the environment based on the user's dietary preferences. For example, if the user is vegan, all non-vegan recipes will be filtered out
+        Filters the recipes stored in the environment based on the user's dietary preferences.
+
+        For example, if the user is vegan, all non-vegan recipes will be filtered out
         """
 
         self.recipes = [
@@ -128,7 +133,9 @@ class MealPlanningEnvironment:
 
     def _check_ingredient_costs(self):
         """
-        Checks if all ingredients used in the recipes have a cost defined in the meal planning environment. If any ingredient is missing a cost, a warning is printed
+        Checks if all ingredients used in the recipes have a cost defined in the meal planning environment.
+
+        If any ingredient is missing a cost, a warning is printed
         """
 
         num_missing_costs = sum(

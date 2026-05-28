@@ -11,7 +11,8 @@ load_dotenv()
 class Embedding:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         """
-        The `Embedding` class is responsible for creating an embedding, allowing for similarity search based on the embedding, and providing functionality to retrieve nutritional information for specific food items
+        The `Embedding` class is responsible for creating an embedding, allowing for similarity search based on the
+        embedding, and providing functionality to retrieve nutritional information for specific food items.
 
         In particular, this class is used by `FoodEmbedding` to create an embedding for food descriptions, and by `FoodDensityEmbedding` to create an embedding for foods that incorporates density information. The embedding allows for efficient similarity search without making API calls, enabling fast retrieval of similar food items based on their descriptions and/or density information, as well as access to their nutritional information without hitting API rate limits
         """
@@ -24,9 +25,10 @@ class Embedding:
 
     def initialise(self, descriptions: list[str] | None = None):
         """
-        Initialise the embeddings for the descriptions, incorporating any information
+        Initialise the embeddings for the descriptions, incorporating any information.
 
-        :param descriptions: the list of descriptions to create embeddings for (if None, the method will be implemented by the subclass to determine the descriptions based on the relevant information for the embedding)
+        :param descriptions: the list of descriptions to create embeddings for (if None, the method will be implemented
+            by the subclass to determine the descriptions based on the relevant information for the embedding)
         :type descriptions: list[str] | None
         """
 
@@ -46,17 +48,19 @@ class Embedding:
         minimum_confidence: float = 0.0,
     ) -> pd.DataFrame:
         """
-        Search for similar items based on a query that incorporates the relevant information for the embedding
+        Search for similar items based on a query that incorporates the relevant information for the embedding.
 
-        :param query: the search query, which can include relevant information for the embedding (e.g., textual description, density information, etc.)
+        :param query: the search query, which can include relevant information for the embedding (e.g., textual
+            description, density information, etc.)
         :type query: str
-        :param data: the DataFrame containing the items to search through (if None, the method will be implemented by the subclass to determine the DataFrame based on the relevant information for the embedding)
+        :param data: the DataFrame containing the items to search through (if None, the method will be implemented by
+            the subclass to determine the DataFrame based on the relevant information for the embedding)
         :type data: pd.DataFrame | None
         :param top_n: the number of top similar items to return (default = 5)
         :type top_n: int
-        :param minimum_confidence: the minimum confidence score for a search result to be considered valid (default = 0.0)
+        :param minimum_confidence: the minimum confidence score for a search result to be considered valid (default =
+            0.0)
         :type minimum_confidence: float
-
         :returns: a DataFrame containing the top similar items based on the query
         :rtype: pd.DataFrame
         """
@@ -77,7 +81,7 @@ class Embedding:
 
     def save(self, index_path: str):
         """
-        Save the FAISS index to a file for later use
+        Save the FAISS index to a file for later use.
 
         :param index_path: the file path to save the FAISS index
         :type index_path: str
@@ -87,7 +91,7 @@ class Embedding:
 
     def load(self, index_path: str):
         """
-        Load a FAISS index from a file
+        Load a FAISS index from a file.
 
         :param index_path: the file path to load the FAISS index from
         :type index_path: str

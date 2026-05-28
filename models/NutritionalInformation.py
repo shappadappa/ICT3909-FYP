@@ -15,7 +15,8 @@ class NutritionalInformation:
         is_vegan: bool | None = None,
     ):
         """
-        The `NutritionalInformation` class represents the nutritional information of an ingredient or recipe. All listed attributes are dependent on the unit quantity of the ingredient/recipe
+        The `NutritionalInformation` class represents the nutritional information of an ingredient or recipe. All listed
+        attributes are dependent on the unit quantity of the ingredient/recipe.
 
         :param calories: number of calories in the ingredient in kcal (default = None)
         :type calories: float | None
@@ -58,7 +59,7 @@ class NutritionalInformation:
 
     def print(self, tab_indent: int = 0):
         """
-        Prints the nutritional information in a readable format
+        Prints the nutritional information in a readable format.
 
         :param tab_indent: number of tabs to indent the printed information (default = 0)
         :type tab_indent: int
@@ -83,11 +84,10 @@ class NutritionalInformation:
 
     def get_nutritional_value(self, attribute: str) -> float | bool | None:
         """
-        Returns the value of the specified nutritional attribute
+        Returns the value of the specified nutritional attribute.
 
         :param attribute: name of the nutritional attribute to retrieve
         :type attribute: str
-
         :return: value of the specified nutritional attribute, or None if the attribute does not exist
         :rtype: float | bool | None
         """
@@ -99,7 +99,7 @@ class NutritionalInformation:
 
     def set_nutritional_value(self, attribute: str, value: float | bool):
         """
-        Sets the value of the specified nutritional attribute
+        Sets the value of the specified nutritional attribute.
 
         :param attribute: name of the nutritional attribute to set
         :type attribute: str
@@ -113,7 +113,7 @@ class NutritionalInformation:
     @property
     def keys(self) -> list[str]:
         """
-        Returns a list of the keys of the nutritional information attributes
+        Returns a list of the keys of the nutritional information attributes.
 
         :return: list of nutritional information attribute keys
         :rtype: list[str]
@@ -135,8 +135,6 @@ class NutritionalInformation:
         ]
 
     def to_dict(self) -> dict:
-        """
-        Converts the nutritional information to a dictionary format
-        """
+        """Converts the nutritional information to a dictionary format."""
 
         return vars(self)

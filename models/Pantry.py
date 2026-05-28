@@ -5,9 +5,7 @@ from models.PantryIngredient import PantryIngredient
 
 class Pantry:
     def __init__(self):
-        """
-        The `Pantry` class represents a collection of ingredients and their available quantities
-        """
+        """The `Pantry` class represents a collection of ingredients and their available quantities."""
 
         self._ingredients: dict[str, PantryIngredient] = {}
         self._quantities: dict[str, float] = {}
@@ -15,7 +13,7 @@ class Pantry:
     @property
     def ingredients(self) -> list[PantryIngredient]:
         """
-        Returns the list of unique ingredient objects currently in the pantry
+        Returns the list of unique ingredient objects currently in the pantry.
 
         :return: list of unique ingredient objects currently in the pantry
         :rtype: list[PantryIngredient]
@@ -26,7 +24,7 @@ class Pantry:
     @property
     def stock(self) -> dict[str, float]:
         """
-        Returns a snapshot of ingredient name to available quantity
+        Returns a snapshot of ingredient name to available quantity.
 
         :return: dictionary mapping ingredient names to their available quantities in grams
         :rtype: dict[str, float]
@@ -37,7 +35,7 @@ class Pantry:
     @property
     def ingredient_costs(self) -> dict[str, float]:
         """
-        Returns a snapshot of ingredient name to estimated financial cost per unit
+        Returns a snapshot of ingredient name to estimated financial cost per unit.
 
         :return: dictionary mapping ingredient names to their estimated financial cost per unit
         :rtype: dict[str, float]
@@ -47,11 +45,10 @@ class Pantry:
 
     def get_days_until_expiry(self, current_date: datetime) -> dict[str, int]:
         """
-        Returns a snapshot of ingredient name to days until estimated expiration
+        Returns a snapshot of ingredient name to days until estimated expiration.
 
         :param current_date: current date to compare with the estimated expiration dates
         :type current_date: datetime
-
         :return: dictionary mapping ingredient names to their estimated days until expiration
         :rtype: dict[str, int]
         """
@@ -63,8 +60,7 @@ class Pantry:
 
     def add(self, ingredient: PantryIngredient, quantity: float):
         """
-        Adds a quantity of an ingredient to the pantry. If the ingredient already exists,
-        its quantity is increased.
+        Adds a quantity of an ingredient to the pantry. If the ingredient already exists, its quantity is increased.
 
         :param ingredient: ingredient to add
         :type ingredient: PantryIngredient
@@ -79,9 +75,7 @@ class Pantry:
             self._quantities[ingredient.name] = quantity
 
     def print(self, max_ingredients: int | None = None):
-        """
-        Prints the details of all ingredients currently in the pantry
-        """
+        """Prints the details of all ingredients currently in the pantry."""
 
         for i, (name, ingredient) in enumerate(self._ingredients.items()):
             if max_ingredients is not None and i >= max_ingredients:
