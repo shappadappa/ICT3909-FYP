@@ -3,9 +3,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from engines import GAMealPlanner
 from models import MealPlanningEnvironment
@@ -54,6 +57,12 @@ def _with_recipe_cost(recipe: dict) -> dict:
 
 
 # schema and other type declarations
+class IngredientOrRecipeQuerySchema(BaseModel):
+    gluten_free: bool | None = None
+    lactose_free: bool | None = None
+    vegetarian: bool | None = None
+    vegan: bool | None = None
+    ids: list[str] | None = None
 
 
 class UserPreferencesSchema(BaseModel):
@@ -94,7 +103,11 @@ class MealPlanResponse(BaseModel):
     shopping_list: list[dict[str, str | float]]  # list of ingredients with name, quantity to buy (g) and cost (€)
 
 
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="GA Meal Planner API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -108,41 +121,40 @@ app.add_middleware(
 
 
 @app.get("/api/ingredients")
+@limiter.limit("60/minute")
 async def get_ingredients(
-    gluten_free: Annotated[bool | None, Query()] = None,
-    lactose_free: Annotated[bool | None, Query()] = None,
-    vegetarian: Annotated[bool | None, Query()] = None,
-    vegan: Annotated[bool | None, Query()] = None,
-    ingredient_ids: Annotated[list[str] | None, Query()] = None,
+    request: Request,
+    body: IngredientOrRecipeQuerySchema = Depends(),
 ):
     filtered_ingredients = INGREDIENTS
 
-    if gluten_free:
+    if body.gluten_free:
         filtered_ingredients = [
             ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_gluten_free"]
         ]
-    if lactose_free:
+    if body.lactose_free:
         filtered_ingredients = [
             ingredient
             for ingredient in filtered_ingredients
             if ingredient["nutritional_information"]["is_lactose_free"]
         ]
-    if vegetarian:
+    if body.vegetarian:
         filtered_ingredients = [
             ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegetarian"]
         ]
-    if vegan:
+    if body.vegan:
         filtered_ingredients = [
             ingredient for ingredient in filtered_ingredients if ingredient["nutritional_information"]["is_vegan"]
         ]
-    if ingredient_ids:
-        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["id"] in ingredient_ids]
+    if body.ids:
+        filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["id"] in body.ids]
 
     return [_with_ingredient_cost(i) for i in filtered_ingredients]
 
 
 @app.get("/api/ingredients/{ingredient_id}")
-async def get_ingredient(ingredient_id: str):
+@limiter.limit("60/minute")
+async def get_ingredient(request: Request, ingredient_id: str):
     matched_ingredient = next((ingredient for ingredient in INGREDIENTS if ingredient["id"] == ingredient_id), None)
 
     if matched_ingredient is None:
@@ -152,31 +164,30 @@ async def get_ingredient(ingredient_id: str):
 
 
 @app.get("/api/recipes")
+@limiter.limit("60/minute")
 async def get_recipes(
-    gluten_free: Annotated[bool | None, Query()] = None,
-    lactose_free: Annotated[bool | None, Query()] = None,
-    vegetarian: Annotated[bool | None, Query()] = None,
-    vegan: Annotated[bool | None, Query()] = None,
-    recipe_ids: Annotated[list[str] | None, Query()] = None,
+    request: Request,
+    body: IngredientOrRecipeQuerySchema = Depends(),
 ):
     filtered_recipes = RECIPES
 
-    if gluten_free:
+    if body.gluten_free:
         filtered_recipes = [recipe for recipe in filtered_recipes if "GLUTEN_FREE" in recipe["dietary_tags"]]
-    if lactose_free:
+    if body.lactose_free:
         filtered_recipes = [recipe for recipe in filtered_recipes if "LACTOSE_FREE" in recipe["dietary_tags"]]
-    if vegetarian:
+    if body.vegetarian:
         filtered_recipes = [recipe for recipe in filtered_recipes if "VEGETARIAN" in recipe["dietary_tags"]]
-    if vegan:
+    if body.vegan:
         filtered_recipes = [recipe for recipe in filtered_recipes if "VEGAN" in recipe["dietary_tags"]]
-    if recipe_ids:
-        filtered_recipes = [recipe for recipe in filtered_recipes if recipe["id"] in recipe_ids]
+    if body.ids:
+        filtered_recipes = [recipe for recipe in filtered_recipes if recipe["id"] in body.ids]
 
     return [_with_recipe_cost(r) for r in filtered_recipes]
 
 
 @app.get("/api/recipes/{recipe_id}")
-async def get_recipe(recipe_id: str):
+@limiter.limit("60/minute")
+async def get_recipe(request: Request, recipe_id: str):
     matched_recipe = next((recipe for recipe in RECIPES if recipe["id"] == recipe_id), None)
 
     if matched_recipe is None:
@@ -186,20 +197,21 @@ async def get_recipe(recipe_id: str):
 
 
 @app.post("/api/meal-plan", response_model=MealPlanResponse)
-def generate_meal_plan(request: MealPlanRequest):
+@limiter.limit("5/minute")
+def generate_meal_plan(request: Request, body: MealPlanRequest):
     user_preferences = UserPreferences(
-        weekly_budget=request.user_preferences.weekly_budget,
-        calorie_target_per_day=request.user_preferences.calorie_target_per_day,
-        protein_target_per_day=request.user_preferences.protein_target_per_day,
-        is_vegetarian=request.user_preferences.is_vegetarian,
-        is_vegan=request.user_preferences.is_vegan,
-        requires_gluten_free=request.user_preferences.requires_gluten_free,
-        requires_lactose_free=request.user_preferences.requires_lactose_free,
+        weekly_budget=body.user_preferences.weekly_budget,
+        calorie_target_per_day=body.user_preferences.calorie_target_per_day,
+        protein_target_per_day=body.user_preferences.protein_target_per_day,
+        is_vegetarian=body.user_preferences.is_vegetarian,
+        is_vegan=body.user_preferences.is_vegan,
+        requires_gluten_free=body.user_preferences.requires_gluten_free,
+        requires_lactose_free=body.user_preferences.requires_lactose_free,
     )
 
     pantry = Pantry()
 
-    for item in request.pantry_items:
+    for item in body.pantry_items:
         ingredient_data = next((ingredient for ingredient in INGREDIENTS if ingredient["id"] == item.id), None)
 
         if ingredient_data is None:
@@ -224,21 +236,21 @@ def generate_meal_plan(request: MealPlanRequest):
 
     planner = GAMealPlanner(
         meal_planning_environment=meal_planning_environment,
-        pantry_weight=request.user_preferences.pantry_weight,
-        waste_weight=request.user_preferences.waste_weight,
-        budget_weight=request.user_preferences.budget_weight,
-        dietary_weight=request.user_preferences.dietary_weight,
+        pantry_weight=body.user_preferences.pantry_weight,
+        waste_weight=body.user_preferences.waste_weight,
+        budget_weight=body.user_preferences.budget_weight,
+        dietary_weight=body.user_preferences.dietary_weight,
     )
     best_plan_indices, fitness = planner.generate_meal_plan(
-        num_days=request.num_days,
-        meals_per_day=request.meals_per_day,
-        num_generations=request.num_generations,
+        num_days=body.num_days,
+        meals_per_day=body.meals_per_day,
+        num_generations=body.num_generations,
         generation_print_interval=None,
         **BEST_GA_HYPERPARAMETERS,
     )
 
-    num_days = request.num_days
-    meals_per_day = request.meals_per_day
+    num_days = body.num_days
+    meals_per_day = body.meals_per_day
 
     meal_plan_ids = [
         [

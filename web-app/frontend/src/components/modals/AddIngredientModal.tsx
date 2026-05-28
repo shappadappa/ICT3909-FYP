@@ -2,8 +2,8 @@ import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
 import { CloseIcon } from "../../assets";
 import { API_BASE_URL } from "../../config";
-import { addPantryItem, pantryStore } from "../../stores";
-import type { Ingredient } from "../../types";
+import { addPantryItem, pantryStore, preferencesStore } from "../../stores";
+import type { Ingredient, UserPreferences } from "../../types";
 import { DietaryTag } from "../../types";
 import DietaryTagBadge from "../badges/DietaryTagBadge";
 import NutritionalInformationCard from "../NutritionalInformationCard";
@@ -14,8 +14,15 @@ interface AddIngredientModalProps {
 	onClose: () => void;
 }
 
-const fetchAllIngredients = async () => {
-	const res = await fetch(`${API_BASE_URL}/api/ingredients`);
+const fetchAllIngredients = async (savedPreferences: UserPreferences) => {
+	const params = new URLSearchParams({
+		gluten_free: savedPreferences.glutenIntolerant ? "true" : "false",
+		lactose_free: savedPreferences.lactoseIntolerant ? "true" : "false",
+		vegetarian: savedPreferences.vegetarian ? "true" : "false",
+		vegan: savedPreferences.vegan ? "true" : "false",
+	});
+
+	const res = await fetch(`${API_BASE_URL}/api/ingredients?${params.toString()}`);
 	if (!res.ok) throw new Error("Failed to fetch ingredients");
 
 	const rawIngredients = await res.json();
@@ -34,6 +41,8 @@ const fetchAllIngredients = async () => {
 
 export default function AddIngredientModal({ isOpen, onClose }: AddIngredientModalProps) {
 	const pantryIngredients = useStore(pantryStore);
+	const savedPreferences = useStore(preferencesStore);
+
 	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");
@@ -45,8 +54,8 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 	today.setHours(0, 0, 0, 0);
 
 	useEffect(() => {
-		fetchAllIngredients()?.then(setAllIngredients).catch(console.error);
-	}, []);
+		fetchAllIngredients(savedPreferences)?.then(setAllIngredients).catch(console.error);
+	}, [savedPreferences]);
 
 	const filtered = query.trim()
 		? allIngredients.filter((i) => i.name.toLowerCase().includes(query.trim().toLowerCase()))
@@ -179,7 +188,14 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 									</li>
 								))
 							) : (
-								<li className="px-3 py-2 text-sm text-gray-400">No ingredients found</li>
+								<li className="px-3 py-2 text-sm text-gray-400">
+									No ingredients found
+									{(savedPreferences?.glutenIntolerant ||
+										savedPreferences?.lactoseIntolerant ||
+										savedPreferences?.vegan ||
+										savedPreferences?.vegetarian) &&
+										". You may need to adjust your dietary preferences to find the ingredients you are looking for."}
+								</li>
 							)}
 						</ul>
 					)}

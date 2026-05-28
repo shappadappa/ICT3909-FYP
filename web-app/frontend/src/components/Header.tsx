@@ -54,7 +54,7 @@ export default function Header() {
 			<div className="flex items-center gap-2 sm:gap-3">
 				<span className="text-walnut-400 font-body hidden text-sm sm:inline">Week of</span>
 				<span className="text-walnut-600 bg-parchment border-walnut-100 hidden rounded-full border px-3 py-1 text-xs font-medium sm:inline sm:text-sm">
-					{weekStart} – {weekEnd}
+					{weekStart} - {weekEnd}
 				</span>
 				<button
 					id="generate-meal-plan-btn"

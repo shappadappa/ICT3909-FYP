@@ -8,8 +8,10 @@ export default function DisclaimerModal({ isOpen, onClose }: { isOpen: boolean; 
 				Project for the Bachelor of Science in Artificial Intelligence (study unit code ICT3909).
 			</p>
 			<p className="my-4 text-sm">
-				The project is intended to be a prototype for the developed system. Ingredients and recipes may not be
-				fully accurate, therefore the system should not be relied solely upon for dietary or nutritional advice.
+				The project is intended to be a prototype for the developed system. Ingredients, recipes, and dietary
+				restrictions or allergens may not be fully accurate, therefore the system should not be relied solely
+				upon for dietary or nutritional advice. Make sure to re-review the generated meal plans before taking
+				any further action.
 			</p>
 			<p className="my-4 text-sm">
 				To begin planning meals, you are encouraged to set your preferences and add pantry entries to improve

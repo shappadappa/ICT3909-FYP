@@ -50,14 +50,16 @@ export default function RecipeModal({ recipe, isError, isOpen, onClose }: Recipe
 							Ingredients
 						</h4>
 						<ul className="space-y-1 text-sm text-gray-700">
-							{recipe.ingredients.map(({ ingredient, quantity }, index) => (
-								<li key={ingredient + index} className="flex justify-between gap-4">
-									<span className="capitalize">{ingredient}</span>
-									<span className="shrink-0 text-gray-400">
-										{quantity % 1 === 0 ? quantity : quantity.toFixed(1)}g
-									</span>
-								</li>
-							))}
+							{recipe.ingredients?.length > 0
+								? recipe.ingredients.map(({ ingredient, quantity }, index) => (
+										<li key={ingredient + index} className="flex justify-between gap-4">
+											<span className="capitalize">{ingredient}</span>
+											<span className="shrink-0 text-gray-400">
+												{quantity % 1 === 0 ? quantity : quantity.toFixed(1)}g
+											</span>
+										</li>
+									))
+								: "N/A"}
 						</ul>
 					</div>
 

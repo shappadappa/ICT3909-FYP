@@ -12,11 +12,12 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-
 	server: {
 		port: 3000,
 	},
-
 	integrations: [react()],
 	adapter: vercel(),
+	security: {
+		checkOrigin: false,
+	},
 });

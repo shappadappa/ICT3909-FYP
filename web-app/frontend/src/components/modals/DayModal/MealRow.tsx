@@ -37,10 +37,10 @@ export function MealRow({ mealKey, recipe }: MealRowProps) {
 				<p className={`truncate text-sm font-medium ${style.text}`}>{recipe?.name ?? "-"}</p>
 				{recipe?.nutritionalInformation ? (
 					<p className="mt-0.5 text-xs text-gray-400">
-						{Math.round(recipe?.nutritionalInformation.calories)} kcal &middot;{" "}
-						{recipe?.nutritionalInformation.protein.toFixed(1)}g protein &middot;{" "}
-						{recipe?.nutritionalInformation.carbohydrates.toFixed(1)}g carbs &middot;{" "}
-						{recipe?.nutritionalInformation.fat.toFixed(1)}g fat
+						{Math.round(recipe.nutritionalInformation.calories ?? 0)} kcal &middot;{" "}
+						{(recipe.nutritionalInformation.protein ?? 0).toFixed(1)}g protein &middot;{" "}
+						{(recipe.nutritionalInformation.carbohydrates ?? 0).toFixed(1)}g carbs &middot;{" "}
+						{(recipe.nutritionalInformation.fat ?? 0).toFixed(1)}g fat
 					</p>
 				) : (
 					<p className="mt-0.5 text-xs text-gray-400">No nutritional data</p>
