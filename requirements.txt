@@ -13,5 +13,6 @@ python-dotenv
 requests
 scipy
 sentence-transformers
+slowapi
 tqdm
 uvicorn
