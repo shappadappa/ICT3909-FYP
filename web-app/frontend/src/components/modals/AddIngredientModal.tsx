@@ -119,11 +119,12 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 	};
 
 	const handleQueryChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newValue = e.target?.value.trim() || "";
-		const oldValue = query.trim();
+		const newValue = e.target?.value || "";
+		const oldValue = query;
 
 		setQuery(newValue);
 
+		// to avoid excesive API calls, if there was previously no results, and the user is still adding more characters, don't call the API again
 		if (newValue.length > 3 && newValue?.length > oldValue?.length && filteredIngredients.length == 0) {
 			return;
 		}
