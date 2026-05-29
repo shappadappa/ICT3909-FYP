@@ -15,5 +15,5 @@ Another notebook is provided, `tuning_GAMealPlanner.ipynb`, which, by using an `
 ## Other Files
 
 - The fitness function used by both the `ILPMealPlanner` and `GAMealPlanner` is implemented in `fitness_score.py`. This function computes a fitness score for a given meal plan based on how well it meets the specified nutritional requirements, budgetary constraints, and how well it reduces food waste and makes best use of the pantry.
-- Functions re-used by many engines, and also during evaluation, are declared in `utils.py`. This includes helper functions for preparing meal planning environments and parsing data.
-- The specific, template prompt used by the `LLMMealPlanner` to generate meal plans is declared in `LLMMealPlannerPrompt.txt`. This prompt is designed to be structured and detailed, to elicit high-quality meal plans from the LLM, and is supplemented with specific context when initialising the planner.
+- Functions reused by many engines, and also during evaluation, are declared in `utils.py`. This includes helper functions for preparing meal planning environments and parsing data.
+- The specific, template prompt used by the `LLMMealPlanner` to generate meal plans is stored in `LLMMealPlannerPrompt.txt`. This prompt is designed to be structured and detailed, to elicit high-quality meal plans from the LLM, and is supplemented with specific context when initialising the planner.

@@ -4,9 +4,9 @@ This module processes raw recipe data from the [Epicurious dataset](https://www.
 
 ## Pipeline
 
-The extraction is split across three notebooks, that should be run in the following order:
+The extraction is split across three notebooks, which should be run in the following order:
 
-1. **`recipe_parsing.ipynb`**: parses raw ingredient strings using NLP (using the `ingredient_parser` library) to extract ingredient names and quantities. Converts quantities to weights in grams using the `FoodDensityEmbedding` density lookup and outputs `parsed_recipes.json`.
+1. **`recipe_parsing.ipynb`**: parses raw ingredient strings using NLP (via the `ingredient_parser` library) to extract ingredient names and quantities. Converts quantities to weights in grams using the `FoodDensityEmbedding` density lookup and outputs `parsed_recipes.json`.
 
 2. **`recipe_extraction.ipynb`**: matches parsed ingredient names against the [USDA FoodData Central](https://fdc.nal.usda.gov/) dataset via `FoodEmbedding` to retrieve per-ingredient nutritional information (calories, carbohydrates, protein, fat, sugar, fibre, etc.). Recipe-level nutritional information is **not** computed here. Outputs `structured_recipes.json` and `structured_ingredients.json`.
 

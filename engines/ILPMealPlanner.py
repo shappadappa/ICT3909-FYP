@@ -97,14 +97,13 @@ class ILPMealPlanner(MealPlanner):
         pantry_names = [name for name, qty in self.pantry_stock.items() if qty > 0]
         n_pantry = len(pantry_names)
 
-        # --- Variable layout (flat vector) ---
-        # x[d, m, r] : binary   - num_days * meals_per_day * n_recipes vars
-        # f[i]        : continuous pantry usage - n_pantry vars
-        # cal_over[d] : continuous - num_days vars
-        # cal_under[d]: continuous - num_days vars
-        # prot_over[d]: continuous - num_days vars
+        # x[d, m, r]   : binary - num_days * meals_per_day * n_recipes vars
+        # f[i]         : continuous pantry usage - n_pantry vars
+        # cal_over[d]  : continuous - num_days vars
+        # cal_under[d] : continuous - num_days vars
+        # prot_over[d] : continuous - num_days vars
         # prot_under[d]: continuous - num_days vars
-        # budget_over : continuous - 1 var
+        # budget_over  : continuous - 1 var
         n_x = num_days * meals_per_day * n_recipes
         x_start = 0
         f_start = n_x
@@ -118,7 +117,7 @@ class ILPMealPlanner(MealPlanner):
         def x_idx(d: int, m: int, r: int) -> int:
             return x_start + (d * meals_per_day + m) * n_recipes + r
 
-        # --- Objective coefficients (milp minimises, so negate the maximisation terms) ---
+        # objective coefficients (milp minimises, so negate the maximisation terms)
         c = np.zeros(n_vars)
 
         # pantry score coefficient (same normalisation as the PuLP version)
@@ -152,7 +151,7 @@ class ILPMealPlanner(MealPlanner):
         budget_coeff = self.budget_weight / max(self.preferences.weekly_budget, 1.0)
         c[budget_over_idx] = budget_coeff
 
-        # --- Build constraint matrix in COO format, then convert to CSC ---
+        # build constraint matrix in COO format, then convert to CSC
         a_rows: list[int] = []
         a_cols: list[int] = []
         a_data: list[float] = []
@@ -165,7 +164,7 @@ class ILPMealPlanner(MealPlanner):
             a_cols.append(col)
             a_data.append(val)
 
-        # 1. Assignment: exactly one recipe per meal slot - sum_r x[d,m,r] == 1
+        # 1. assignment: exactly one recipe per meal slot (sum_r x[d,m,r] == 1)
         for d in range(num_days):
             for m in range(meals_per_day):
                 for r in range(n_recipes):
@@ -174,9 +173,9 @@ class ILPMealPlanner(MealPlanner):
                 con_ub.append(1.0)
                 row += 1
 
-        # 2. Symmetry breaking within a day: enforces non-decreasing recipe index order
+        # 2. symmetry breaking within a day: enforces non-decreasing recipe index order
         #    across meal slots to prune the branch-and-bound tree
-        #    sum_r r*x[d,m,r] <= sum_r r*x[d,m+1,r]  →  sum_r r*(x[d,m,r] - x[d,m+1,r]) <= 0
+        #    (sum_r r*x[d,m,r] <= sum_r r*x[d,m+1,r])
         for d in range(num_days):
             for m in range(meals_per_day - 1):
                 for r in range(n_recipes):
@@ -186,9 +185,9 @@ class ILPMealPlanner(MealPlanner):
                 con_ub.append(0.0)
                 row += 1
 
-        # 3. Pantry usability: f[i] <= pantry consumption before expiry
-        #    f[name] - sum_{d<days_exp, m, r using name} x[d,m,r]*qty <= 0
-        #    (upper bound on f[name] via variable bounds handles the pantry_cap constraint)
+        # 3. pantry usability: f[i] <= pantry consumption before expiry
+        #    (f[name] - sum_{d<days_exp, m, r using name} x[d,m,r]*qty <= 0:
+        #    upper bound on f[name] via variable bounds handles the pantry_cap constraint)
         ingredient_to_recipes: dict[str, list[tuple[int, float]]] = {}
         for r in range(n_recipes):
             for ing, qty in recipes[r].ingredients.items():
@@ -208,8 +207,8 @@ class ILPMealPlanner(MealPlanner):
             con_ub.append(0.0)
             row += 1
 
-        # 4. Dietary calorie deviation: cal_over[d] - cal_under[d] == daily_cal - cal_target
-        #    Rearranged: cal_over[d] - cal_under[d] - sum_{m,r} x[d,m,r]*cal[r] == -cal_target
+        # 4. dietary calorie deviation: cal_over[d] - cal_under[d] == daily_cal - cal_target
+        #    rearranged: cal_over[d] - cal_under[d] - sum_{m,r} x[d,m,r]*cal[r] == -cal_target
         for d in range(num_days):
             _add(row, cal_over_start + d, 1.0)
             _add(row, cal_under_start + d, -1.0)
@@ -222,7 +221,7 @@ class ILPMealPlanner(MealPlanner):
             con_ub.append(rhs)
             row += 1
 
-        # 5. Dietary protein deviation: prot_over[d] - prot_under[d] == daily_prot - prot_target
+        # 5. dietary protein deviation: prot_over[d] - prot_under[d] == daily_prot - prot_target
         for d in range(num_days):
             _add(row, prot_over_start + d, 1.0)
             _add(row, prot_under_start + d, -1.0)
@@ -235,7 +234,7 @@ class ILPMealPlanner(MealPlanner):
             con_ub.append(rhs)
             row += 1
 
-        # 6. Budget overrun: budget_over >= full_cost - pantry_savings - weekly_budget
+        # 6. budget overrun: budget_over >= full_cost - pantry_savings - weekly_budget
         #    budget_over - sum_{d,m,r} x[d,m,r]*cost[r] + sum_i f[i]*unit_cost[i] >= -weekly_budget
         recipe_full_costs = [
             sum(qty * self.ingredient_costs.get(ing, 1.0) / 100.0 for ing, qty in recipe.ingredients.items())
@@ -255,12 +254,12 @@ class ILPMealPlanner(MealPlanner):
         con_ub.append(np.inf)
         row += 1
 
-        # --- Assemble sparse constraint matrix ---
+        # assemble sparse constraint matrix
         n_constraints = row
         A = csc_matrix((a_data, (a_rows, a_cols)), shape=(n_constraints, n_vars))
         constraints = LinearConstraint(A, np.array(con_lb), np.array(con_ub))  # type: ignore[arg-type]
 
-        # --- Variable bounds ---
+        # variable bounds
         lb_vars = np.zeros(n_vars)  # all variables >= 0
         ub_vars = np.full(n_vars, np.inf)
         ub_vars[x_start:f_start] = 1.0  # binary variables in [0, 1]
@@ -268,11 +267,11 @@ class ILPMealPlanner(MealPlanner):
             ub_vars[f_start + i] = self.pantry_stock[name]  # pantry cap per ingredient
         bounds = Bounds(lb=lb_vars, ub=ub_vars)  # type: ignore[arg-type]
 
-        # --- Integrality: 1 = integer, 0 = continuous ---
+        # integrality: 1 = integer, 0 = continuous
         integrality = np.zeros(n_vars)
         integrality[x_start:f_start] = 1.0  # x variables are binary
 
-        # --- Solve ---
+        # solve
         options: dict = {
             "time_limit": float(time_limit),
             "mip_rel_gap": mip_gap,
@@ -281,7 +280,7 @@ class ILPMealPlanner(MealPlanner):
         result = milp(c, constraints=constraints, integrality=integrality, bounds=bounds, options=options)
         self.solve_status = result.status
 
-        # --- Extract solution ---
+        # extract solution
         sol = result.x if result.x is not None else np.zeros(n_vars)
         meal_plan: list[int] = []
         for d in range(num_days):
