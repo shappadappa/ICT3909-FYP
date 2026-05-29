@@ -13,7 +13,7 @@ const RECIPE_NOT_FOUND: Recipe = {
 
 export const fetchRecipesByIds = async (ids: string[]): Promise<Recipe[]> => {
 	const uniqueIds = Array.from(new Set(ids));
-	const params = new URLSearchParams(uniqueIds.map((id) => ["recipe_ids", id]));
+	const params = new URLSearchParams(uniqueIds.map((id) => ["ids", id]));
 
 	const res = await fetch(`${API_BASE_URL}/api/recipes?${params}`);
 	if (!res.ok) throw new Error("Failed to fetch recipes");

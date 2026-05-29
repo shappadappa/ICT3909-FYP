@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CloseIcon } from "../../assets";
 import { API_BASE_URL } from "../../config";
 import { addPantryItem, pantryStore, preferencesStore } from "../../stores";
@@ -14,12 +14,13 @@ interface AddIngredientModalProps {
 	onClose: () => void;
 }
 
-const fetchAllIngredients = async (savedPreferences: UserPreferences) => {
+const fetchAllIngredients = async (savedPreferences: UserPreferences, name_query: string) => {
 	const params = new URLSearchParams({
 		gluten_free: savedPreferences.glutenIntolerant ? "true" : "false",
 		lactose_free: savedPreferences.lactoseIntolerant ? "true" : "false",
 		vegetarian: savedPreferences.vegetarian ? "true" : "false",
 		vegan: savedPreferences.vegan ? "true" : "false",
+		name_query: name_query || "",
 	});
 
 	const res = await fetch(`${API_BASE_URL}/api/ingredients?${params.toString()}`);
@@ -43,7 +44,8 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 	const pantryIngredients = useStore(pantryStore);
 	const savedPreferences = useStore(preferencesStore);
 
-	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
+	const [filteredIngredients, setFilteredIngredients] = useState<Ingredient[]>([]);
+	const [isFetchingIngredients, setIsFetchingIngredients] = useState(false);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [query, setQuery] = useState("");
 	const [quantity, setQuantity] = useState("");
@@ -52,14 +54,6 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
-
-	useEffect(() => {
-		fetchAllIngredients(savedPreferences)?.then(setAllIngredients).catch(console.error);
-	}, [savedPreferences]);
-
-	const filtered = query.trim()
-		? allIngredients.filter((i) => i.name.toLowerCase().includes(query.trim().toLowerCase()))
-		: [];
 
 	const handleSubmit = (e: React.SubmitEvent) => {
 		e.preventDefault();
@@ -124,6 +118,28 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 		onClose();
 	};
 
+	const handleQueryChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newValue = e.target?.value.trim() || "";
+		const oldValue = query.trim();
+
+		setQuery(newValue);
+
+		if (newValue.length > 3 && newValue?.length > oldValue?.length && filteredIngredients.length == 0) {
+			return;
+		}
+
+		if (newValue.length > 2) {
+			setIsFetchingIngredients(true);
+
+			const newFilteredIngredients = await fetchAllIngredients(savedPreferences, newValue);
+
+			setFilteredIngredients(newFilteredIngredients);
+			setIsFetchingIngredients(false);
+		} else {
+			setFilteredIngredients([]);
+		}
+	};
+
 	return (
 		<Modal
 			title="Add Pantry Item"
@@ -144,7 +160,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 							type="text"
 							placeholder="Start typing to search ingredients"
 							value={query}
-							onChange={(e) => setQuery(e.target.value)}
+							onChange={handleQueryChange}
 							className="flex-1 focus:outline-none"
 						/>
 						{query && (
@@ -156,8 +172,8 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 
 					{query.trim() && query.length > 2 && (
 						<ul className="absolute top-full left-0 z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow-md">
-							{filtered.length > 0 ? (
-								filtered.map((ingredient) => (
+							{filteredIngredients.length > 0 &&
+								filteredIngredients.map((ingredient) => (
 									<li key={ingredient.id}>
 										<button
 											type="button"
@@ -186,8 +202,8 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 											{ingredient.name}
 										</button>
 									</li>
-								))
-							) : (
+								))}{" "}
+							{filteredIngredients.length === 0 && !isFetchingIngredients && (
 								<li className="px-3 py-2 text-sm text-gray-400">
 									No ingredients found
 									{(savedPreferences?.glutenIntolerant ||
@@ -197,6 +213,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 										". You may need to adjust your dietary preferences to find the ingredients you are looking for."}
 								</li>
 							)}
+							{isFetchingIngredients && <li className="px-3 py-2 text-sm text-gray-400">Searching...</li>}
 						</ul>
 					)}
 				</div>

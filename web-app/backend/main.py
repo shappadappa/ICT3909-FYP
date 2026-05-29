@@ -57,12 +57,22 @@ def _with_recipe_cost(recipe: dict) -> dict:
 
 
 # schema and other type declarations
-class IngredientOrRecipeQuerySchema(BaseModel):
-    gluten_free: bool | None = None
-    lactose_free: bool | None = None
-    vegetarian: bool | None = None
-    vegan: bool | None = None
-    ids: list[str] | None = None
+class IngredientOrRecipeQuery:
+    def __init__(
+        self,
+        gluten_free: bool | None = None,
+        lactose_free: bool | None = None,
+        vegetarian: bool | None = None,
+        vegan: bool | None = None,
+        ids: Annotated[list[str] | None, Query()] = None,
+        name_query: str | None = None,
+    ):
+        self.gluten_free = gluten_free
+        self.lactose_free = lactose_free
+        self.vegetarian = vegetarian
+        self.vegan = vegan
+        self.ids = ids
+        self.name_query = name_query
 
 
 class UserPreferencesSchema(BaseModel):
@@ -124,7 +134,7 @@ app.add_middleware(
 @limiter.limit("60/minute")
 async def get_ingredients(
     request: Request,
-    body: IngredientOrRecipeQuerySchema = Depends(),
+    body: IngredientOrRecipeQuery = Depends(),
 ):
     filtered_ingredients = INGREDIENTS
 
@@ -148,6 +158,11 @@ async def get_ingredients(
         ]
     if body.ids:
         filtered_ingredients = [ingredient for ingredient in filtered_ingredients if ingredient["id"] in body.ids]
+    if body.name_query:
+        prefix = body.name_query.lower()
+        filtered_ingredients = [
+            ingredient for ingredient in filtered_ingredients if ingredient["name"].lower().startswith(prefix)
+        ]
 
     return [_with_ingredient_cost(i) for i in filtered_ingredients]
 
@@ -167,7 +182,7 @@ async def get_ingredient(request: Request, ingredient_id: str):
 @limiter.limit("60/minute")
 async def get_recipes(
     request: Request,
-    body: IngredientOrRecipeQuerySchema = Depends(),
+    body: IngredientOrRecipeQuery = Depends(),
 ):
     filtered_recipes = RECIPES
 
