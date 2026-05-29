@@ -16,7 +16,11 @@ export default defineConfig({
 		port: 3000,
 	},
 	integrations: [react()],
-	adapter: vercel(),
+	adapter: vercel({
+		webAnalytics: {
+			enabled: true,
+		},
+	}),
 	security: {
 		checkOrigin: false,
 	},
