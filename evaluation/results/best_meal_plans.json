@@ -38,39 +38,39 @@
     ],
     "GAMealPlanner|1": [
         [
-            "Clam, Potato, and Bacon Potpie ",
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce ",
-            "Leeks Vinaigrette with Burrata Cheese and Mustard "
+            "Toasted Spice Vinaigrette ",
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce ",
-            "Clam, Potato, and Bacon Potpie ",
-            "Super Potato Salad "
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Toasted Spice Vinaigrette ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce ",
-            "Pasta with Veal, Sausage and Porcini Rag\u00f9 ",
-            "Tomato, Caper and Olive Vinaigrette "
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Toasted Spice Vinaigrette ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Tomato, Caper and Olive Vinaigrette ",
-            "Pasta with Veal, Sausage and Porcini Rag\u00f9 ",
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce "
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Toasted Spice Vinaigrette ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Super Potato Salad ",
-            "Clam, Potato, and Bacon Potpie ",
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce "
+            "Toasted Spice Vinaigrette ",
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Pasta with Veal, Sausage and Porcini Rag\u00f9 ",
-            "Tomato, Caper and Olive Vinaigrette ",
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce "
+            "Poached Eggs in Pip\u00e9rade ",
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Toasted Spice Vinaigrette "
         ],
         [
-            "Clam, Potato, and Bacon Potpie ",
-            "Super Potato Salad ",
-            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce "
+            "Poached Eggs in Pip\u00e9rade ",
+            "Baked Pork Chops with Parmesan-Sage Crust ",
+            "Toasted Spice Vinaigrette "
         ]
     ],
     "ILPMealPlanner|1": [
@@ -80,14 +80,14 @@
             "Middle-Eastern Pita Salad "
         ],
         [
-            "Baked Pork Chops with Parmesan-Sage Crust ",
-            "Toasted Spice Vinaigrette ",
+            "Mushroom Soup ",
+            "Middle-Eastern Pita Salad ",
             "Middle-Eastern Pita Salad "
         ],
         [
-            "Mushroom Soup ",
             "Red Cabbage and Carrot Slaw ",
-            "Enlightened Traditional Coleslaw "
+            "Enlightened Traditional Coleslaw ",
+            "Caramelized Pineapple with Ginger Cr\u00e8me Anglaise "
         ],
         [
             "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce ",
@@ -95,8 +95,8 @@
             "Enlightened Traditional Coleslaw "
         ],
         [
-            "Mushroom Soup ",
-            "Red Cabbage and Carrot Slaw ",
+            "Chocolate Bread Pudding with Bourbon-Pecan Caramel Sauce ",
+            "Sea Bass with Spicy Roasted Bell Pepper Sauce ",
             "Enlightened Traditional Coleslaw "
         ],
         [
@@ -114,777 +114,777 @@
         [
             "Black-Eyed Pea Curry ",
             "Hominy, Tomato, and Chili Soup ",
-            "Roasted Cockles "
-        ],
-        [
-            "Cod with Potatoes and Preserved Lemon Relish ",
-            "Vegetable and Bean Chili ",
             "Watercress, Orange and Red Onion Salad "
         ],
         [
-            "Fried Eggs on Corn Tortillas with Two Salsas (Huevos Divorciados) ",
-            "Chestnut Soup ",
-            "Spicy Soba Noodles with Shiitakes and Cabbage "
-        ],
-        [
-            "Vegetable-Herb Broth ",
-            "Skillet Polenta with Tomatoes and Gorgonzola ",
-            "Grilled Jumbo Shrimp with Lemon and Oregano "
-        ],
-        [
-            "Tossed Fresh Fruit Salad with Orange Mayonnaise Dressing ",
-            "Roasted Red Pepper, Almond, and Garlic Dip ",
+            "Vegetable and Bean Chili ",
+            "Cod with Potatoes and Preserved Lemon Relish ",
             "Poached Eggs in Pip\u00e9rade "
         ],
         [
-            "Butternut Squash and Apple Soup ",
-            "Sweet-and-Sour Celery ",
-            "Tandoori Shrimp and Mango Salad "
+            "Leafy Greens With Spicy Garlic Oil ",
+            "Skillet Polenta with Tomatoes and Gorgonzola ",
+            "Tossed Fresh Fruit Salad with Orange Mayonnaise Dressing "
+        ],
+        [
+            "Roasted-Garlic Basil Sauce ",
+            "White Chocolate Mousse ",
+            "Sweet-and-Sour Celery "
+        ],
+        [
+            "Watercress, Orange and Red Onion Salad ",
+            "Black-Eyed Pea Curry ",
+            "Hominy, Tomato, and Chili Soup "
+        ],
+        [
+            "Vegetable and Bean Chili ",
+            "Cod with Potatoes and Preserved Lemon Relish ",
+            "Poached Eggs in Pip\u00e9rade "
         ],
         [
             "Leafy Greens With Spicy Garlic Oil ",
-            "Peas with Spinach and Shallots ",
-            "Orange Pancakes `21' Club "
+            "Skillet Polenta with Tomatoes and Gorgonzola ",
+            "Tossed Fresh Fruit Salad with Orange Mayonnaise Dressing "
         ]
     ],
     "RandomMealPlanner|2": [
         [
-            "Roasted Mediterranean Vegetables with Grapefruit Gremolata ",
-            "Turkey Soup with Orzo and White Beans ",
-            "Mexican Chicken and Vegetable Casserole "
+            "Pork Chile Verde with Red Chile Salsa ",
+            "Veal Shank with Balsamic Onions and White Beans ",
+            "Chicken Soup with Egg and Cheese "
         ],
         [
-            "Turkey Osso Buco ",
-            "Penne with Broccoli and Mushrooms ",
-            "New England Clam Chowder "
+            "Sauteed Kale with Smoked Paprika ",
+            "Chickpea Stew ",
+            "Celery Root, Carrot and Beet Salad "
         ],
         [
-            "Asian Shrimp, Pineapple, and Peanut Salad ",
-            "Chicken, Scallion, and Red Pepper Cylinders ",
-            "Pasta in Almond Garlic Sauce "
+            "Gl\u00f6gg ",
+            "Shrimp and Mango Salad with Glass Noodles ",
+            "Garlic, White Cheddar and Chipotle Mashed Potatoes "
         ],
         [
-            "Basil Buttermilk Dressing ",
-            "Stir-Fried Chicken With Black Beans ",
-            "Bananas Foster Coffee Parfaits "
+            "Herb-Roasted Chicken Breasts ",
+            "Lamb Chops with Mushroom Wine Sauce ",
+            "Green Beans with Caramelized Pecans "
         ],
         [
-            "Tomato, Cucumber and Guacamole Sandwiches ",
-            "Mussels in Light Broth ",
-            "Argentine-Style Beef with Chimichurri Sauce "
+            "Roasted Lemongrass Chicken ",
+            "Roasted Grape Tomato, Orange, and Basil Relish ",
+            "Lime-Soy-Ginger Sauce "
         ],
         [
-            "Marinated Filet of Beef ",
-            "Tuna Steaks with Garlic, Tomatoes, Capers, and Basil ",
-            "Spinach and Feta Turnovers "
+            "Rack of Lamb with Fresh Herbs and Garlic ",
+            "Chicken, Potato, and Carrot Enchiladas with Ancho-Guajillo Chile Sauce ",
+            "Toasted Barley Risotto with Spinach and Herb Pur\u00e9e "
         ],
         [
-            "Beef and Sausage Meat Loaf with Mozzarella ",
-            "Chioggia Beet Borani with Feta and Toasted Sesame Seeds ",
-            "Creamy Dill Dressing "
+            "Lima Bean, Potato, and Garlic Pur\u00e9e with Potato Crisps ",
+            "Cawl ",
+            "Stuffed Poblano Chiles with Avocado and Potatoes "
         ]
     ],
     "GAMealPlanner|2": [
         [
-            "Chicken and Bell Pepper Fajitas ",
-            "Irish Bacon ",
-            "Irish Bacon "
+            "Ranch Beans ",
+            "Thanksgiving Stuffed Onions ",
+            "Ranch Beans "
         ],
         [
-            "Irish Bacon ",
-            "Irish Bacon ",
-            "Chicken and Bell Pepper Fajitas "
+            "Ranch Beans ",
+            "Roasted-Garlic Oil ",
+            "Ranch Beans "
         ],
         [
-            "Warm Red Cabbage Salad with Roast Chicken and Gorgonzola Cheese ",
-            "Celery Rice Pilaf with Caraway ",
-            "Chicken and Bell Pepper Fajitas "
+            "Ranch Beans ",
+            "Ranch Beans ",
+            "Thanksgiving Stuffed Onions "
         ],
         [
-            "Irish Bacon ",
-            "Irish Bacon ",
-            "Chicken and Bell Pepper Fajitas "
+            "Ranch Beans ",
+            "Thanksgiving Stuffed Onions ",
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney "
         ],
         [
-            "Warm Red Cabbage Salad with Roast Chicken and Gorgonzola Cheese ",
-            "Chicken and Bell Pepper Fajitas ",
-            "Irish Bacon "
+            "Thanksgiving Stuffed Onions ",
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney ",
+            "Ranch Beans "
         ],
         [
-            "Chicken and Bell Pepper Fajitas ",
-            "Celery Rice Pilaf with Caraway ",
-            "Warm Red Cabbage Salad with Roast Chicken and Gorgonzola Cheese "
+            "Thanksgiving Stuffed Onions ",
+            "Ranch Beans ",
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney "
         ],
         [
-            "Chicken and Bell Pepper Fajitas ",
-            "Irish Bacon ",
-            "Irish Bacon "
+            "Thanksgiving Stuffed Onions ",
+            "Grilled Sea Bass with Tomatoes and Herb Cream Sauce ",
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney "
         ]
     ],
     "ILPMealPlanner|2": [
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney ",
+            "Roasted-Garlic Oil ",
+            "Ranch Beans "
         ],
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney ",
+            "Thanksgiving Stuffed Onions ",
+            "Ranch Beans "
         ],
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney ",
+            "Thanksgiving Stuffed Onions ",
+            "Ranch Beans "
         ],
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Red-Wine Pot Roast with Porcini ",
+            "Chocolate Chip Apricot Bars ",
+            "Thanksgiving Stuffed Onions "
         ],
         [
-            "Stir-Fried Chicken With Black Beans ",
-            "Chioggia Beet Borani with Feta and Toasted Sesame Seeds ",
-            "Bistro Steak with Buttermilk Onion Rings "
+            "Roasted-Garlic Oil ",
+            "Pan-Fried Steaks with Shallot-Gorgonzola Butter ",
+            "Brandied Date and Walnut Pie "
         ],
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Roasted-Garlic Oil ",
+            "Pan-Fried Steaks with Shallot-Gorgonzola Butter ",
+            "Brandied Date and Walnut Pie "
         ],
         [
-            "Bistro Steak with Buttermilk Onion Rings ",
-            "Pasta in Almond Garlic Sauce ",
-            "Cream of Mushroom Soup "
+            "Roasted-Garlic Oil ",
+            "Pan-Fried Steaks with Shallot-Gorgonzola Butter ",
+            "Brandied Date and Walnut Pie "
         ]
     ],
     "LLMMealPlanner|2": [
         [
-            "Garlic Mashed Potatoes ",
-            "Roasted Sweet Potatoes with Miso, Orange, and Sesame ",
-            "Roasted Mediterranean Vegetables with Grapefruit Gremolata "
+            "Red Pepper Sauce ",
+            "Sauteed Broccoli Rabe ",
+            "Roasted Grape Tomato, Orange, and Basil Relish "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Red-Cabbage Confit ",
-            "Celery Rice Pilaf with Caraway "
+            "Red Pepper Sauce ",
+            "Salsa Vinaigrette ",
+            "Roasted Potato, Garlic, and Red Pepper Salad "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Griddled Tomato-Chipotle Salsa ",
-            "Celery Rice Pilaf with Caraway "
+            "Red Pepper Sauce ",
+            "Light Vegetable Stock ",
+            "Roasted Bell Pepper Salad with Pine Nuts "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Grapefruit and J\u00edcama Salad ",
-            "Celery Rice Pilaf with Caraway "
+            "Red Pepper Sauce ",
+            "Roasted Grape Tomato, Orange, and Basil Relish ",
+            "Sauteed Broccoli Rabe "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Roasted Sweet Potatoes with Miso, Orange, and Sesame ",
-            "Roasted Mediterranean Vegetables with Grapefruit Gremolata "
+            "Red Pepper Sauce ",
+            "Salsa Vinaigrette ",
+            "Roasted Potato, Garlic, and Red Pepper Salad "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Red-Cabbage Confit ",
-            "Celery Rice Pilaf with Caraway "
+            "Red Pepper Sauce ",
+            "Light Vegetable Stock ",
+            "Roasted Bell Pepper Salad with Pine Nuts "
         ],
         [
-            "Garlic Mashed Potatoes ",
-            "Griddled Tomato-Chipotle Salsa ",
-            "Celery Rice Pilaf with Caraway "
+            "Red Pepper Sauce ",
+            "Roasted Grape Tomato, Orange, and Basil Relish ",
+            "Sauteed Broccoli Rabe "
         ]
     ],
     "RandomMealPlanner|3": [
         [
-            "Baked Cheese Grits ",
-            "BLT Casserole ",
-            "Grilled Soy-Tamarind Denver Steaks "
+            "Cranberry Fennel Stuffing ",
+            "Brown Rice and Barley ",
+            "Japanese-Style Fried Rice (Chahan) "
         ],
         [
-            "Mushroom-Poblano Frittata ",
-            "Coconut Cream Pie ",
-            "Carrot Soup with Star Anise "
+            "Matzo Scallion Pancakes ",
+            "Egg and Potato Salad with Green Olives ",
+            "Giant Chocolate Peanut Butter Cup "
         ],
         [
-            "Frenchy's Pasties ",
-            "Pan-Seared Steak with Mushroom-Merlot Sauce ",
-            "Sofrito Grilled Bread "
+            "Spicy Tahini Sauce ",
+            "Goat Cheese-Stuffed Peppadews ",
+            "Red Pepper Sauce "
         ],
         [
-            "Baked Eggs with Zucchini Rago\u00fbt ",
-            "Caramelized French Toast with Cinnamon and Berries ",
-            "Cantaloupe Basil Salsa "
+            "Spicy Adobo Shrimp Cocktail ",
+            "Mushroom-Shallot Quiche ",
+            "Turkey Breast Medallions with Tomato Jam "
         ],
         [
-            "Peel-and-Eat Hot Pepper Shrimp ",
-            "Greek Marinated Fried Chicken - Kotopoulo Tiganito Marinato ",
-            "Chocolate-Coconut Pound Cake "
+            "Scotch Eggs with Fresh Herbs ",
+            "BA's Best Carrot Cake ",
+            "Roast Beef with Rosemary Mayonnaise "
         ],
         [
-            "Chicken with Mushrooms and White Wine ",
-            "Hibiscus Sauce (Sirope de Flor de Jamaica) ",
-            "Quick Clam Chowder "
+            "German Potato Salad ",
+            "Grilled Lemon-Coriander Chicken ",
+            "Steamed Broccoli with Hummus "
         ],
         [
-            "Cider-Basted Turkey with Roasted Apple Gravy ",
-            "Sun-Dried Tomato, Garlic, and Jalape\u00f1o Pasta ",
-            "Chili-Glazed Shrimp with Tomatillo-Cilantro Sauce "
+            "Bacon-and-Egg Rice ",
+            "Snow Eggs with Pistachio Custard and Chocolate Drizzle ",
+            "Black Cod with Swiss Chard, Olives, and Lemon "
         ]
     ],
     "GAMealPlanner|3": [
         [
-            "French Vinaigrette with Hard-Boiled Egg ",
-            "Quick Clam Chowder ",
-            "French Vinaigrette with Hard-Boiled Egg "
+            "Vegetable Platter with Cannellini \"Hummus\" ",
+            "Rotelle with Mushroom Sauce ",
+            "Steamed Broccoli with Olive Oil and Parmesan "
         ],
         [
-            "Quick Clam Chowder ",
-            "Lemon Pudding with Strawberries and Meringue Cigars ",
-            "Latin-Style Chicken and Rice "
+            "Linguine alla Carbonara ",
+            "Poached Eggs with Tomato Cilantro Sauce ",
+            "Country Beet Salad "
         ],
         [
-            "Quick Clam Chowder ",
-            "Lemon Pudding with Strawberries and Meringue Cigars ",
-            "Latin-Style Chicken and Rice "
+            "Country Beet Salad ",
+            "Poached Eggs with Tomato Cilantro Sauce ",
+            "Linguine alla Carbonara "
         ],
         [
-            "French Vinaigrette with Hard-Boiled Egg ",
-            "Quick Clam Chowder ",
-            "French Vinaigrette with Hard-Boiled Egg "
+            "Bacon-and-Egg Rice ",
+            "Mexican Scrambled Eggs ",
+            "Easy Vegetable Stock "
         ],
         [
-            "Latin-Style Chicken and Rice ",
-            "Farmer Cheese Cheesecake ",
-            "Latin-Style Chicken and Rice "
+            "Country Beet Salad ",
+            "Poached Eggs with Tomato Cilantro Sauce ",
+            "Linguine alla Carbonara "
         ],
         [
-            "Latin-Style Chicken and Rice ",
-            "Latin-Style Chicken and Rice ",
-            "Farmer Cheese Cheesecake "
+            "Linguine alla Carbonara ",
+            "Poached Eggs with Tomato Cilantro Sauce ",
+            "Country Beet Salad "
         ],
         [
-            "Grilled Soy-Tamarind Denver Steaks ",
-            "French Vinaigrette with Hard-Boiled Egg ",
-            "Seared Tuna on Fettuccine with Green Olives and Arugula "
+            "Country P\u00e2t\u00e9 (P\u00e2t\u00e9 de Campagne) ",
+            "Grilled Lemon-Coriander Chicken ",
+            "Country P\u00e2t\u00e9 (P\u00e2t\u00e9 de Campagne) "
         ]
     ],
     "ILPMealPlanner|3": [
         [
-            "Epicurean Sauce ",
-            "Epicurean Sauce ",
-            "Roast Turkey with Cider Sage Gravy "
+            "Steamed Broccoli with Olive Oil and Parmesan ",
+            "Pepper Steak with Port, Zinfandel, and Mushroom Sauce ",
+            "Grilled Lemon-Coriander Chicken "
         ],
         [
-            "Fried Rice with Ham, Egg, and Scallions ",
-            "Fried Rice with Ham, Egg, and Scallions ",
-            "Tomato Sauce "
+            "Pickled Shrimp ",
+            "Grilled Lemon-Coriander Chicken ",
+            "Basil Tabbouleh "
         ],
         [
-            "Buttermilk Cornmeal Pancakes ",
-            "Olive Oil-Baked Beet Chips With Sea Salt And Black Pepper ",
-            "Celery Salad With Celery Root And Horseradish "
+            "Todd's Modern Day Brisket ",
+            "Todd's Modern Day Brisket ",
+            "Orange Cheesecake with Caramel-Orange Sauce "
         ],
         [
-            "Enlightened Traditional Coleslaw ",
-            "Fried Rice with Ham, Egg, and Scallions ",
-            "Tomato Sauce "
+            "Todd's Modern Day Brisket ",
+            "Todd's Modern Day Brisket ",
+            "Orange Cheesecake with Caramel-Orange Sauce "
         ],
         [
-            "Fried Rice with Ham, Egg, and Scallions ",
-            "Buttermilk Cornmeal Pancakes ",
-            "Crispy Salt and Pepper Chicken with Caramelized Fennel and Shallots "
+            "Todd's Modern Day Brisket ",
+            "Todd's Modern Day Brisket ",
+            "Orange Cheesecake with Caramel-Orange Sauce "
         ],
         [
-            "Steamed Mussels with Tomatoes and Garlic Toasts ",
-            "Vanilla-Bean Cheesecake with Guava Topping and Mango-Lime Salad ",
-            "Vanilla-Bean Cheesecake with Guava Topping and Mango-Lime Salad "
+            "Grilled Lemon and Garlic Leg of Lamb with Coriander Chutney ",
+            "Todd's Modern Day Brisket ",
+            "Orange Cheesecake with Caramel-Orange Sauce "
         ],
         [
-            "Fried Rice with Ham, Egg, and Scallions ",
-            "Pretzel-Crusted Pork Chops with Orange-Mustard Sauce ",
-            "Vanilla-Bean Cheesecake with Guava Topping and Mango-Lime Salad "
+            "Grilled Tuna and Peppers with Caper Vinaigrette ",
+            "Herbed Yellow Pepper Scrambled Eggs with Chive Sour Cream on Brioche ",
+            "Carrot Cake "
         ]
     ],
     "LLMMealPlanner|3": [
         [
-            "Baked Tomatoes Teagarden ",
-            "Avocado Salsa ",
-            "French Vinaigrette with Hard-Boiled Egg "
+            "Mediterranean Vegetables ",
+            "Potato Gnocchi ",
+            "Frozen Iced Coffee With Coffee Jelly "
         ],
         [
-            "Stir-Fried Spinach with Ginger and Garlic ",
-            "Crustless Mini Quiches ",
-            "Garlic Mashed Potatoes with Chives "
+            "Indian Ratatouille ",
+            "Hollywood Thai Beef Salad ",
+            "Roasted Tomato and Bell Pepper Salsa "
         ],
         [
-            "Cucumber, Radish, and Red Onion Salad ",
-            "Quick Moroccan Vegetable Couscous ",
-            "Fried Rice with Ham, Egg, and Scallions "
+            "Red and Green Cabbage Slaw with Caraway ",
+            "Green Juice ",
+            "Mom's Hearty Chicken and Rice Soup "
         ],
         [
-            "Ratatouille on the Run ",
-            "Sugar Snap Peas with Ginger and Garlic ",
-            "Enlightened Traditional Coleslaw "
+            "Turkey Stock ",
+            "Mushroom and Tomato Soup ",
+            "Steamed Broccoli with Hummus "
         ],
         [
-            "Chopped Spinach with Toasted Sesame Seeds ",
-            "Spicy Fried Chickpeas ",
-            "Mussels With Spicy Tomato Oil and Grilled Bread "
+            "Mexican Scrambled Eggs ",
+            "Snap Peas and Green Beans with Arugula-Mint Pesto ",
+            "Cumin-Dusted Sea Bass on Green Rice "
         ],
         [
-            "Peel-and-Eat Hot Pepper Shrimp ",
-            "Cobb Salad with Balsamic Shallot Vinaigrette ",
-            "Crepes with Homemade Fruit Syrup "
+            "Black-Eyed Pea Curry ",
+            "Ginger and Garlic Broccoli ",
+            "Panang Curry Paste "
         ],
         [
-            "Arugula, Yellow Tomato, and Nectarine Salsa ",
-            "Winter Tomato Sauce ",
-            "Apricot Honey Cake "
+            "Roasted Tomato and Bell Pepper Salsa ",
+            "Tecate Skirt-Steak Tacos ",
+            "Deviled Eggs with Sun-Dried Tomatoes and Chives "
         ]
     ],
     "RandomMealPlanner|4": [
         [
-            "Black Bean Soup with Cumin and Cilantro ",
-            "New Potato Salad with Sauteed Onion Vinaigrette ",
-            "Basic Duck Stock "
+            "Steamed Broccoli with Hummus ",
+            "Moroccan-Style Preserved Lemons ",
+            "Ancho Pasilla Sauce "
         ],
         [
-            "El Jefe's Glove-Box Recado ",
-            "Tomato Salad with Red Onion and Herbs ",
-            "Spiced Apple Cider "
+            "Roasted Vegetables ",
+            "Vegetable Stock ",
+            "Cranberry-Citrus Sorbet "
         ],
         [
-            "Skirt Steak with Haricots Verts, Corn, and Pesto ",
-            "Endive and Asian Pear Salad ",
-            "Red-Wine Reduction "
+            "Dry Chimichurri Rub ",
+            "Habanero-Orange Salsa ",
+            "Tehina "
         ],
         [
-            "Dried Chile Salsa ",
-            "Red and Green Cabbage Slaw with Caraway ",
-            "Lemon Mint Braised Artichokes "
+            "Tricolor Roasted Peppers ",
+            "Arugula with Lemon and Olive Oil ",
+            "Gluten-Free Vegan Oatmeal Raisin Cookies "
         ],
         [
-            "Tomato-Onion Topping ",
-            "Calabrian Chile Oil ",
-            "Cumin-Scented Eggplant with Pomegranate and Cilantro "
+            "Radicchio, Fennel, and Arugula Salad with Roquefort and Walnuts ",
+            "Warm Green Bean and Walnut Salad ",
+            "Wilted Chard With Shallots and Vinegar "
         ],
         [
-            "Viennese Cucumber Salad ",
-            "Blackberry-Tarragon Paletas ",
-            "Tomatillo Salsa "
+            "Grilled Eggplant with Lebneh ",
+            "Vegetable Slaw ",
+            "Stir-Fried Spinach with Ginger and Garlic "
         ],
         [
-            "Plum Barbecue Sauce ",
-            "Ratatouille Parcels ",
-            "Grilled Sweet-Potato Salad "
+            "Stir Fried Baby Bok Choy ",
+            "Coffee-Braised Short Ribs with Ancho Chile ",
+            "Vegetables Glazed with Balsamic Vinegar "
         ]
     ],
     "GAMealPlanner|4": [
         [
-            "Oven-Poached Fish in Olive Oil ",
-            "Spinach with Pine Nuts and Raisins ",
-            "Lemon-Mint Julep "
+            "Vegetable Stock ",
+            "Sweet and Tangy Hummus ",
+            "Grouper with Tomato and Basil "
         ],
         [
-            "Tequila Cooler ",
-            "Tortillas in Black-Bean Pur\u00e9e ",
-            "Spinach with Pine Nuts and Raisins "
+            "Sweet and Tangy Hummus ",
+            "Grouper with Tomato and Basil ",
+            "Vegetables Glazed with Balsamic Vinegar "
         ],
         [
-            "Cumin-Scented Eggplant with Pomegranate and Cilantro ",
-            "Tortillas in Black-Bean Pur\u00e9e ",
-            "Ramp and Walnut Pistou "
-        ],
-        [
-            "Fennel, Beet and Orange Salad with Olives ",
-            "Mai Tai II ",
-            "Oven-Poached Fish in Olive Oil "
+            "Herbed Kalamata Olives ",
+            "Wild Rice with Carrots ",
+            "Grouper with Tomato and Basil "
         ],
         [
             "Marinated Mushroom, Tomato, and Scallion Skewers ",
-            "Pineapple Papaya Relish ",
-            "Spicy Bell Pepper Salad "
+            "Sweet and Tangy Hummus ",
+            "Spiced Salad Dressing "
         ],
         [
-            "Tortillas in Black-Bean Pur\u00e9e ",
-            "Ramp and Walnut Pistou ",
-            "Fennel, Beet and Orange Salad with Olives "
+            "Spiced Salad Dressing ",
+            "Rib-Eye Steaks with Garbanzo and Green Bean Salad ",
+            "Spiced Salad Dressing "
         ],
         [
-            "Oven-Poached Fish in Olive Oil ",
-            "Mai Tai II ",
-            "Tropical Fruit and Rum Punch "
+            "Grouper with Tomato and Basil ",
+            "Sweet and Tangy Hummus ",
+            "Chopped Salad of Cucumber, Red Onion, Lemon, and Parsley "
+        ],
+        [
+            "Herbed Kalamata Olives ",
+            "Sweet and Tangy Hummus ",
+            "Marinated Mushroom, Tomato, and Scallion Skewers "
         ]
     ],
     "ILPMealPlanner|4": [
         [
-            "Spencer ",
-            "Spinach with Pine Nuts and Raisins ",
-            "Tortillas in Black-Bean Pur\u00e9e "
+            "Steamed Broccoli with Hummus ",
+            "Steamed Broccoli with Hummus ",
+            "Roasted Citrus and Avocado Salad "
         ],
         [
-            "Spicy Bell Pepper Salad ",
-            "Pineapple Papaya Relish ",
-            "Spinach with Pine Nuts and Raisins "
+            "Steamed Broccoli with Hummus ",
+            "Steamed Broccoli with Hummus ",
+            "Roasted Citrus and Avocado Salad "
         ],
         [
-            "Chilled Tomato-Tarragon Soup with Croutons ",
-            "Black Bean and Red Pepper Salad ",
-            "Ramp and Walnut Pistou "
+            "Steamed Broccoli with Hummus ",
+            "Steamed Broccoli with Hummus ",
+            "Roasted Citrus and Avocado Salad "
         ],
         [
-            "Ramp and Walnut Pistou ",
-            "Candied Carrot Curls ",
-            "Tortillas in Black-Bean Pur\u00e9e "
+            "Salad with Herb-Dijon Dressing ",
+            "Sweet and Tangy Hummus ",
+            "Vegetables Glazed with Balsamic Vinegar "
         ],
         [
-            "Black Bean and Red Pepper Salad ",
-            "Red-Wine Reduction ",
-            "Spencer "
+            "Salad with Herb-Dijon Dressing ",
+            "Sweet and Tangy Hummus ",
+            "Classic Turkey Stock "
         ],
         [
-            "Chilled Tomato-Tarragon Soup with Croutons ",
-            "Black Bean and Red Pepper Salad ",
-            "Ramp and Walnut Pistou "
+            "Wild Rice with Carrots ",
+            "Cornish Hens with Roasted-Garlic A\u00efoli ",
+            "Vegetables Glazed with Balsamic Vinegar "
         ],
         [
-            "Chilled Tomato-Tarragon Soup with Croutons ",
-            "Black Bean and Red Pepper Salad ",
-            "Ramp and Walnut Pistou "
+            "Salad with Herb-Dijon Dressing ",
+            "Sweet and Tangy Hummus ",
+            "Papaya Salsa "
         ]
     ],
     "LLMMealPlanner|4": [
         [
-            "Black Bean Soup with Cumin and Cilantro ",
-            "Black Bean and Red Pepper Salad ",
-            "Three-Bean Salad with Coriander Chili Dressing "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "Caribbean-Style Black Bean and Rice Salad ",
-            "White Bean and Artichoke Dip ",
-            "Wilted Spinach with Roasted Garlic "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "Fresh Green Salsa (Salsa verde cruda) ",
-            "Roasted Chayote and Red Pepper Salad with Tangerine Dressing ",
-            "Broccoli Slaw with Miso-Ginger Dressing "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "The World of Rice Salads ",
-            "Carrot and Radish Salad ",
-            "Slow-Cooked Tuscan Kale "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "Broiled Eggplant with Cilantro Vinaigrette ",
-            "Red Bell Pepper Harissa ",
-            "Oven-Roasted Vegetables with Fresh Herbs "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "Tomatillo Salsa ",
-            "Roasted Jalape\u00f1o-Tomato Salsa with Fresh Cilantro ",
-            "Asparagus Gremolata "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ],
         [
-            "Grilled Bell Peppers with Criolla Sauce ",
-            "Tomato Salad with Red Onion and Herbs ",
-            "Green Beans and Arugula "
+            "Guacamole ",
+            "Frijoles de la Olla (\"Clay Pot\" Beans) ",
+            "Arugula Salad with Lemon-Pepper Dressing "
         ]
     ],
     "RandomMealPlanner|5": [
         [
-            "Spicy Cilantro Sauce ",
-            "Roasted Shitake, Portobello, and Crimini Mushrooms ",
-            "Pot-Roasted Artichokes With White Wine and Capers "
+            "Charred Tomatillo Salsa Verde ",
+            "Marshmallow Frosting ",
+            "Chilled Yellow Squash and Leek Soup With Coriander and Lemon Cr\u00e8me Fra\u00eeche "
         ],
         [
-            "Spicy Dill Pickles ",
-            "French Bean Salad ",
-            "Whole Wheat Date Rolls "
+            "Crostini ",
+            "Mediterranean Salad ",
+            "Rice with Soy-Glazed Bonito Flakes and Sesame Seeds "
         ],
         [
-            "Sauce Gribiche ",
-            "Rouille ",
-            "Bruschetta with Roasted Red Bell Peppers "
+            "Arugula, Yellow Tomato, and Nectarine Salsa ",
+            "Rosemary Focaccia ",
+            "Carrot, Cauliflower and Beet Salad with Orange-Anise Dressing "
         ],
         [
-            "Green Beans with Pecan Pesto ",
-            "Roasted Red Pepper Pur\u00e9e ",
-            "Gingered Poached Apricot and Raspberry Compote "
+            "Pierogi and Vareniki Dough ",
+            "Winter Salad with Toasted Mustard Seed Vinaigrette ",
+            "Dilly Bean Potato Salad "
         ],
         [
-            "Panzanella Tomato Toast with Crispy Capers and Basil Leaves ",
-            "Yellow Salad with Citrus-Date Vinaigrette ",
-            "Gingered Brioche Summer Pudding with Sour Cream Mascarpone "
+            "Cabbage and Tomato Slaw with Sherry-Mustard Viniagrette ",
+            "Chickpea, Garlic, and Mint Topping ",
+            "Tomato-Onion Topping "
         ],
         [
-            "Harissa Sauce ",
-            "Cauliflower with Ginger and Mustard Seeds ",
-            "Avocado Salsa "
+            "Classic Mayonnaise ",
+            "Classic Sangria ",
+            "Squash Rings with Honey-Soy Glaze "
         ],
         [
-            "Linguine with Eggplant ",
-            "Brined and Roasted Rosemary-Chile Almonds ",
-            "Sauteed Fennel and Carrots "
+            "Cannellini Beans with Garlic and Sage ",
+            "Vegetable Burgers with Eggplant and Tomato ",
+            "Garlic Bruschetta "
         ]
     ],
     "GAMealPlanner|5": [
         [
-            "Rosemary and Garlic Roasted Potatoes ",
-            "Pizza Dough ",
-            "Rouille "
+            "Asian-Style Noodle Salad ",
+            "Vegetable Burgers with Eggplant and Tomato ",
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette "
         ],
         [
-            "Fast Favorite Garlic Dill Pickles ",
-            "Pizza Dough ",
-            "Basil Flatbread with Roasted Tomatoes and Basil Oil "
+            "Marinated Vegetable Salad ",
+            "Sweet and Tangy Hummus ",
+            "Marinated Vegetable Salad "
         ],
         [
-            "Basil Flatbread with Roasted Tomatoes and Basil Oil ",
-            "Pizza Dough ",
-            "Chilled Tomato, Roasted Garlic, and Basil Soup "
+            "Asian-Style Noodle Salad ",
+            "Vegetable Burgers with Eggplant and Tomato ",
+            "Marinated Vegetable Salad "
         ],
         [
-            "Old-Fashioned Potato Salad with Sweet Pickles ",
-            "Fast Favorite Garlic Dill Pickles ",
-            "French Bean Salad "
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette ",
+            "Rib-Eye Steaks with Roasted Red Peppers and Balsamic Vinegar ",
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette "
         ],
         [
-            "Fast Favorite Garlic Dill Pickles ",
-            "Old-Fashioned Potato Salad with Sweet Pickles ",
-            "French Bean Salad "
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette ",
+            "Rib-Eye Steaks with Roasted Red Peppers and Balsamic Vinegar ",
+            "Onion Marmalade "
         ],
         [
-            "Easy Vegetable Stock ",
-            "Sweet Bavarian Mustard ",
-            "Rava Dosas with Potato Chickpea Masala "
+            "Tomato, Pickled Onion, and Coriander Sandwiches ",
+            "Sweet and Tangy Hummus ",
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette "
         ],
         [
-            "French Bean Salad ",
-            "Grapefruit and J\u00edcama Salad ",
-            "Genoa Toasts "
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette ",
+            "Rib-Eye Steaks with Roasted Red Peppers and Balsamic Vinegar ",
+            "Haricots Verts With Poached Eggs And Tarragon Vinaigrette "
         ]
     ],
     "ILPMealPlanner|5": [
         [
-            "Spaghetti alla Carbonara ",
-            "Spaghetti alla Carbonara ",
-            "Avocado-Mango Salsa "
+            "Marinated Vegetable Salad ",
+            "Miso Soup with Carrots and Tofu ",
+            "Vegetable Burgers with Eggplant and Tomato "
         ],
         [
-            "Stir-Fried Vegetables with Orange and Mint ",
-            "Avocado-Mango Salsa ",
-            "Avocado-Mango Salsa "
+            "Marinated Vegetable Salad ",
+            "Miso Soup with Carrots and Tofu ",
+            "Vegetable Burgers with Eggplant and Tomato "
+        ],
+        [
+            "Marinated Vegetable Salad ",
+            "Marinated Vegetable Salad ",
+            "Rainbow Chard Slaw "
         ],
         [
             "Miso Soup with Carrots and Tofu ",
-            "Avocado-Mango Salsa ",
-            "Easy Vegetable Stock "
+            "Tomato Sauce ",
+            "Onion Marmalade "
         ],
         [
-            "Miso Soup with Carrots and Tofu ",
-            "Easy Vegetable Stock ",
-            "Yellow Salad with Citrus-Date Vinaigrette "
+            "Sweet and Tangy Hummus ",
+            "Asian-Style Noodle Salad ",
+            "Griddled Tomato-Chipotle Salsa "
         ],
         [
-            "Miso Soup with Carrots and Tofu ",
-            "Miso Soup with Carrots and Tofu ",
-            "Roasted Squash with Mint and Toasted Pumpkin Seeds "
+            "Sweet and Tangy Hummus ",
+            "Korean BBQ Marinade ",
+            "Chickpea, Garlic, and Mint Topping "
         ],
         [
-            "Spaghetti alla Carbonara ",
-            "Spaghetti alla Carbonara ",
-            "Gingered Brioche Summer Pudding with Sour Cream Mascarpone "
-        ],
-        [
-            "Genoa Toasts ",
-            "Roasted Vegetable Broth ",
-            "Spicy Kimchi Tofu Stew "
+            "Sweet and Tangy Hummus ",
+            "Korean BBQ Marinade ",
+            "Cauliflower-Leek Kugel with Almond-Herb Crust "
         ]
     ],
     "LLMMealPlanner|5": [
         [
-            "Chilled Tomato, Roasted Garlic, and Basil Soup ",
-            "Chick-Pea, Garlic, and Parsley Dip ",
-            "Santa Fe Potato Salad "
+            "Chinese-Style Spinach and Mushroom Soup ",
+            "Mustard Aioli-Grilled Potatoes with Fines Herbes ",
+            "Miso Soup with Carrots and Tofu "
         ],
         [
-            "French Bean Salad ",
-            "Penne, Spinach, Asparagus and Cashew Salad ",
-            "Orange Roughy with Tomato-Cilantro Salsa "
-        ],
-        [
-            "Avocado Salsa ",
-            "Miso Soup with Carrots and Tofu ",
-            "Spicy Coleslaw with Cumin-Lime Dressing "
-        ],
-        [
-            "Sauteed Fennel and Carrots ",
+            "\"Pot Roast\" of Seitan, Aunt Gloria-Style ",
             "Bulgur Salad with Cucumber, Dill, and Mint ",
-            "Arugula, Yellow Tomato, and Nectarine Salsa "
+            "Trio of Salads "
         ],
         [
-            "Panfried Tofu with Oriental Garlic Sauce ",
-            "Escarole with Pine Nuts ",
-            "Green Bean, Spinach, and Beet Salad "
+            "Spinach with Chickpeas and Fried Eggs ",
+            "Broccoli Slaw with Miso-Ginger Dressing ",
+            "Warm Potato Salad with Watercress "
         ],
         [
-            "Fresh Mint Chutney ",
-            "Charred Eggplant and Tahini Spread ",
-            "Marinated London Broil with Lemon and Garlic "
+            "Stewed Cannellini Beans With Chiles and Thyme ",
+            "Mustard Greens, Roasted Squash, and Hazelnut Salad ",
+            "Three-Bean Salad "
         ],
         [
-            "Fresh Green Salsa (Salsa verde cruda) ",
-            "Tomato, Cucumber and Red Onion Salad with Mint ",
-            "Roasted Carrots and Parsnips "
+            "Grill Potato and Onion Packages ",
+            "Peanut Noodles with Gingered Vegetables and Tofu ",
+            "Flank Steak "
+        ],
+        [
+            "Tomato-White Bean Soup with Pesto ",
+            "Bulgur Salad with Cucumber, Dill, and Mint ",
+            "Winter Salad with Toasted Mustard Seed Vinaigrette "
+        ],
+        [
+            "Cucumber and Avocado Salad ",
+            "Broccoli Slaw with Miso-Ginger Dressing ",
+            "Chilled Tomato, Roasted Garlic, and Basil Soup "
         ]
     ],
     "RandomMealPlanner|6": [
         [
-            "Yukon Gold and Sweet Potato Home Fries ",
-            "Braised Veal Shanks with Mashed Potatoes and Tomato Onion Jus ",
-            "Chopped Vegetable Salad with Feta and Olives "
+            "Perfect Pumpkin Pie ",
+            "Veal Shank with Balsamic Onions and White Beans ",
+            "Frozen Mint Chocolate Checkerboard "
         ],
         [
-            "Goat Cheese-Stuffed Turkey Burgers with Roasted Red Pepper Relish ",
-            "Watermelon With Yogurt, Poppy Seeds, and Fried Rosemary ",
-            "Tortilla Soup with Chiles and Tomatoes "
+            "Cottage Cheese Pancakes ",
+            "Butternut Squash and Mushroom Lasagna ",
+            "Late-Summer Cherry Pie "
         ],
         [
-            "Snapper Sashimi with Seaweed and Fennel ",
-            "Pork and Apple Pie with Cheddar-Sage Crust ",
-            "Curried Couscous "
+            "Caramelized-Onion Dip with Cilantro-Garlic Pita Crisps ",
+            "Mushroom and Thyme Risotto Cakes with Roasted Tomato and Arugula Salad ",
+            "Spaghetti with Garlic Oil and Tomato "
         ],
         [
-            "Chocolate Plum Pudding ",
-            "Sweet Potato and Gruy\u00e8re Souffl\u00e9 ",
-            "Grilled Cheddar Cheese and Ham Sandwiches "
+            "Black Bean Chili with Butternut Squash ",
+            "Sausages with Caramelized Red Onions and Radicchio ",
+            "Spiced Apple Cake with Eggnog Sauce "
         ],
         [
-            "Mashed Baked Potatoes With Chives ",
-            "Grilled Swordfish with Pineapple Plantain Chutney ",
-            "Orange Yogurt Panna Cottas with Cranberry Orange Sauce "
+            "Corn and Black Bean Tortilla Cakes ",
+            "Spicy Beef, Yam and Prune Stew ",
+            "Sauteed Cod with Asparagus Sauce and Fennel "
         ],
         [
-            "Grilled Beef Tenderloin with Roasted Garlic Sauce and Leek-Tomato Quinoa ",
-            "Lemon Cloud ",
-            "Pistachio Couscous "
+            "Lobster and Shrimp Bisque ",
+            "Ginger Syrup ",
+            "Cheese Blintzes "
         ],
         [
-            "Paula Wolfert's Seven-Day Preserved Lemons ",
-            "Wilted Spinach with Roasted Garlic ",
-            "Escarole with Olives, Raisins, and Pine Nuts "
+            "Ricotta Whipped Potatoes ",
+            "Simone's Shallot Vinaigrette ",
+            "Winter Herb Pasta "
         ]
     ],
     "GAMealPlanner|6": [
         [
-            "Pistachio-Crusted Chicken with Carrot Raita ",
-            "Whole-Wheat Spaghetti with Goat Cheese and Arugula ",
-            "Pasta With Mushrooms and Prosciutto "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Parmesan-Crusted Lemon Chicken ",
+            "Red Snapper with Spicy Soy Glaze on Sauteed Vegetables and Sweet Potatoes "
         ],
         [
-            "Pumpkin Bread Pudding with Cranberry Caramel Sauce ",
-            "Pepper Chicken with Hummus ",
-            "Grilled Belgian Endive and Blue Cheese Gratin\u00e9e "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Clark's Barbecued Pork Ribs ",
-            "Mediterranean Supper Omelet with Fennel, Olives, and Dill ",
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Pumpkin Bread Pudding with Cranberry Caramel Sauce ",
-            "Pepper Chicken with Hummus ",
-            "Grilled Belgian Endive and Blue Cheese Gratin\u00e9e "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Clark's Barbecued Pork Ribs ",
-            "Mediterranean Supper Omelet with Fennel, Olives, and Dill ",
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Goat Cheese, Artichoke, and Smoked Ham Strata ",
-            "Gruy\u00e8re Potato Gratin ",
-            "Clark's Barbecued Pork Ribs "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Clark's Barbecued Pork Ribs ",
-            "Mediterranean Supper Omelet with Fennel, Olives, and Dill ",
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Parmesan-Crusted Lemon Chicken ",
+            "Red Snapper with Spicy Soy Glaze on Sauteed Vegetables and Sweet Potatoes "
         ]
     ],
     "ILPMealPlanner|6": [
         [
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce ",
-            "Red, White, and Green Lasagne ",
-            "Clark's Barbecued Pork Ribs "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Lobster Bisque ",
-            "Lobster Bisque ",
-            "Charred Broccoli Salad with Eggplant Pur\u00e9e "
+            "Red Snapper with Spicy Soy Glaze on Sauteed Vegetables and Sweet Potatoes ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Parmesan-Crusted Lemon Chicken "
         ],
         [
-            "Smashed Potatoes and Peas ",
-            "Pumpkin Bread Pudding with Cranberry Caramel Sauce ",
-            "Red, White, and Green Lasagne "
+            "Frozen Mint Chocolate Checkerboard ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Fried Rice with Pork and Kale ",
-            "Calamari with Roasted Tomato Sauce ",
-            "Sausage and Egg Sandwich "
+            "Genoa Toasts ",
+            "Potato-Leek Matzo Balls ",
+            "Moroccan Lamb Stew "
         ],
         [
-            "Smashed Potatoes and Peas ",
-            "Chicken with Cranberry and Mustard Sauce ",
-            "Pumpkin Bread Pudding with Cranberry Caramel Sauce "
+            "Genoa Toasts ",
+            "Moroccan Lamb Stew ",
+            "Yukari Shiso Salt Yaki Onigiri "
         ],
         [
-            "Fried Rice with Pork and Kale ",
-            "Calamari with Roasted Tomato Sauce ",
-            "Sausage and Egg Sandwich "
+            "Red Snapper with Spicy Soy Glaze on Sauteed Vegetables and Sweet Potatoes ",
+            "Frozen Mint Chocolate Checkerboard ",
+            "Parmesan-Crusted Lemon Chicken "
         ],
         [
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce ",
-            "Saut\u00e9ed Pork Chops with Sweet Potato, Apples and Mustard Sauce ",
-            "Scallops Verde "
+            "Canyon Ranch Berry Fruit Crepes ",
+            "Parmesan-Crusted Lemon Chicken ",
+            "Rosemary Chicken with Broccoli Rabe "
         ]
     ],
     "LLMMealPlanner|6": [
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Pan-Roasted Salmon with Collards and Radish Raita ",
+            "Red Snapper with Spicy Soy Glaze on Sauteed Vegetables and Sweet Potatoes ",
+            "Sauteed Carrots and Red Bell Peppers "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Chicken Breasts with Rock-Shrimp Sauce ",
+            "Ranchero Beef Stew ",
+            "Grilled Red Snapper and Mango with Cilantro-Lime Vinaigrette "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Pork Chops with Apple Balsamic Sauce and Blue Cheese Tomato Gratin ",
+            "Grilled Shrimp with Roasted Garlic-Herb Sauce ",
+            "Swedish Potato, Ham and Pea Salad "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Roast Chicken with Asparagus, Morel, and Pearl-Onion Rago\u00fbt ",
+            "Saut\u00e9ed Chicken and Radishes with Mustard and Tarragon ",
+            "Thai-Style Tomato and Shrimp Salad "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Lima Bean Paella ",
+            "Chicken Vindaloo ",
+            "Potato, Carrot and Parsnip Soup "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Belly Acres' Better Burger ",
+            "Minty, Boozy Chicken ",
+            "Creamy Scrambled Eggs with Spinach "
         ],
         [
-            "Mushroom And Leek Saut\u00e9 ",
-            "White Bean and Watercress Gratin ",
-            "Yukon Gold and Sweet Potato Home Fries "
+            "Braised Chicken With Chickpeas and Swiss Chard ",
+            "Spaghetti with Braised Kale ",
+            "Veal Shank with Balsamic Onions and White Beans "
         ]
     ]
 }

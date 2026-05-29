@@ -9,74 +9,75 @@
         Q[m,c] Q[m,c]
         Q[m,c]
         Q[m,c]
-        Q[m,c]
+        Q[m,c] Q[m,c]
     },
     hlines,
     hline{3} = {2pt},
     vlines,
-    vline{2,4,5,6, 7} = {2pt},
+    vline{2,4,5,6} = {2pt},
     cells   = {font=\scriptsize},
     row{1,2} = {font=\bfseries\footnotesize},
+    row{3,5,7,9,11} = {bg=gray!15},
 }
     \SetCell[r=2]{m,l} Metric &
     \SetCell[c=2]{c} Random &  &
     \gls{llm} &
     \gls{ilp} &
-    \gls{ga} \\
+    \SetCell[c=2]{c} \gls{ga} &  \\
     
-     & $\mu$ & $\sigma$ &  &  &  \\
+     & $\mu$ & $\sigma$ &  &  & $\mu$ & $\sigma$ \\
     
     Ingredient Utilisation \hfill $\uparrow$ &
-    \textbf{0.4382} & 0.1263 &
-    0.2727 &
-    0.2727 &
-    0.2129 \\
+    0.2469 & 0.0517 &
+    0.2536 &
+    \textbf{0.3131} &
+    0.2449 & 0.1223 \\
     
     Expiry-Weighted Utilisation \hfill $\uparrow$ &
-    \textbf{0.5106} & 0.2148 &
-    0.2222 &
-    0.2222 &
-    0.1752 \\
+    0.2009 & 0.0480 &
+    0.2035 &
+    \textbf{0.2912} &
+    0.2443 & 0.1608 \\
     
     Food Waste \hfill $\downarrow$ &
-    \textbf{0.1073} & 0.1263 &
-    0.2727 &
-    0.2727 &
-    0.3091 \\
+    0.3003 & 0.0508 &
+    0.2918 &
+    \textbf{0.2324} &
+    0.3006 & 0.1223 \\
     
     Dietary Compliance \hfill $\uparrow$ &
     \textbf{1.0000} & 0.0000 &
     \textbf{1.0000} &
     \textbf{1.0000} &
-    \textbf{1.0000} \\
+    \textbf{1.0000} & 0.0000 \\
     
     Nutritional Target \hfill $\uparrow$ &
-    0.0127 & 0.0233 &
-    0.2954 &
-    \textbf{0.9684} &
-    0.8428 \\
+    0.0045 & 0.0136 &
+    0.1445 &
+    \textbf{0.9373} &
+    0.9087 & 0.0371 \\
     
     Budget Efficiency \hfill $\uparrow$ &
-    0.1956 & 0.0676 &
-    0.6707 &
+    0.1748 & 0.0987 &
     \textbf{1.0000} &
-    0.9943 \\
+    \textbf{1.0000} &
+    \textbf{1.0000} & 0.0000 \\
     
     Pantry Coverage \hfill $\uparrow$ &
-    0.0284 & 0.0103 &
-    \textbf{0.0631} &
-    0.0522 &
-    0.0543 \\
+    0.0130 & 0.0088 &
+    \textbf{0.1140} &
+    0.0602 &
+    0.0499 & 0.0183 \\
     
     Variety \hfill $\uparrow$ &
     \textbf{1.0000} & 0.0000 &
     0.3333 &
-    0.2381 &
-    0.1905 \\
+    0.3810 &
+    0.2190 & 0.0646 \\
     
     Runtime (seconds) \hfill $\downarrow$ &
-    \textbf{0.0017} & 0.0008 &
-    4.2293 &
-    249.7183 &
-    9.6027 \\
+    \textbf{0.0000} & 0.0000 &
+    4.3853 &
+    334.6951 &
+    21.6789 & 2.0448 \\
 \end{longtblr}
