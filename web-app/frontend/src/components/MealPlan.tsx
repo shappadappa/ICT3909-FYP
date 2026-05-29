@@ -122,6 +122,10 @@ export default function MealPlan() {
 	const renderEmpty = () => (
 		<div className="flex h-full flex-col items-center justify-center gap-4">
 			<p className="text-walnut-600 text-sm">No meals planned for this week.</p>
+			<p className="text-walnut-600 max-w-sm text-center text-sm">
+				Tap the button below to generate a meal plan. You may want to update your dietary preferences and pantry
+				first.
+			</p>
 			<button
 				className="bg-sage-600 hover:bg-sage-800 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors duration-150"
 				onClick={handleGenerateClick}

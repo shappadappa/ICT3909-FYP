@@ -20,4 +20,5 @@ export default defineConfig({
 	security: {
 		checkOrigin: false,
 	},
+	output: "server",
 });

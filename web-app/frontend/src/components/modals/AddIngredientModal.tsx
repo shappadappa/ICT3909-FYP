@@ -14,12 +14,12 @@ interface AddIngredientModalProps {
 	onClose: () => void;
 }
 
-const fetchAllIngredients = async (savedPreferences: UserPreferences, name_query: string) => {
+const fetchIngredients = async (savedPreferences: UserPreferences, name_query: string) => {
 	const params = new URLSearchParams({
-		gluten_free: savedPreferences.glutenIntolerant ? "true" : "false",
-		lactose_free: savedPreferences.lactoseIntolerant ? "true" : "false",
-		vegetarian: savedPreferences.vegetarian ? "true" : "false",
-		vegan: savedPreferences.vegan ? "true" : "false",
+		gluten_free: savedPreferences?.glutenIntolerant ? "true" : "false",
+		lactose_free: savedPreferences?.lactoseIntolerant ? "true" : "false",
+		vegetarian: savedPreferences?.vegetarian ? "true" : "false",
+		vegan: savedPreferences?.vegan ? "true" : "false",
 		name_query: name_query || "",
 	});
 
@@ -43,6 +43,12 @@ const fetchAllIngredients = async (savedPreferences: UserPreferences, name_query
 export default function AddIngredientModal({ isOpen, onClose }: AddIngredientModalProps) {
 	const pantryIngredients = useStore(pantryStore);
 	const savedPreferences = useStore(preferencesStore);
+
+	const hasDietaryRestrictions =
+		savedPreferences?.glutenIntolerant ||
+		savedPreferences?.lactoseIntolerant ||
+		savedPreferences?.vegetarian ||
+		savedPreferences?.vegan;
 
 	const [filteredIngredients, setFilteredIngredients] = useState<Ingredient[]>([]);
 	const [isFetchingIngredients, setIsFetchingIngredients] = useState(false);
@@ -132,7 +138,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 		if (newValue.length > 2) {
 			setIsFetchingIngredients(true);
 
-			const newFilteredIngredients = await fetchAllIngredients(savedPreferences, newValue);
+			const newFilteredIngredients = await fetchIngredients(savedPreferences, newValue);
 
 			setFilteredIngredients(newFilteredIngredients);
 			setIsFetchingIngredients(false);
@@ -156,6 +162,13 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 		>
 			<div className="flex flex-col gap-3">
 				<div className="relative">
+					{hasDietaryRestrictions && (
+						<div className="mb-2 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2.5 text-sm text-amber-800">
+							⚠️ Please check your dietary preferences if you can't find the ingredient you are looking
+							for.
+						</div>
+					)}
+
 					<div className="flex w-full items-center rounded-md border border-gray-300 px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-blue-500">
 						<input
 							type="text"
@@ -207,10 +220,7 @@ export default function AddIngredientModal({ isOpen, onClose }: AddIngredientMod
 							{filteredIngredients.length === 0 && !isFetchingIngredients && (
 								<li className="px-3 py-2 text-sm text-gray-400">
 									No ingredients found
-									{(savedPreferences?.glutenIntolerant ||
-										savedPreferences?.lactoseIntolerant ||
-										savedPreferences?.vegan ||
-										savedPreferences?.vegetarian) &&
+									{hasDietaryRestrictions &&
 										". You may need to adjust your dietary preferences to find the ingredients you are looking for."}
 								</li>
 							)}
