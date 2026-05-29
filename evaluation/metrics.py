@@ -153,8 +153,12 @@ def get_nutritional_target_score(meal_plan: list[list[Recipe]], user_preferences
     num_days = len(meal_plan)
 
     for day_meals in meal_plan:
-        daily_calories = sum(recipe.nutritional_information.get_nutritional_value("calories") for recipe in day_meals)
-        daily_protein = sum(recipe.nutritional_information.get_nutritional_value("protein") for recipe in day_meals)
+        daily_calories = sum(
+            recipe.nutritional_information.get_nutritional_value("calories") or 0.0 for recipe in day_meals
+        )
+        daily_protein = sum(
+            recipe.nutritional_information.get_nutritional_value("protein") or 0.0 for recipe in day_meals
+        )
 
         if user_preferences.calorie_target_per_day > 0:
             total_relative_error += (
