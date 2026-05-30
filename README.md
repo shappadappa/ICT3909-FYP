@@ -1,5 +1,8 @@
 # Smart, Personalised and Efficient Meal Planning: Using AI to Combat Food Waste
 
+![Final Year Project](https://img.shields.io/badge/University%20of%20Malta-Final%20Year%20Project-%23bb1631?link=https%3A%2F%2Fwww.um.edu.mt%2Fcourses%2Fstudyunit%2FICT3909)
+![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
+
 <span style="font-size: 1.5rem; font-weight: bold;">ICT3909 Final Year Project in Artificial Intelligence<br/></span>
 <span style="font-size: 1.25rem">By Michael Farrugia</span>
 
