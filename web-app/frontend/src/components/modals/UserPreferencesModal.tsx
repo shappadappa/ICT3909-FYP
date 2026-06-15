@@ -14,21 +14,41 @@ const preferenceWeights = [
 		key: "pantryWeight",
 		label: "Pantry Utilisation",
 		description: "How strongly to reward meals that use ingredients already in your pantry.",
+		buttons: [
+			{ label: "Low Pantry Utilisation", value: 0 },
+			{ label: "Medium Pantry Utilisation", value: 0.5 },
+			{ label: "High Pantry Utilisation", value: 1 },
+		],
 	},
 	{
 		key: "wasteWeight",
 		label: "Food Waste",
 		description: "How strongly to penalise meal plans that let pantry items expire unused.",
+		buttons: [
+			{ label: "Higher Food Waste", value: 0 },
+			{ label: "Medium Food Waste", value: 0.5 },
+			{ label: "Lower Food Waste", value: 1 },
+		],
 	},
 	{
 		key: "budgetWeight",
 		label: "Budget Adherence",
 		description: "How strongly to penalise meal plans that exceed your weekly budget.",
+		buttons: [
+			{ label: "Lower Budget Adherence", value: 0 },
+			{ label: "Medium Budget Adherence", value: 0.5 },
+			{ label: "Higher Budget Adherence", value: 1 },
+		],
 	},
 	{
 		key: "dietaryWeight",
 		label: "Dietary Targets",
 		description: "How strongly to penalise meal plans that miss your calorie and protein goals.",
+		buttons: [
+			{ label: "Lower Dietary Adherence", value: 0 },
+			{ label: "Medium Dietary Adherence", value: 0.5 },
+			{ label: "Higher Dietary Adherence", value: 1 },
+		],
 	},
 ] as const;
 
@@ -273,7 +293,7 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 						Meal Planner Weights (optional)
 					</legend>
 
-					{preferenceWeights.map(({ key, label, description }) => (
+					{preferenceWeights.map(({ key, label, description, buttons }) => (
 						<div key={key} className="flex flex-col gap-1">
 							<label htmlFor={key} className="text-sm font-medium text-gray-600">
 								{label}
@@ -281,26 +301,22 @@ export default function UserPreferencesModal({ isOpen, onClose }: UserPreference
 
 							<p className="text-xs text-gray-400">{description}</p>
 
-							<div className="relative">
-								<input
-									type="number"
-									id={key}
-									name={key}
-									min="0"
-									max="1"
-									step="0.1"
-									value={preferences[key]}
-									className="focus:border-sage-400 w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pr-16 pl-3 text-sm text-gray-800 outline-none focus:bg-white"
-									onChange={(e) =>
-										setPreferences((preferences) => ({
-											...preferences,
-											[key]: Number(e.target.value),
-										}))
-									}
-								/>
-								<span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gray-400">
-									0 - 1
-								</span>
+							<div className="relative flex flex-col gap-2 md:flex-row">
+								{buttons.map(({ label: buttonLabel, value }) => (
+									<button
+										type="button"
+										key={buttonLabel}
+										className={`bg-sage-50 hover:bg-sage-100 mr-2 mb-2 rounded-lg border border-gray-200 px-3 py-1 text-xs text-gray-800 ${preferences[key] === value ? "bg-sage-200 hover:bg-sage-200" : ""}`}
+										onClick={() =>
+											setPreferences((preferences) => ({
+												...preferences,
+												[key]: value,
+											}))
+										}
+									>
+										{buttonLabel}
+									</button>
+								))}
 							</div>
 						</div>
 					))}
