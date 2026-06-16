@@ -33,7 +33,7 @@ export function useGenerateMealPlan() {
 				})),
 				num_days: 7,
 				meals_per_day: 3,
-				num_generations: 100,
+				num_generations: 200,
 			};
 
 			const res = await fetch(`${API_BASE_URL}/api/meal-plan`, {
